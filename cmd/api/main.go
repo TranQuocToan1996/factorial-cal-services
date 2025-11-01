@@ -7,17 +7,14 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"factorial-cal-services/migrations"
 	"factorial-cal-services/pkg/config"
-	"factorial-cal-services/pkg/db"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/swag/example/override/docs"
-	"gorm.io/gorm"
 )
 
 // @title           Simple Order Service API
@@ -39,10 +36,10 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 
-	db, err := db.NewGormDB(cfg.DSN())
-	if err != nil {
-		log.Fatalf("Failed to connect to database: %v", err)
-	}
+	// db, err := db.NewGormDB(cfg.DSN())
+	// if err != nil {
+	// 	log.Fatalf("Failed to connect to database: %v", err)
+	// }
 
 	if err := migrations.RunMigrations(cfg.DSN()); err != nil {
 		log.Printf("Migration failed: %v", err)
@@ -55,16 +52,13 @@ func main() {
 		Use(gin.Logger()).
 		Use(gin.Recovery())
 
-	// Set Swagger host dynamically based on environment
 	if cfg.SWAGGER_HOST != "" {
 		docs.SwaggerInfo.Host = cfg.SWAGGER_HOST
-		log.Printf("Swagger host set to: %s", cfg.SWAGGER_HOST)
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Health check endpoints
 	r.GET("/health", healthCheck)
-	r.GET("/ready", readyCheck(db))
 
 	srv := &http.Server{
 		Addr:    cfg.SERVER_PORT,
@@ -86,13 +80,7 @@ func main() {
 
 	log.Println("Shutting down API server...")
 
-	// Graceful shutdown with 5s timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Printf("Server forced to shutdown: %v", err)
-	}
+	srv.Shutdown(context.Background())
 
 	log.Println("API server stopped")
 }
@@ -106,30 +94,4 @@ func main() {
 // @Router       /health [get]
 func healthCheck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
-}
-
-// readyCheck godoc
-// @Summary      Readiness check
-// @Description  Check if the service is ready to accept requests (database connection)
-// @Tags         health
-// @Produce      json
-// @Success      200  {object}  map[string]string
-// @Failure      503  {object}  map[string]string
-// @Router       /ready [get]
-func readyCheck(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// Check database connection
-		sqlDB, err := db.DB()
-		if err != nil {
-			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "not_ready", "error": "database error"})
-			return
-		}
-
-		if err := sqlDB.Ping(); err != nil {
-			c.JSON(http.StatusServiceUnavailable, gin.H{"status": "not_ready", "error": "database ping failed"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"status": "ready"})
-	}
 }

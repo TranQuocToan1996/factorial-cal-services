@@ -74,9 +74,9 @@ func NewRabbitMQConsumer(amqpURL string) (*RabbitMQConsumer, error) {
 	}, nil
 }
 
-// Consume starts consuming messages from the specified queue with retry and DLQ support
+// Consume starts consuming messages from the specified queue
 func (c *RabbitMQConsumer) Consume(ctx context.Context, queueName string, handler MessageHandler) error {
-	// Setup all queues and exchanges
+	// Setup queue
 	if err := c.setupQueues(queueName); err != nil {
 		return err
 	}
@@ -95,16 +95,16 @@ func (c *RabbitMQConsumer) Consume(ctx context.Context, queueName string, handle
 		return fmt.Errorf("failed to register consumer: %w", err)
 	}
 
-	log.Printf("Started consuming from queue: %s (with retry and DLQ)", queueName)
+	log.Printf("Started consuming from queue: %s", queueName)
 
 	// Process messages in goroutine
-	go c.consumeLoop(ctx, msgs, queueName, handler)
+	go c.consumeLoop(ctx, msgs, handler)
 
 	return nil
 }
 
 // consumeLoop handles the main message consumption loop
-func (c *RabbitMQConsumer) consumeLoop(ctx context.Context, msgs <-chan amqp.Delivery, queueName string, handler MessageHandler) {
+func (c *RabbitMQConsumer) consumeLoop(ctx context.Context, msgs <-chan amqp.Delivery, handler MessageHandler) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -115,7 +115,7 @@ func (c *RabbitMQConsumer) consumeLoop(ctx context.Context, msgs <-chan amqp.Del
 				log.Println("Message channel closed")
 				return
 			}
-			c.handleMessage(ctx, msg, queueName, handler)
+			c.handleMessageAndAck(ctx, msg, handler)
 		}
 	}
 }
