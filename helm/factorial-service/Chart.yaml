@@ -1,0 +1,7 @@
+apiVersion: v2
+name: factorial-service
+description: A Helm chart for Factorial Calculation Service
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+

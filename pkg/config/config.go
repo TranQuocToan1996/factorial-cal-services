@@ -3,9 +3,14 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 func LoadConfig() *Config {
+	maxFactorial, _ := strconv.Atoi(getEnvOrDefault("MAX_FACTORIAL", "20000"))
+	redisThreshold, _ := strconv.Atoi(getEnvOrDefault("REDIS_THRESHOLD", "10000"))
+	redisDB, _ := strconv.Atoi(getEnvOrDefault("REDIS_DB", "0"))
+
 	return &Config{
 		SERVER_PORT:                       os.Getenv("SERVER_PORT"),
 		DB_USER:                           os.Getenv("DB_USER"),
@@ -21,6 +26,15 @@ func LoadConfig() *Config {
 		FACTORIAL_CAL_SERVICES_QUEUE_NAME: os.Getenv("FACTORIAL_CAL_SERVICES_QUEUE_NAME"),
 		SWAGGER_HOST:                      os.Getenv("SWAGGER_HOST"),
 		RABBITMQ_CA:                       os.Getenv("RABBITMQ_CA"),
+		REDIS_HOST:                        os.Getenv("REDIS_HOST"),
+		REDIS_PORT:                        os.Getenv("REDIS_PORT"),
+		REDIS_PASSWORD:                    os.Getenv("REDIS_PASSWORD"),
+		REDIS_DB:                          redisDB,
+		AWS_REGION:                        os.Getenv("AWS_REGION"),
+		S3_BUCKET_NAME:                    os.Getenv("S3_BUCKET_NAME"),
+		STEP_FUNCTIONS_ARN:                os.Getenv("STEP_FUNCTIONS_ARN"),
+		MAX_FACTORIAL:                     maxFactorial,
+		REDIS_THRESHOLD:                   redisThreshold,
 	}
 }
 
@@ -39,6 +53,15 @@ type Config struct {
 	FACTORIAL_CAL_SERVICES_QUEUE_NAME string `mapstructure:"FACTORIAL_CAL_SERVICES_QUEUE_NAME"`
 	SWAGGER_HOST                      string `mapstructure:"SWAGGER_HOST"`
 	RABBITMQ_CA                       string `mapstructure:"RABBITMQ_CA"`
+	REDIS_HOST                        string `mapstructure:"REDIS_HOST"`
+	REDIS_PORT                        string `mapstructure:"REDIS_PORT"`
+	REDIS_PASSWORD                    string `mapstructure:"REDIS_PASSWORD"`
+	REDIS_DB                          int    `mapstructure:"REDIS_DB"`
+	AWS_REGION                        string `mapstructure:"AWS_REGION"`
+	S3_BUCKET_NAME                    string `mapstructure:"S3_BUCKET_NAME"`
+	STEP_FUNCTIONS_ARN                string `mapstructure:"STEP_FUNCTIONS_ARN"`
+	MAX_FACTORIAL                     int    `mapstructure:"MAX_FACTORIAL"`
+	REDIS_THRESHOLD                   int    `mapstructure:"REDIS_THRESHOLD"`
 }
 
 func (c *Config) DSN() string {
@@ -49,4 +72,15 @@ func (c *Config) DSN() string {
 func (c *Config) RabbitMQURL() string {
 	return fmt.Sprintf("amqp://%s:%s@%s:%s",
 		c.RABBITMQ_USER, c.RABBITMQ_PASSWORD, c.RABBITMQ_HOST, c.RABBITMQ_PORT)
+}
+
+func (c *Config) RedisAddr() string {
+	return fmt.Sprintf("%s:%s", c.REDIS_HOST, c.REDIS_PORT)
+}
+
+func getEnvOrDefault(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
 }

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "factorial-service.fullname" . }}-api
+  labels:
+    app: {{ include "factorial-service.name" . }}
+    component: api
+spec:
+  type: {{ .Values.api.service.type }}
+  ports:
+  - port: {{ .Values.api.service.port }}
+    targetPort: {{ .Values.api.service.targetPort }}
+    protocol: TCP
+    name: http
+  selector:
+    app: {{ include "factorial-service.name" . }}
+    component: api
+

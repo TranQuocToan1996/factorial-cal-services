@@ -1,0 +1,110 @@
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"factorial-cal-services/pkg/config"
+	"factorial-cal-services/pkg/consumer"
+	"factorial-cal-services/pkg/db"
+	"factorial-cal-services/pkg/repository"
+	"factorial-cal-services/pkg/service"
+
+	"github.com/aws/aws-sdk-go-v2/aws"
+	awsConfig "github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/redis/go-redis/v9"
+)
+
+func main() {
+	cfg := config.LoadConfig()
+
+	// Initialize database
+	database, err := db.NewGormDB(cfg.DSN())
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	log.Println("Connected to database")
+
+	// Initialize Redis
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     cfg.RedisAddr(),
+		Password: cfg.REDIS_PASSWORD,
+		DB:       cfg.REDIS_DB,
+	})
+
+	// Test Redis connection
+	ctx := context.Background()
+	if err := redisClient.Ping(ctx).Err(); err != nil {
+		log.Printf("Warning: Redis connection failed: %v", err)
+	} else {
+		log.Println("Connected to Redis successfully")
+	}
+	defer redisClient.Close()
+
+	// Initialize AWS S3
+	var awsCfg aws.Config
+	var s3Client *s3.Client
+	if cfg.AWS_REGION != "" && cfg.S3_BUCKET_NAME != "" {
+		awsCfg, err = awsConfig.LoadDefaultConfig(ctx, awsConfig.WithRegion(cfg.AWS_REGION))
+		if err != nil {
+			log.Fatalf("Failed to load AWS config: %v", err)
+		}
+		s3Client = s3.NewFromConfig(awsCfg)
+		log.Println("AWS S3 client initialized")
+	} else {
+		log.Fatal("AWS_REGION and S3_BUCKET_NAME must be set")
+	}
+
+	// Initialize services
+	factorialService := service.NewFactorialService()
+	redisService := service.NewRedisService(redisClient, 24*time.Hour)
+	s3Service := service.NewS3Service(s3Client, cfg.S3_BUCKET_NAME)
+
+	// Initialize repository
+	factorialRepo := repository.NewFactorialRepository(database)
+
+	// Initialize RabbitMQ consumer
+	mqConsumer, err := consumer.NewRabbitMQConsumer(cfg.RabbitMQURL())
+	if err != nil {
+		log.Fatalf("Failed to create RabbitMQ consumer: %v", err)
+	}
+	defer mqConsumer.Close()
+
+	// Create message handler
+	messageHandler := consumer.NewFactorialMessageHandler(
+		factorialService,
+		redisService,
+		s3Service,
+		factorialRepo,
+	)
+
+	// Start consuming
+	consumeCtx, cancelConsume := context.WithCancel(context.Background())
+	defer cancelConsume()
+
+	err = mqConsumer.Consume(consumeCtx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, messageHandler)
+	if err != nil {
+		log.Fatalf("Failed to start consuming: %v", err)
+	}
+
+	log.Println("Worker started, waiting for messages...")
+
+	// Wait for interrupt signal for graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+
+	log.Println("Shutting down worker...")
+	cancelConsume()
+
+	// Give time for current message processing to complete
+	time.Sleep(2 * time.Second)
+
+	log.Println("Worker stopped")
+}
+

@@ -1,24 +1,36 @@
+# Multi-stage Dockerfile for API and Worker
+
 # Build stage
-FROM golang:1.25-alpine AS build
+FROM golang:1.21-alpine AS builder
 WORKDIR /app
 
 # Copy go mod files first for better caching
 COPY go.mod go.sum ./
 
-# Download dependencies (this layer will be cached unless go.mod/go.sum change)
+# Download dependencies
 RUN go mod download
 
 # Copy source code
 COPY . .
 
-# Build the application
-RUN go build -o /bin/api ./cmd/api
+# Build API binary
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o api ./cmd/api
 
-# Final stage
-FROM alpine:3.18
+# Build Worker binary
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o worker ./cmd/worker
+
+# API Image
+FROM alpine:3.18 AS api
 WORKDIR /app
-COPY --from=build /bin/api /bin/api
-COPY --from=build /app/docs /app/docs
 RUN apk add --no-cache ca-certificates
-# RUN apk add --no-cache curl
-ENTRYPOINT ["/bin/api"]
+COPY --from=builder /app/api /app/api
+COPY --from=builder /app/docs /app/docs
+EXPOSE 8080
+ENTRYPOINT ["/app/api"]
+
+# Worker Image
+FROM alpine:3.18 AS worker
+WORKDIR /app
+RUN apk add --no-cache ca-certificates
+COPY --from=builder /app/worker /app/worker
+ENTRYPOINT ["/app/worker"]

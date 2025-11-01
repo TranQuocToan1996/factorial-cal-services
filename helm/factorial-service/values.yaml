@@ -1,0 +1,71 @@
+api:
+  replicaCount: 2
+  image:
+    repository: factorial-api
+    tag: latest
+    pullPolicy: Always
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "200m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  service:
+    type: LoadBalancer
+    port: 8080
+    targetPort: 8080
+
+worker:
+  replicaCount: 3
+  image:
+    repository: factorial-worker
+    tag: latest
+    pullPolicy: Always
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+
+config:
+  serverPort: ":8080"
+  maxFactorial: 20000
+  redisThreshold: 10000
+  queueName: "factorial_queue"
+
+database:
+  host: "mysql-service"
+  port: "3306"
+  name: "factorial_db"
+  user: "root"
+  sslmode: "disable"
+
+rabbitmq:
+  host: "rabbitmq-service"
+  port: "5672"
+  user: "guest"
+
+redis:
+  host: "redis-service"
+  port: "6379"
+  db: 0
+
+aws:
+  region: "us-east-1"
+  s3Bucket: "factorial-results"
+  stepFunctionsArn: ""
+
+serviceAccount:
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: ""
+  name: "factorial-service-sa"
+
