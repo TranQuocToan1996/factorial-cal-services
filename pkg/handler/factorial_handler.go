@@ -106,7 +106,7 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 		if factorialResult == "" {
 			factorialResult, _ = h.s3Service.DownloadFactorial(ctx, existing.S3Key)
 		}
-		
+
 		sendAPIResponse(c, http.StatusOK, "ok", "done", dto.ResultResponseData{
 			Number:          req.Number,
 			FactorialResult: factorialResult,
@@ -244,22 +244,13 @@ func (h *FactorialHandler) GetMetadata(c *gin.Context) {
 		return
 	}
 
-	ctx := context.Background()
-	var factorialResult string
-	if calc.Status == domain.StatusDone {
-		// Download factorial result if status is done
-		factorialResult, _ = h.s3Service.DownloadFactorial(ctx, calc.S3Key)
-	}
-
 	sendAPIResponse(c, http.StatusOK, "ok", "done", dto.MetadataResponseData{
-		ID:              strconv.FormatInt(calc.ID, 10),
-		Number:          calc.Number,
-		FactorialResult: factorialResult,
-		S3Key:           calc.S3Key,
-		Checksum:        calc.Checksum,
-		Status:          calc.Status,
-		CreatedAt:       calc.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
-		UpdatedAt:       calc.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		ID:        strconv.FormatInt(calc.ID, 10),
+		Number:    calc.Number,
+		S3Key:     calc.S3Key,
+		Checksum:  calc.Checksum,
+		Status:    calc.Status,
+		CreatedAt: calc.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		UpdatedAt: calc.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
 	})
 }
-

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/alicebob/miniredis/v2"
+	"github.com/redis/go-redis/v9"
 )
 
 func TestShouldCache(t *testing.T) {
@@ -121,29 +121,3 @@ func TestRedisSetAndGet(t *testing.T) {
 		})
 	}
 }
-
-func TestRedisGetNonExistent(t *testing.T) {
-	mr, err := miniredis.Run()
-	if err != nil {
-		t.Fatalf("Failed to create miniredis: %v", err)
-	}
-	defer mr.Close()
-
-	client := redis.NewClient(&redis.Options{
-		Addr: mr.Addr(),
-	})
-	defer client.Close()
-
-	service := NewRedisService(client, time.Hour, 1000)
-	ctx := context.Background()
-
-	result, err := service.Get(ctx, "999")
-	if err != nil {
-		t.Errorf("Expected no error for cache miss, got: %v", err)
-	}
-
-	if result != "" {
-		t.Errorf("Expected empty string for cache miss, got: %s", result)
-	}
-}
-

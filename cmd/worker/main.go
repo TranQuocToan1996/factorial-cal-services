@@ -14,9 +14,6 @@ import (
 	"factorial-cal-services/pkg/repository"
 	"factorial-cal-services/pkg/service"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	awsConfig "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -46,30 +43,15 @@ func main() {
 	}
 	defer redisClient.Close()
 
-	// Initialize AWS S3
-	var awsCfg aws.Config
-	var s3Client *s3.Client
-	if cfg.AWS_REGION != "" && cfg.S3_BUCKET_NAME != "" {
-		awsCfg, err = awsConfig.LoadDefaultConfig(ctx, awsConfig.WithRegion(cfg.AWS_REGION))
-		if err != nil {
-			log.Fatalf("Failed to load AWS config: %v", err)
-		}
-		s3Client = s3.NewFromConfig(awsCfg)
-		log.Println("AWS S3 client initialized")
-	} else {
-		log.Fatal("AWS_REGION and S3_BUCKET_NAME must be set")
-	}
-
 	// Initialize services
 	factorialService := service.NewFactorialServiceWithLimit(int64(cfg.MAX_FACTORIAL))
 	redisService := service.NewRedisService(redisClient, 24*time.Hour, int64(cfg.REDIS_THRESHOLD))
-	s3Service := service.NewS3Service(s3Client, cfg.S3_BUCKET_NAME)
+	s3Service := service.NewS3Service(ctx, cfg)
 	checksumService := service.NewChecksumService()
 
 	// Initialize repositories
 	factorialRepo := repository.NewFactorialRepository(database)
 	maxRequestRepo := repository.NewMaxRequestRepository(database)
-	currentCalculatedRepo := repository.NewCurrentCalculatedRepository(database)
 
 	// Initialize RabbitMQ consumer
 	mqConsumer, err := consumer.NewRabbitMQConsumer(cfg.RabbitMQURL())
@@ -127,4 +109,3 @@ func main() {
 
 	log.Println("Worker stopped")
 }
-

@@ -117,6 +117,7 @@ func (c *RabbitMQConsumer) consumeLoop(ctx context.Context, msgs <-chan amqp.Del
 				return
 			}
 			c.handleMessageAndAck(ctx, msg, handler)
+		}
 	}
 }
 
@@ -153,7 +154,7 @@ func (c *RabbitMQConsumer) ConsumeBatch(ctx context.Context, queueName string, b
 func (c *RabbitMQConsumer) consumeBatchLoop(ctx context.Context, msgs <-chan amqp.Delivery, batchSize int, handler BatchMessageHandler) {
 	batch := make([][]byte, 0, batchSize)
 	deliveries := make([]amqp.Delivery, 0, batchSize)
-	
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -172,16 +173,17 @@ func (c *RabbitMQConsumer) consumeBatchLoop(ctx context.Context, msgs <-chan amq
 				log.Println("Message channel closed")
 				return
 			}
-			
+
 			batch = append(batch, msg.Body)
 			deliveries = append(deliveries, msg)
-			
+
 			// Process batch when it reaches the desired size
 			if len(batch) >= batchSize {
 				c.processBatch(ctx, batch, deliveries, handler)
 				batch = batch[:0]
 				deliveries = deliveries[:0]
 			}
+
 		}
 	}
 }
@@ -191,9 +193,9 @@ func (c *RabbitMQConsumer) processBatch(ctx context.Context, batch [][]byte, del
 	if len(batch) == 0 {
 		return
 	}
-	
+
 	log.Printf("Processing batch of %d messages", len(batch))
-	
+
 	if err := handler(ctx, batch); err != nil {
 		log.Printf("Error processing batch: %v", err)
 		// Nack all messages in batch (don't requeue)

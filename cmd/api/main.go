@@ -17,9 +17,6 @@ import (
 	"factorial-cal-services/pkg/repository"
 	"factorial-cal-services/pkg/service"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	awsConfig "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	swaggerFiles "github.com/swaggo/files"
@@ -63,6 +60,7 @@ func main() {
 		Password: cfg.REDIS_PASSWORD,
 		DB:       cfg.REDIS_DB,
 	})
+	defer redisClient.Close()
 
 	// Test Redis connection
 	ctx := context.Background()
@@ -70,19 +68,6 @@ func main() {
 		log.Printf("Warning: Redis connection failed: %v", err)
 	} else {
 		log.Println("Connected to Redis successfully")
-	}
-
-	// Initialize AWS S3
-	var awsCfg aws.Config
-	var s3Client *s3.Client
-	if cfg.AWS_REGION != "" && cfg.S3_BUCKET_NAME != "" {
-		awsCfg, err = awsConfig.LoadDefaultConfig(ctx, awsConfig.WithRegion(cfg.AWS_REGION))
-		if err != nil {
-			log.Printf("Warning: Failed to load AWS config: %v", err)
-		} else {
-			s3Client = s3.NewFromConfig(awsCfg)
-			log.Println("AWS S3 client initialized")
-		}
 	}
 
 	// Initialize RabbitMQ producer
@@ -95,7 +80,7 @@ func main() {
 	// Initialize services
 	factorialService := service.NewFactorialServiceWithLimit(int64(cfg.MAX_FACTORIAL))
 	redisService := service.NewRedisService(redisClient, 24*time.Hour, int64(cfg.REDIS_THRESHOLD))
-	s3Service := service.NewS3Service(s3Client, cfg.S3_BUCKET_NAME)
+	s3Service := service.NewS3Service(ctx, cfg)
 
 	// Initialize repository
 	factorialRepo := repository.NewFactorialRepository(database)
@@ -158,7 +143,6 @@ func main() {
 		log.Printf("Server forced to shutdown: %v", err)
 	}
 
-	redisClient.Close()
 	log.Println("API server stopped")
 }
 

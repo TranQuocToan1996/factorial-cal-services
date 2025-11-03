@@ -26,14 +26,13 @@ type ResultResponseData struct {
 
 // MetadataResponseData represents the data payload for metadata response
 type MetadataResponseData struct {
-	ID              string `json:"id"`
-	Number          string `json:"number"`
-	FactorialResult string `json:"factorial_result,omitempty"`
-	S3Key           string `json:"s3_key,omitempty"`
-	Checksum        string `json:"checksum,omitempty"`
-	Status          string `json:"status"`
-	CreatedAt       string `json:"created_at"`
-	UpdatedAt       string `json:"updated_at"`
+	ID        string `json:"id"`
+	Number    string `json:"number"`
+	S3Key     string `json:"s3_key,omitempty"`
+	Checksum  string `json:"checksum,omitempty"`
+	Status    string `json:"status"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 // Legacy DTOs for backward compatibility (deprecated, use APIResponse wrapper)
