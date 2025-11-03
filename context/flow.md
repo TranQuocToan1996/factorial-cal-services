@@ -1,1 +1,4 @@
 # Describe flow how user get the result
+- User request the number for calculate the factorial, ie GET /factorial?number=10. Server check cache and return result to user if has, if not return calculating with request success. Incase no result. Publish event number 10.
+- background job workers wait and handle events. Get by batch and handle. Get the max value from the batches, update factorial_max_request_numbers if the factorial_max_request_numbers in db < value of the events batches. Maybe many workers, each event process at least 1. Do simple but make sure work well even in high through put and many workers at the same times.
+- A AWS step function running from bottom up to calculate the res

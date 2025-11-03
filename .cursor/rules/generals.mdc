@@ -23,6 +23,7 @@ Project:
 - Clean code, unit tests
 - use any instead of interface{}
 - Use RESTFul API
+- Clean name conventions
 
 
 Folder:
