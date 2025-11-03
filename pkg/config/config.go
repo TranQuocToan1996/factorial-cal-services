@@ -90,6 +90,67 @@ func (c *Config) RedisAddr() string {
 	return fmt.Sprintf("%s:%s", c.REDIS_HOST, c.REDIS_PORT)
 }
 
+// Validate validates the configuration and returns an error if required fields are missing or invalid
+func (c *Config) Validate() error {
+	// Required database fields
+	if c.DB_HOST == "" {
+		return fmt.Errorf("DB_HOST is required")
+	}
+	if c.DB_PORT == "" {
+		return fmt.Errorf("DB_PORT is required")
+	}
+	if c.DB_NAME == "" {
+		return fmt.Errorf("DB_NAME is required")
+	}
+	if c.DB_USER == "" {
+		return fmt.Errorf("DB_USER is required")
+	}
+
+	// Validate DB_PORT is numeric
+	if _, err := strconv.Atoi(c.DB_PORT); err != nil {
+		return fmt.Errorf("DB_PORT must be numeric: %w", err)
+	}
+
+	// Required RabbitMQ fields
+	if c.RABBITMQ_HOST == "" {
+		return fmt.Errorf("RABBITMQ_HOST is required")
+	}
+	if c.RABBITMQ_PORT == "" {
+		return fmt.Errorf("RABBITMQ_PORT is required")
+	}
+
+	// Validate RABBITMQ_PORT is numeric
+	if _, err := strconv.Atoi(c.RABBITMQ_PORT); err != nil {
+		return fmt.Errorf("RABBITMQ_PORT must be numeric: %w", err)
+	}
+
+	// Validate batch sizes are positive
+	if c.WORKER_BATCH_SIZE <= 0 {
+		return fmt.Errorf("WORKER_BATCH_SIZE must be positive (got %d)", c.WORKER_BATCH_SIZE)
+	}
+	if c.WORKER_MAX_BATCHES <= 0 {
+		return fmt.Errorf("WORKER_MAX_BATCHES must be positive (got %d)", c.WORKER_MAX_BATCHES)
+	}
+
+	// Validate MAX_FACTORIAL is positive
+	if c.MAX_FACTORIAL <= 0 {
+		return fmt.Errorf("MAX_FACTORIAL must be positive (got %d)", c.MAX_FACTORIAL)
+	}
+
+	// Validate REDIS_THRESHOLD is positive
+	if c.REDIS_THRESHOLD <= 0 {
+		return fmt.Errorf("REDIS_THRESHOLD must be positive (got %d)", c.REDIS_THRESHOLD)
+	}
+
+	// Warn about optional but recommended fields
+	if c.AWS_REGION == "" || c.S3_BUCKET_NAME == "" {
+		// Log warning but don't fail (S3 might not be configured for local development)
+		fmt.Println("Warning: AWS_REGION and S3_BUCKET_NAME are not set. S3 operations will fail if attempted.")
+	}
+
+	return nil
+}
+
 func getEnvOrDefault(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value

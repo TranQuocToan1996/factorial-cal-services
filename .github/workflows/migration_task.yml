@@ -22,8 +22,7 @@ jobs:
       id-token: write
 
     steps:
-      # 0. Set up Go (for building binaries)
-      # TODO: Add a step to build the migration task
+      # 0. Log info
       - name: Log info
         run: |
             echo "${{ vars.AWS_GITHUB_ACTION_ROLE  }}"
@@ -36,18 +35,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 3. Set up Go (for building binaries)
+      # 2. Set up Go (for building binaries)
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
           go-version: '1.25'
           cache: true
 
-      # 5. Run tests
+      # 3. Run tests
       - name: Run test migrations
         run: go test -v ./migrations -race -timeout 300s -cover
 
-      # 2. Configure AWS credentials
+      # 4. Build migration task binary
+      - name: Build migration task
+        run: |
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o bin/migrate ./cmd/migrate
+          chmod +x bin/migrate
+          echo "✓ Migration binary built successfully"
+          ls -lh bin/migrate
+
+      # 5. Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

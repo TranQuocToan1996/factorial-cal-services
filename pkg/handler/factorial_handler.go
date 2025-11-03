@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"factorial-cal-services/pkg/domain"
 	"factorial-cal-services/pkg/dto"
@@ -69,10 +70,13 @@ func NewFactorialHandler(
 // @Accept       json
 // @Produce      json
 // @Param        request body dto.CalculateRequest true "Calculation Request"
-// @Success      202  {object}  dto.CalculateResponse
-// @Failure      400  {object}  dto.ErrorResponse
-// @Failure      500  {object}  dto.ErrorResponse
+// @Success      200  {object}  dto.APIResponse{data=dto.ResultResponseData} "Calculation already completed, returns result"
+// @Success      200  {object}  dto.APIResponse{data=dto.CalculateResponseData} "Calculation submitted successfully"
+// @Failure      400  {object}  dto.APIResponse{data=dto.ErrorResponse} "Invalid request - number missing or invalid format"
+// @Failure      500  {object}  dto.APIResponse{data=dto.ErrorResponse} "Internal server error - database or queue failure"
 // @Router       /factorial [post]
+// @Example      400 {"code":400,"status":"fail","message":"invalid number format","data":{"error":"fail","message":"invalid number format"}}
+// @Example      500 {"code":500,"status":"fail","message":"Failed to submit calculation","data":{"error":"fail","message":"Failed to submit calculation"}}
 func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 	var req dto.CalculateRequest
 
@@ -98,13 +102,26 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 
 	if existing != nil && existing.Status == domain.StatusDone {
 		// Return result if already calculated
-		ctx := context.Background()
+		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		defer cancel()
+
 		var factorialResult string
+		var err error
 		if h.redisService.ShouldCache(req.Number) {
-			factorialResult, _ = h.redisService.Get(ctx, req.Number)
+			redisCtx, redisCancel := context.WithTimeout(ctx, 5*time.Second)
+			factorialResult, err = h.redisService.Get(redisCtx, req.Number)
+			redisCancel()
+			if err != nil {
+				log.Printf("Redis error: %v", err)
+			}
 		}
-		if factorialResult == "" {
-			factorialResult, _ = h.s3Service.DownloadFactorial(ctx, existing.S3Key)
+		if factorialResult == "" && h.s3Service != nil {
+			factorialResult, err = h.s3Service.DownloadFactorial(ctx, existing.S3Key)
+			if err != nil {
+				log.Printf("S3 download error: %v", err)
+				sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to retrieve result")
+				return
+			}
 		}
 
 		sendAPIResponse(c, http.StatusOK, "ok", "done", dto.ResultResponseData{
@@ -116,7 +133,12 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 
 	// Publish to RabbitMQ
 	message := map[string]string{"number": req.Number}
-	messageBytes, _ := json.Marshal(message)
+	messageBytes, err := json.Marshal(message)
+	if err != nil {
+		log.Printf("Error marshaling message: %v", err)
+		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to prepare calculation request")
+		return
+	}
 
 	err = h.producer.Publish(context.Background(), h.queueName, messageBytes)
 	if err != nil {
@@ -135,10 +157,15 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 // @Tags         factorial
 // @Produce      json
 // @Param        number path string true "Number"
-// @Success      200  {object}  dto.ResultResponse
-// @Failure      404  {object}  dto.ErrorResponse
-// @Failure      500  {object}  dto.ErrorResponse
+// @Success      200  {object}  dto.APIResponse{data=dto.ResultResponseData} "Result retrieved successfully"
+// @Success      200  {object}  dto.APIResponse{data=dto.CalculateResponseData} "Calculation in progress"
+// @Failure      400  {object}  dto.APIResponse{data=dto.ErrorResponse} "Invalid number format"
+// @Failure      500  {object}  dto.APIResponse{data=dto.ErrorResponse} "Internal server error - database or storage failure"
 // @Router       /factorial/{number} [get]
+// @Example      200 {"code":200,"status":"ok","message":"done","data":{"number":"10","factorial_result":"3628800"}}
+// @Example      200 {"code":200,"status":"ok","message":"calculating","data":{}}
+// @Example      400 {"code":400,"status":"fail","message":"number must be between 0 and 10000","data":{"error":"fail","message":"number must be between 0 and 10000"}}
+// @Example      500 {"code":500,"status":"fail","message":"Failed to retrieve result from storage","data":{"error":"fail","message":"Failed to retrieve result from storage"}}
 func (h *FactorialHandler) GetResult(c *gin.Context) {
 	number := c.Param("number")
 
@@ -149,12 +176,21 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 		return
 	}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// Check if S3 service is available
+	if h.s3Service == nil {
+		sendErrorResponse(c, http.StatusInternalServerError, "fail", "S3 service not configured")
+		return
+	}
 
 	// Check if should use Redis cache
 	if h.redisService.ShouldCache(number) {
 		// Try Redis first
-		result, err := h.redisService.Get(ctx, number)
+		redisCtx, redisCancel := context.WithTimeout(ctx, 5*time.Second)
+		result, err := h.redisService.Get(redisCtx, number)
+		redisCancel()
 		if err != nil {
 			log.Printf("Redis error: %v", err)
 		} else if result != "" {
@@ -177,7 +213,12 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 	if calc == nil {
 		// Not found - publish event and return calculating status (per flow.md)
 		message := map[string]string{"number": number}
-		messageBytes, _ := json.Marshal(message)
+		messageBytes, err := json.Marshal(message)
+		if err != nil {
+			log.Printf("Error marshaling message: %v", err)
+			sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to prepare calculation request")
+			return
+		}
 		if err := h.producer.Publish(ctx, h.queueName, messageBytes); err != nil {
 			log.Printf("Error publishing event: %v", err)
 		}
@@ -191,7 +232,9 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 	}
 
 	// Download from S3
-	result, err := h.s3Service.DownloadFactorial(ctx, calc.S3Key)
+	s3Ctx, s3Cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer s3Cancel()
+	result, err := h.s3Service.DownloadFactorial(s3Ctx, calc.S3Key)
 	if err != nil {
 		log.Printf("Error downloading from S3: %v", err)
 		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to retrieve result from storage")
@@ -200,9 +243,11 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 
 	// Cache to Redis if applicable
 	if h.redisService.ShouldCache(number) {
-		if err := h.redisService.Set(ctx, number, result); err != nil {
+		redisCtx, redisCancel := context.WithTimeout(ctx, 5*time.Second)
+		if err := h.redisService.Set(redisCtx, number, result); err != nil {
 			log.Printf("Failed to cache result: %v", err)
 		}
+		redisCancel()
 	}
 
 	sendAPIResponse(c, http.StatusOK, "ok", "done", dto.ResultResponseData{
@@ -213,14 +258,19 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 
 // GetMetadata godoc
 // @Summary      Get factorial calculation metadata
-// @Description  Get the metadata of a factorial calculation (status, S3 key, etc.)
+// @Description  Get the metadata of a factorial calculation (status, S3 key, checksum, etc.)
 // @Tags         factorial
 // @Produce      json
 // @Param        number path string true "Number"
-// @Success      200  {object}  dto.MetadataResponse
-// @Failure      404  {object}  dto.ErrorResponse
-// @Failure      500  {object}  dto.ErrorResponse
+// @Success      200  {object}  dto.APIResponse{data=dto.MetadataResponseData} "Metadata retrieved successfully"
+// @Success      200  {object}  dto.APIResponse{data=dto.CalculateResponseData} "Calculation not found or in progress"
+// @Failure      400  {object}  dto.APIResponse{data=dto.ErrorResponse} "Invalid number format"
+// @Failure      500  {object}  dto.APIResponse{data=dto.ErrorResponse} "Internal server error - database failure"
 // @Router       /factorial/metadata/{number} [get]
+// @Example      200 {"code":200,"status":"ok","message":"done","data":{"id":"1","number":"10","factorial_result":"3628800","s3_key":"factorials/10.txt","checksum":"abc123...","status":"done","created_at":"2025-01-01T00:00:00Z","updated_at":"2025-01-01T00:00:00Z"}}
+// @Example      200 {"code":200,"status":"ok","message":"calculating","data":{}}
+// @Example      400 {"code":400,"status":"fail","message":"invalid number format","data":{"error":"fail","message":"invalid number format"}}
+// @Example      500 {"code":500,"status":"fail","message":"Failed to retrieve metadata","data":{"error":"fail","message":"Failed to retrieve metadata"}}
 func (h *FactorialHandler) GetMetadata(c *gin.Context) {
 	number := c.Param("number")
 
@@ -244,13 +294,28 @@ func (h *FactorialHandler) GetMetadata(c *gin.Context) {
 		return
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	var factorialResult string
+	if calc.Status == domain.StatusDone && h.s3Service != nil {
+		// Download factorial result if status is done
+		var err error
+		factorialResult, err = h.s3Service.DownloadFactorial(ctx, calc.S3Key)
+		if err != nil {
+			log.Printf("Error downloading factorial result: %v", err)
+			// Continue without factorial result if download fails
+		}
+	}
+
 	sendAPIResponse(c, http.StatusOK, "ok", "done", dto.MetadataResponseData{
-		ID:        strconv.FormatInt(calc.ID, 10),
-		Number:    calc.Number,
-		S3Key:     calc.S3Key,
-		Checksum:  calc.Checksum,
-		Status:    calc.Status,
-		CreatedAt: calc.CreatedAt,
-		UpdatedAt: calc.UpdatedAt,
+		ID:              strconv.FormatInt(calc.ID, 10),
+		Number:          calc.Number,
+		FactorialResult: factorialResult,
+		S3Key:           calc.S3Key,
+		Checksum:        calc.Checksum,
+		Status:          calc.Status,
+		CreatedAt:       calc.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		UpdatedAt:       calc.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
 	})
 }

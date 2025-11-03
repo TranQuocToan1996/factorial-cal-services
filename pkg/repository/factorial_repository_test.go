@@ -15,8 +15,11 @@ func setupTestDB(t *testing.T) *gorm.DB {
 		t.Fatalf("Failed to connect to test database: %v", err)
 	}
 
-	// Auto migrate
-	err = db.AutoMigrate(&domain.FactorialCalculation{})
+	// Auto migrate all tables
+	err = db.AutoMigrate(
+		&domain.FactorialCalculation{},
+		&domain.FactorialCurrentCalculatedNumber{},
+	)
 	if err != nil {
 		t.Fatalf("Failed to migrate: %v", err)
 	}
@@ -165,3 +168,58 @@ func TestUpdateS3Key(t *testing.T) {
 	}
 }
 
+func TestUpdateWithCurrentNumber(t *testing.T) {
+	db := setupTestDB(t)
+	repo := NewFactorialRepository(db)
+	currentRepo := NewCurrentCalculatedRepository(db)
+
+	// Create a calculation record
+	calc := &domain.FactorialCalculation{
+		Number: "10",
+		Status: domain.StatusCalculating,
+		S3Key:  "",
+	}
+
+	err := repo.Create(calc)
+	if err != nil {
+		t.Fatalf("Failed to create calculation record: %v", err)
+	}
+
+	// Update with current number using transaction
+	err = repo.UpdateWithCurrentNumber("10", "factorials/10.txt", "abc123", 100, domain.StatusDone, "10")
+	if err != nil {
+		t.Errorf("Failed to update with current number: %v", err)
+	}
+
+	// Verify calculation record updated
+	found, err := repo.FindByNumber("10")
+	if err != nil {
+		t.Errorf("Failed to find calculation record: %v", err)
+	}
+
+	if found == nil {
+		t.Fatal("Expected to find calculation record")
+	}
+
+	if found.S3Key != "factorials/10.txt" {
+		t.Errorf("Expected S3 key 'factorials/10.txt', got %s", found.S3Key)
+	}
+
+	if found.Checksum != "abc123" {
+		t.Errorf("Expected checksum 'abc123', got %s", found.Checksum)
+	}
+
+	if found.Status != domain.StatusDone {
+		t.Errorf("Expected status done, got %s", found.Status)
+	}
+
+	// Verify current number updated
+	current, err := currentRepo.GetCurrentNumber()
+	if err != nil {
+		t.Errorf("Failed to get current number: %v", err)
+	}
+
+	if current != "10" {
+		t.Errorf("Expected current number '10', got %s", current)
+	}
+}

@@ -89,4 +89,3 @@ func HandleRequest(ctx context.Context, event Event) (Response, error) {
 func main() {
 	lambda.Start(HandleRequest)
 }
-

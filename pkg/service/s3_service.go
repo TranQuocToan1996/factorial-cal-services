@@ -35,7 +35,7 @@ type s3Service struct {
 
 // NewS3Service creates a new S3 service
 func NewS3Service(ctx context.Context, cfg *config.Config) S3Service {
-	if cfg.AWS_REGION != "" && cfg.S3_BUCKET_NAME != "" {
+	if cfg.AWS_REGION == "" || cfg.S3_BUCKET_NAME == "" {
 		log.Fatalf("AWS_REGION and S3_BUCKET_NAME must be set")
 	}
 	awsCfg, err := awsConfig.LoadDefaultConfig(ctx, awsConfig.WithRegion(cfg.AWS_REGION))

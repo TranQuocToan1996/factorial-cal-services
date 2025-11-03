@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -48,13 +49,16 @@ func (s *redisService) formatKey(number string) string {
 
 // ShouldCache determines if a number should be cached based on threshold
 func (s *redisService) ShouldCache(number string) bool {
-	// Parse number to check against threshold
-	factorialService := NewFactorialService()
-	n, err := factorialService.ValidateNumber(number)
+	// Parse number directly without validation limits (threshold check only)
+	n, err := strconv.ParseInt(number, 10, 64)
 	if err != nil {
 		return false
 	}
-	return int64(n) < s.threshold
+	// Only check if negative
+	if n < 0 {
+		return false
+	}
+	return n < s.threshold
 }
 
 // Get retrieves a factorial result from Redis cache

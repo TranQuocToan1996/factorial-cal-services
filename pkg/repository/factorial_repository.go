@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"factorial-cal-services/pkg/domain"
 
 	"gorm.io/gorm"
@@ -100,5 +101,59 @@ func (r *factorialRepository) UpdateS3KeyWithChecksum(number string, s3Key strin
 	}
 	
 	return nil
+}
+
+// UpdateWithCurrentNumber atomically updates factorial metadata and current calculated number
+func (r *factorialRepository) UpdateWithCurrentNumber(
+	number string,
+	s3Key string,
+	checksum string,
+	size int64,
+	status string,
+	currentNumber string,
+) error {
+	// Use transaction to ensure atomicity
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		// Update factorial calculation metadata
+		result := tx.Model(&domain.FactorialCalculation{}).
+			Where("number = ?", number).
+			Updates(map[string]interface{}{
+				"s3_key":  s3Key,
+				"checksum": checksum,
+				"size":     size,
+				"status":   status,
+			})
+		
+		if result.Error != nil {
+			return result.Error
+		}
+		
+		if result.RowsAffected == 0 {
+			return gorm.ErrRecordNotFound
+		}
+		
+		// Update current calculated number within the same transaction
+		var existing domain.FactorialCurrentCalculatedNumber
+		if err := tx.First(&existing).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				// Create new record
+				curCalc := &domain.FactorialCurrentCalculatedNumber{
+					CurNumber: currentNumber,
+				}
+				if err := tx.Create(curCalc).Error; err != nil {
+					return fmt.Errorf("failed to create current number: %w", err)
+				}
+			} else {
+				return fmt.Errorf("failed to query current number: %w", err)
+			}
+		} else {
+			// Update existing record
+			if err := tx.Model(&existing).Update("cur_number", currentNumber).Error; err != nil {
+				return fmt.Errorf("failed to update current number: %w", err)
+			}
+		}
+		
+		return nil
+	})
 }
 

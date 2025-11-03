@@ -15,14 +15,14 @@ type StepFunctionsClient interface {
 }
 
 type stepFunctionsClient struct {
-	client         *sfn.Client
+	client          *sfn.Client
 	stateMachineArn string
 }
 
 // NewStepFunctionsClient creates a new Step Functions client
 func NewStepFunctionsClient(cfg aws.Config, stateMachineArn string) StepFunctionsClient {
 	return &stepFunctionsClient{
-		client:         sfn.NewFromConfig(cfg),
+		client:          sfn.NewFromConfig(cfg),
 		stateMachineArn: stateMachineArn,
 	}
 }
@@ -43,11 +43,9 @@ func (c *stepFunctionsClient) StartExecution(ctx context.Context, number string)
 		StateMachineArn: aws.String(c.stateMachineArn),
 		Input:           aws.String(string(inputJSON)),
 	})
-
 	if err != nil {
 		return "", fmt.Errorf("failed to start execution: %w", err)
 	}
 
 	return *result.ExecutionArn, nil
 }
-

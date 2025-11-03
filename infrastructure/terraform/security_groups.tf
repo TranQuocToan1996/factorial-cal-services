@@ -6,10 +6,10 @@ resource "aws_security_group" "pub" {
 
   # Port 80 from admin CIDR
   ingress {
-    description = "HTTP"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+      description = "HTTP"
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
     cidr_blocks = [var.admin_cidr]
   }
 
@@ -30,7 +30,7 @@ resource "aws_security_group" "pub" {
     protocol        = "tcp"
     cidr_blocks     = [var.admin_cidr]
     security_groups = [aws_security_group.app.id]
-  }
+    }
 
   # Port 3000 from admin CIDR and self-reference
   ingress {
@@ -63,18 +63,18 @@ resource "aws_security_group" "pub" {
 
   # Egress to 8080 and 3000
   egress {
-    description = "App 8080"
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
+      description = "App 8080"
+      from_port   = 8080
+      to_port     = 8080
+      protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
-    description = "App 3000"
-    from_port   = 3000
-    to_port     = 3000
-    protocol    = "tcp"
+      description = "App 3000"
+      from_port   = 3000
+      to_port     = 3000
+      protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -105,7 +105,7 @@ resource "aws_security_group" "app" {
     to_port         = 22
     protocol        = "tcp"
     security_groups = [aws_security_group.dev.id]
-  }
+    }
 
   # Port 3000 from pub SG
   ingress {
@@ -114,7 +114,7 @@ resource "aws_security_group" "app" {
     to_port         = 3000
     protocol        = "tcp"
     security_groups = [aws_security_group.pub.id]
-  }
+    }
 
   # Port 443 from pub SG
   ingress {
@@ -157,7 +157,7 @@ resource "aws_security_group" "dev" {
     description = "SSH"
     from_port   = 22
     to_port     = 22
-    protocol    = "tcp"
+      protocol    = "tcp"
     cidr_blocks = [var.admin_cidr]
   }
 

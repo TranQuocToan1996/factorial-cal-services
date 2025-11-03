@@ -99,7 +99,7 @@ func TestCalculateFactorial(t *testing.T) {
 }
 
 func TestValidateNumber(t *testing.T) {
-	service := NewFactorialService()
+	service := NewFactorialServiceWithLimit(20000)
 
 	tests := []struct {
 		name        string

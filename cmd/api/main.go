@@ -43,6 +43,11 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 
+	// Validate configuration
+	if err := cfg.Validate(); err != nil {
+		log.Fatalf("Configuration validation failed: %v", err)
+	}
+
 	// Run migrations
 	if err := migrations.RunMigrations(cfg.DSN()); err != nil {
 		log.Printf("Migration failed: %v", err)

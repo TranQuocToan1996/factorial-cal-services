@@ -22,7 +22,8 @@ func TestShouldCache(t *testing.T) {
 	})
 	defer client.Close()
 
-	service := NewRedisService(client, time.Hour, 1000)
+	// Use 1 billion threshold to match production config
+	service := NewRedisService(client, time.Hour, 1000000000)
 
 	tests := []struct {
 		name     string
@@ -42,12 +43,17 @@ func TestShouldCache(t *testing.T) {
 		{
 			name:     "Boundary number 10000",
 			number:   "10000",
-			expected: false,
+			expected: true, // With 1B threshold, 10000 should cache
 		},
 		{
 			name:     "Large number 15000",
 			number:   "15000",
-			expected: false,
+			expected: true, // With 1B threshold, 15000 should cache
+		},
+		{
+			name:     "Number exceeding threshold (2B)",
+			number:   "2000000000",
+			expected: false, // Exceeds 1B threshold, should not cache
 		},
 		{
 			name:     "Invalid number",

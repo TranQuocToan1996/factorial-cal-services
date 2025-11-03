@@ -62,6 +62,7 @@ type FactorialRepository interface {
 	UpdateStatus(number string, status string) error
 	UpdateS3Key(number string, s3Key string, status string) error
 	UpdateS3KeyWithChecksum(number string, s3Key string, checksum string, size int64, status string) error
+	UpdateWithCurrentNumber(number string, s3Key string, checksum string, size int64, status string, currentNumber string) error
 }
 
 // MaxRequestRepository defines the interface for max request number operations

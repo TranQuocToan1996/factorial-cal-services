@@ -20,6 +20,11 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 
+	// Validate configuration
+	if err := cfg.Validate(); err != nil {
+		log.Fatalf("Configuration validation failed: %v", err)
+	}
+
 	// Initialize database
 	database, err := db.NewGormDB(cfg.DSN())
 	if err != nil {
@@ -48,10 +53,12 @@ func main() {
 	redisService := service.NewRedisService(redisClient, 24*time.Hour, int64(cfg.REDIS_THRESHOLD))
 	s3Service := service.NewS3Service(ctx, cfg)
 	checksumService := service.NewChecksumService()
+	incrementalService := service.NewIncrementalFactorialService(factorialService)
 
 	// Initialize repositories
 	factorialRepo := repository.NewFactorialRepository(database)
 	maxRequestRepo := repository.NewMaxRequestRepository(database)
+	currentCalculatedRepo := repository.NewCurrentCalculatedRepository(database)
 
 	// Initialize RabbitMQ consumer
 	mqConsumer, err := consumer.NewRabbitMQConsumer(cfg.RabbitMQURL())
@@ -67,7 +74,9 @@ func main() {
 		s3Service,
 		factorialRepo,
 		maxRequestRepo,
+		currentCalculatedRepo,
 		checksumService,
+		incrementalService,
 	)
 
 	// Start batch consuming with multiple concurrent batches
