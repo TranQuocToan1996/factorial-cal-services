@@ -53,7 +53,6 @@ func main() {
 	redisService := service.NewRedisService(redisClient, 24*time.Hour, int64(cfg.REDIS_THRESHOLD))
 	s3Service := service.NewS3Service(ctx, cfg)
 	checksumService := service.NewChecksumService()
-	incrementalService := service.NewIncrementalFactorialService(factorialService)
 
 	// Initialize repositories
 	factorialRepo := repository.NewFactorialRepository(database)
@@ -66,6 +65,8 @@ func main() {
 		log.Fatalf("Failed to create RabbitMQ consumer: %v", err)
 	}
 	defer mqConsumer.Close()
+
+	incrementalService := service.NewIncrementalFactorialService(factorialService, currentCalculatedRepo)
 
 	// Create batch handler
 	batchHandler := consumer.NewFactorialBatchHandler(

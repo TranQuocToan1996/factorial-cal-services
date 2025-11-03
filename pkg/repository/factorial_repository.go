@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+
 	"factorial-cal-services/pkg/domain"
 
 	"gorm.io/gorm"
@@ -13,8 +14,18 @@ type factorialRepository struct {
 	db *gorm.DB
 }
 
+// FactorialRepository defines the interface for factorial data operations
+type FactorialRepository interface {
+	Create(calc *domain.FactorialCalculation) error
+	FindByNumber(number string) (*domain.FactorialCalculation, error)
+	UpdateStatus(number string, status string) error
+	UpdateS3Key(number string, s3Key string, status string) error
+	UpdateS3KeyWithChecksum(number string, s3Key string, checksum string, size int64, status string) error
+	UpdateWithCurrentNumber(number string, s3Key string, checksum string, size int64, status string, currentNumber string) error
+}
+
 // NewFactorialRepository creates a new factorial repository
-func NewFactorialRepository(db *gorm.DB) domain.FactorialRepository {
+func NewFactorialRepository(db *gorm.DB) FactorialRepository {
 	return &factorialRepository{
 		db: db,
 	}
@@ -22,25 +33,18 @@ func NewFactorialRepository(db *gorm.DB) domain.FactorialRepository {
 
 // Create inserts a new factorial calculation record
 func (r *factorialRepository) Create(calc *domain.FactorialCalculation) error {
-	result := r.db.Create(calc)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
+	return r.db.Create(calc).Error
 }
 
 // FindByNumber retrieves a factorial calculation by number
 func (r *factorialRepository) FindByNumber(number string) (*domain.FactorialCalculation, error) {
 	var calc domain.FactorialCalculation
 	result := r.db.Where("number = ?", number).First(&calc)
-	
+
 	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
 		return nil, result.Error
 	}
-	
+
 	return &calc, nil
 }
 
@@ -49,15 +53,15 @@ func (r *factorialRepository) UpdateStatus(number string, status string) error {
 	result := r.db.Model(&domain.FactorialCalculation{}).
 		Where("number = ?", number).
 		Update("status", status)
-	
+
 	if result.Error != nil {
 		return result.Error
 	}
-	
+
 	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
 	}
-	
+
 	return nil
 }
 
@@ -65,19 +69,19 @@ func (r *factorialRepository) UpdateStatus(number string, status string) error {
 func (r *factorialRepository) UpdateS3Key(number string, s3Key string, status string) error {
 	result := r.db.Model(&domain.FactorialCalculation{}).
 		Where("number = ?", number).
-		Updates(map[string]interface{}{
+		Updates(map[string]any{
 			"s3_key": s3Key,
 			"status": status,
 		})
-	
+
 	if result.Error != nil {
 		return result.Error
 	}
-	
+
 	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
 	}
-	
+
 	return nil
 }
 
@@ -85,21 +89,21 @@ func (r *factorialRepository) UpdateS3Key(number string, s3Key string, status st
 func (r *factorialRepository) UpdateS3KeyWithChecksum(number string, s3Key string, checksum string, size int64, status string) error {
 	result := r.db.Model(&domain.FactorialCalculation{}).
 		Where("number = ?", number).
-		Updates(map[string]interface{}{
-			"s3_key":  s3Key,
+		Updates(map[string]any{
+			"s3_key":   s3Key,
 			"checksum": checksum,
 			"size":     size,
 			"status":   status,
 		})
-	
+
 	if result.Error != nil {
 		return result.Error
 	}
-	
+
 	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
 	}
-	
+
 	return nil
 }
 
@@ -117,21 +121,21 @@ func (r *factorialRepository) UpdateWithCurrentNumber(
 		// Update factorial calculation metadata
 		result := tx.Model(&domain.FactorialCalculation{}).
 			Where("number = ?", number).
-			Updates(map[string]interface{}{
-				"s3_key":  s3Key,
+			Updates(map[string]any{
+				"s3_key":   s3Key,
 				"checksum": checksum,
 				"size":     size,
 				"status":   status,
 			})
-		
+
 		if result.Error != nil {
 			return result.Error
 		}
-		
+
 		if result.RowsAffected == 0 {
 			return gorm.ErrRecordNotFound
 		}
-		
+
 		// Update current calculated number within the same transaction
 		var existing domain.FactorialCurrentCalculatedNumber
 		if err := tx.First(&existing).Error; err != nil {
@@ -152,8 +156,7 @@ func (r *factorialRepository) UpdateWithCurrentNumber(
 				return fmt.Errorf("failed to update current number: %w", err)
 			}
 		}
-		
+
 		return nil
 	})
 }
-

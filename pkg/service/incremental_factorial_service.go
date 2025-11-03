@@ -6,23 +6,25 @@ import (
 	"math/big"
 	"strconv"
 
-	"factorial-cal-services/pkg/domain"
+	"factorial-cal-services/pkg/repository"
 )
 
 // IncrementalFactorialService handles incremental factorial calculations
 type IncrementalFactorialService interface {
 	CalculateIncremental(ctx context.Context, curNumber string, curFactorial string, targetNumber string) (string, error)
-	CalculateFromCurrent(ctx context.Context, currentRepo domain.CurrentCalculatedRepository, redisService RedisService, storageService StorageService, targetNumber string) (string, error)
+	CalculateFromCurrent(ctx context.Context, currentRepo repository.CurrentCalculatedRepository, redisService RedisService, storageService StorageService, targetNumber string) (string, error)
 }
 
 type incrementalFactorialService struct {
 	factorialService FactorialService
+	currentCalRepo   repository.CurrentCalculatedRepository
 }
 
 // NewIncrementalFactorialService creates a new incremental factorial service
-func NewIncrementalFactorialService(factorialService FactorialService) IncrementalFactorialService {
+func NewIncrementalFactorialService(factorialService FactorialService, currentCalRepo repository.CurrentCalculatedRepository) IncrementalFactorialService {
 	return &incrementalFactorialService{
 		factorialService: factorialService,
+		currentCalRepo:   currentCalRepo,
 	}
 }
 
@@ -60,7 +62,7 @@ func (s *incrementalFactorialService) CalculateIncremental(ctx context.Context, 
 }
 
 // CalculateFromCurrent gets current number and factorial from repository/storage and calculates incrementally
-func (s *incrementalFactorialService) CalculateFromCurrent(ctx context.Context, currentRepo domain.CurrentCalculatedRepository, redisService RedisService, storageService StorageService, targetNumber string) (string, error) {
+func (s *incrementalFactorialService) CalculateFromCurrent(ctx context.Context, currentRepo repository.CurrentCalculatedRepository, redisService RedisService, storageService StorageService, targetNumber string) (string, error) {
 	// Get current calculated number from DB
 	curNumber, err := currentRepo.GetCurrentNumber()
 	if err != nil {
@@ -92,4 +94,3 @@ func (s *incrementalFactorialService) CalculateFromCurrent(ctx context.Context, 
 	// Calculate incrementally
 	return s.CalculateIncremental(ctx, curNumber, curFactorial, targetNumber)
 }
-

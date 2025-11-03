@@ -10,7 +10,8 @@ import (
 
 func NewGormDB(dsn string) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger:      logger.Default.LogMode(logger.Info),
+		PrepareStmt: true,
 	})
 	if err != nil {
 		return nil, err

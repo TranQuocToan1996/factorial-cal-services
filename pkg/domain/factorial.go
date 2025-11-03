@@ -54,27 +54,3 @@ type FactorialCurrentCalculatedNumber struct {
 func (FactorialCurrentCalculatedNumber) TableName() string {
 	return "factorial_current_calculated_numbers"
 }
-
-// FactorialRepository defines the interface for factorial data operations
-type FactorialRepository interface {
-	Create(calc *FactorialCalculation) error
-	FindByNumber(number string) (*FactorialCalculation, error)
-	UpdateStatus(number string, status string) error
-	UpdateS3Key(number string, s3Key string, status string) error
-	UpdateS3KeyWithChecksum(number string, s3Key string, checksum string, size int64, status string) error
-	UpdateWithCurrentNumber(number string, s3Key string, checksum string, size int64, status string, currentNumber string) error
-}
-
-// MaxRequestRepository defines the interface for max request number operations
-type MaxRequestRepository interface {
-	GetMaxNumber() (string, error)
-	UpdateMaxNumber(maxNumber string) error
-	SetMaxNumberIfGreater(maxNumber string) error
-}
-
-// CurrentCalculatedRepository defines the interface for current calculated number operations
-type CurrentCalculatedRepository interface {
-	GetCurrentNumber() (string, error)
-	UpdateCurrentNumber(curNumber string) error
-}
-

@@ -137,7 +137,7 @@ func TestIntegrationFullFlow(t *testing.T) {
 		maxRequestRepo,
 		currentCalculatedRepo,
 		checksumService,
-		service.NewIncrementalFactorialService(factorialService),
+		service.NewIncrementalFactorialService(factorialService, currentCalculatedRepo),
 	)
 
 	// Test: POST calculation publishes message (simulated)

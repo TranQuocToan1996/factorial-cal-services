@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"factorial-cal-services/pkg/domain"
+	"factorial-cal-services/pkg/repository"
 	"factorial-cal-services/pkg/service"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -41,9 +42,9 @@ type FactorialMessageHandler struct {
 	factorialService      service.FactorialService
 	redisService          service.RedisService
 	s3Service             service.S3Service
-	repository            domain.FactorialRepository
-	maxRequestRepo        domain.MaxRequestRepository
-	currentCalculatedRepo domain.CurrentCalculatedRepository
+	repository            repository.FactorialRepository
+	maxRequestRepo        repository.MaxRequestRepository
+	currentCalculatedRepo repository.CurrentCalculatedRepository
 	checksumService       service.ChecksumService
 	incrementalService    service.IncrementalFactorialService
 }
@@ -53,8 +54,8 @@ func NewFactorialMessageHandler(
 	factorialService service.FactorialService,
 	redisService service.RedisService,
 	s3Service service.S3Service,
-	repository domain.FactorialRepository,
-	maxRequestRepo domain.MaxRequestRepository,
+	repository repository.FactorialRepository,
+	maxRequestRepo repository.MaxRequestRepository,
 	checksumService service.ChecksumService,
 ) MessageHandler {
 	handler := &FactorialMessageHandler{
@@ -73,9 +74,9 @@ func NewFactorialBatchHandler(
 	factorialService service.FactorialService,
 	redisService service.RedisService,
 	s3Service service.S3Service,
-	repository domain.FactorialRepository,
-	maxRequestRepo domain.MaxRequestRepository,
-	currentCalculatedRepo domain.CurrentCalculatedRepository,
+	repository repository.FactorialRepository,
+	maxRequestRepo repository.MaxRequestRepository,
+	currentCalculatedRepo repository.CurrentCalculatedRepository,
 	checksumService service.ChecksumService,
 	incrementalService service.IncrementalFactorialService,
 ) BatchMessageHandler {
@@ -495,4 +496,3 @@ func (h *FactorialMessageHandler) processIncrementalBatch(ctx context.Context, c
 	log.Printf("Incremental batch processing completed: calculated from %d to %d", curNum+1, maxNum)
 	return nil
 }
-
