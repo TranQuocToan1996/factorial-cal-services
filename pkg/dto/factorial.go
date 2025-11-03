@@ -1,5 +1,7 @@
 package dto
 
+import "time"
+
 // APIResponse represents the standard API response wrapper
 type APIResponse struct {
 	Code    int         `json:"code"`
@@ -26,13 +28,13 @@ type ResultResponseData struct {
 
 // MetadataResponseData represents the data payload for metadata response
 type MetadataResponseData struct {
-	ID        string `json:"id"`
-	Number    string `json:"number"`
-	S3Key     string `json:"s3_key,omitempty"`
-	Checksum  string `json:"checksum,omitempty"`
-	Status    string `json:"status"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	ID        string    `json:"id"`
+	Number    string    `json:"number"`
+	S3Key     string    `json:"s3_key,omitempty"`
+	Checksum  string    `json:"checksum,omitempty"`
+	Status    string    `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // Legacy DTOs for backward compatibility (deprecated, use APIResponse wrapper)
@@ -51,10 +53,10 @@ type ResultResponse struct {
 
 // MetadataResponse represents the metadata of a factorial calculation
 type MetadataResponse struct {
-	Number    string `json:"number"`
-	Status    string `json:"status"`
-	S3Key     string `json:"s3_key,omitempty"`
-	CreatedAt string `json:"created_at"`
+	Number    string    `json:"number"`
+	Status    string    `json:"status"`
+	S3Key     string    `json:"s3_key,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // ErrorResponse represents an error response

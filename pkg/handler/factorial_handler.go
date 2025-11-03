@@ -250,7 +250,7 @@ func (h *FactorialHandler) GetMetadata(c *gin.Context) {
 		S3Key:     calc.S3Key,
 		Checksum:  calc.Checksum,
 		Status:    calc.Status,
-		CreatedAt: calc.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
-		UpdatedAt: calc.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		CreatedAt: calc.CreatedAt,
+		UpdatedAt: calc.UpdatedAt,
 	})
 }

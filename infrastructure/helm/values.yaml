@@ -42,10 +42,10 @@ config:
   queueName: "factorial_queue"
 
 database:
-  host: "mysql-service"
-  port: "3306"
+  host: "postgres-service"
+  port: "5432"
   name: "factorial_db"
-  user: "root"
+  user: "postgres"
   sslmode: "disable"
 
 rabbitmq:

@@ -87,4 +87,4 @@ List of arch now:
 - Worker Golang (EKS)
 - Redis (Helm -> EKS)
 - Storage Engine (Now S3-AWS)
-- MySQL (Now RDS-AWS)
+- PostgreSQL (Now RDS-AWS)

@@ -1,22 +1,18 @@
 -- Migration: 000001_init
 -- Description: Initial database schema for factorial calculations
--- Cross-DB compatible (PostgreSQL/MySQL)
--- Note: Auto-increment and updated_at are handled by GORM
+-- PostgreSQL
 
 CREATE TABLE IF NOT EXISTS factorial_calculations (
-    id BIGINT NOT NULL,
-    number VARCHAR(100) NOT NULL,
+    id BIGSERIAL PRIMARY KEY,
+    number VARCHAR(100) NOT NULL UNIQUE,
     status VARCHAR(20) NOT NULL,
     s3_key VARCHAR(512) NOT NULL,
     checksum VARCHAR(64),
     size BIGINT DEFAULT 0,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE (number)
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create indexes (works for both PostgreSQL and MySQL)
-CREATE INDEX idx_factorial_number ON factorial_calculations (number);
-CREATE INDEX idx_factorial_status ON factorial_calculations (status);
-CREATE INDEX idx_factorial_created_at ON factorial_calculations (created_at);
+-- Create indexes (remove duplicate number index since it's already UNIQUE)
+CREATE INDEX IF NOT EXISTS idx_factorial_status ON factorial_calculations (status);
+CREATE INDEX IF NOT EXISTS idx_factorial_created_at ON factorial_calculations (created_at);

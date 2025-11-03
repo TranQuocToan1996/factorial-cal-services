@@ -2,7 +2,7 @@
 
 ### 2025-11-01: Complete Factorial Calculation Service Implementation
 - ✅ Implemented full factorial calculation service with string-based I/O
-- ✅ Created MySQL migration with proper schema (number as VARCHAR(100))
+- ✅ Created PostgreSQL migration with proper schema (number as VARCHAR(100))
 - ✅ Built domain models and repository layer (GORM)
 - ✅ Implemented core services:
   - Factorial calculation service with big.Int support (0-20,000)
@@ -40,7 +40,7 @@
 - All results stored in S3 (plain text)
 - Small numbers (< 10,000) cached in Redis (24h TTL)
 - Large numbers (>= 10,000) skip Redis cache
-- MySQL stores only metadata (status, s3_key, timestamps)
+- PostgreSQL stores only metadata (status, s3_key, timestamps, checksum, size)
 - Multiple independent workers for horizontal scaling
 - Event-driven architecture with RabbitMQ
 - AWS Step Functions for orchestration
