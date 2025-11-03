@@ -7,21 +7,31 @@ import (
 	"strconv"
 )
 
-const (
-	MaxFactorial = 20000
-)
-
 // FactorialService handles factorial calculations
 type FactorialService interface {
 	CalculateFactorial(number string) (string, error)
 	ValidateNumber(number string) (int64, error)
 }
 
-type factorialService struct{}
+type factorialService struct {
+	maxFactorial int64
+}
 
 // NewFactorialService creates a new factorial service
 func NewFactorialService() FactorialService {
-	return &factorialService{}
+	return &factorialService{
+		maxFactorial: 10000, // Default, should be overridden via NewFactorialServiceWithLimit
+	}
+}
+
+// NewFactorialServiceWithLimit creates a new factorial service with custom max limit
+func NewFactorialServiceWithLimit(maxFactorial int64) FactorialService {
+	if maxFactorial <= 0 {
+		maxFactorial = 10000 // Default
+	}
+	return &factorialService{
+		maxFactorial: maxFactorial,
+	}
 }
 
 // ValidateNumber validates and parses the input number string
@@ -37,8 +47,8 @@ func (s *factorialService) ValidateNumber(number string) (int64, error) {
 		return 0, errors.New("number must be non-negative")
 	}
 
-	if n > MaxFactorial {
-		return 0, fmt.Errorf("number exceeds maximum allowed value of %d", MaxFactorial)
+	if n > s.maxFactorial {
+		return 0, fmt.Errorf("number exceeds maximum allowed value of %d", s.maxFactorial)
 	}
 
 	return n, nil

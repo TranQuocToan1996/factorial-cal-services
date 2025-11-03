@@ -80,3 +80,25 @@ func (r *factorialRepository) UpdateS3Key(number string, s3Key string, status st
 	return nil
 }
 
+// UpdateS3KeyWithChecksum updates the S3 key, checksum, size, and status of a factorial calculation
+func (r *factorialRepository) UpdateS3KeyWithChecksum(number string, s3Key string, checksum string, size int64, status string) error {
+	result := r.db.Model(&domain.FactorialCalculation{}).
+		Where("number = ?", number).
+		Updates(map[string]interface{}{
+			"s3_key":  s3Key,
+			"checksum": checksum,
+			"size":     size,
+			"status":   status,
+		})
+	
+	if result.Error != nil {
+		return result.Error
+	}
+	
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	
+	return nil
+}
+

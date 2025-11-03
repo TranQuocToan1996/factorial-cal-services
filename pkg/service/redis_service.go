@@ -9,7 +9,6 @@ import (
 )
 
 const (
-	RedisThreshold    = 10000
 	DefaultRedisTTL   = 24 * time.Hour
 	RedisKeyPrefix    = "factorial:"
 )
@@ -22,18 +21,23 @@ type RedisService interface {
 }
 
 type redisService struct {
-	client *redis.Client
-	ttl    time.Duration
+	client    *redis.Client
+	ttl       time.Duration
+	threshold int64
 }
 
 // NewRedisService creates a new Redis service
-func NewRedisService(client *redis.Client, ttl time.Duration) RedisService {
+func NewRedisService(client *redis.Client, ttl time.Duration, threshold int64) RedisService {
 	if ttl == 0 {
 		ttl = DefaultRedisTTL
 	}
+	if threshold == 0 {
+		threshold = 1000 // Default threshold
+	}
 	return &redisService{
-		client: client,
-		ttl:    ttl,
+		client:    client,
+		ttl:       ttl,
+		threshold: threshold,
 	}
 }
 
@@ -50,7 +54,7 @@ func (s *redisService) ShouldCache(number string) bool {
 	if err != nil {
 		return false
 	}
-	return n < RedisThreshold
+	return int64(n) < s.threshold
 }
 
 // Get retrieves a factorial result from Redis cache

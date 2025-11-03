@@ -61,12 +61,15 @@ func main() {
 	}
 
 	// Initialize services
-	factorialService := service.NewFactorialService()
-	redisService := service.NewRedisService(redisClient, 24*time.Hour)
+	factorialService := service.NewFactorialServiceWithLimit(int64(cfg.MAX_FACTORIAL))
+	redisService := service.NewRedisService(redisClient, 24*time.Hour, int64(cfg.REDIS_THRESHOLD))
 	s3Service := service.NewS3Service(s3Client, cfg.S3_BUCKET_NAME)
+	checksumService := service.NewChecksumService()
 
-	// Initialize repository
+	// Initialize repositories
 	factorialRepo := repository.NewFactorialRepository(database)
+	maxRequestRepo := repository.NewMaxRequestRepository(database)
+	currentCalculatedRepo := repository.NewCurrentCalculatedRepository(database)
 
 	// Initialize RabbitMQ consumer
 	mqConsumer, err := consumer.NewRabbitMQConsumer(cfg.RabbitMQURL())
@@ -75,21 +78,38 @@ func main() {
 	}
 	defer mqConsumer.Close()
 
-	// Create message handler
-	messageHandler := consumer.NewFactorialMessageHandler(
+	// Create batch handler
+	batchHandler := consumer.NewFactorialBatchHandler(
 		factorialService,
 		redisService,
 		s3Service,
 		factorialRepo,
+		maxRequestRepo,
+		checksumService,
 	)
 
-	// Start consuming
+	// Start batch consuming with multiple concurrent batches
 	consumeCtx, cancelConsume := context.WithCancel(context.Background())
 	defer cancelConsume()
 
-	err = mqConsumer.Consume(consumeCtx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, messageHandler)
-	if err != nil {
-		log.Fatalf("Failed to start consuming: %v", err)
+	batchSize := cfg.WORKER_BATCH_SIZE
+	maxBatches := cfg.WORKER_MAX_BATCHES
+	if maxBatches <= 0 {
+		maxBatches = 16 // Default
+	}
+	if batchSize <= 0 {
+		batchSize = 100 // Default
+	}
+
+	log.Printf("Starting %d batch consumers with batch size %d", maxBatches, batchSize)
+
+	// Start multiple batch consumers concurrently
+	for i := 0; i < maxBatches; i++ {
+		go func(batchID int) {
+			if err := mqConsumer.ConsumeBatch(consumeCtx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, batchSize, batchHandler); err != nil {
+				log.Fatalf("Failed to start batch consumer %d: %v", batchID, err)
+			}
+		}(i)
 	}
 
 	log.Println("Worker started, waiting for messages...")

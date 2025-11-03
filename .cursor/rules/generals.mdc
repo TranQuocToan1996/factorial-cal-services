@@ -24,6 +24,7 @@ Project:
 - use any instead of interface{}
 - Use RESTFul API
 - Clean name conventions
+- Use Golang. But do not depend on only 1 kind of DB, infra (AWS, S3), Queue or stream or framework (Gin, Echo, Zero, Fiber,...)
 
 
 Folder:

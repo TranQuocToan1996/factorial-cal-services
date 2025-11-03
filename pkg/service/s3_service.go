@@ -19,6 +19,9 @@ type S3Service interface {
 	UploadFactorial(ctx context.Context, number string, result string) (string, error)
 	DownloadFactorial(ctx context.Context, s3Key string) (string, error)
 	GenerateS3Key(number string) string
+	// StorageService interface methods
+	Upload(ctx context.Context, number string, result string) (string, error)
+	Download(ctx context.Context, key string) (string, error)
 }
 
 type s3Service struct {
@@ -81,5 +84,15 @@ func (s *s3Service) DownloadFactorial(ctx context.Context, s3Key string) (string
 	}
 	
 	return string(body), nil
+}
+
+// Upload implements StorageService interface (alias for UploadFactorial)
+func (s *s3Service) Upload(ctx context.Context, number string, result string) (string, error) {
+	return s.UploadFactorial(ctx, number, result)
+}
+
+// Download implements StorageService interface (alias for DownloadFactorial)
+func (s *s3Service) Download(ctx context.Context, key string) (string, error) {
+	return s.DownloadFactorial(ctx, key)
 }
 

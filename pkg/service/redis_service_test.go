@@ -22,7 +22,7 @@ func TestShouldCache(t *testing.T) {
 	})
 	defer client.Close()
 
-	service := NewRedisService(client, time.Hour)
+	service := NewRedisService(client, time.Hour, 1000)
 
 	tests := []struct {
 		name     string
@@ -79,7 +79,7 @@ func TestRedisSetAndGet(t *testing.T) {
 	})
 	defer client.Close()
 
-	service := NewRedisService(client, time.Hour)
+	service := NewRedisService(client, time.Hour, 1000)
 	ctx := context.Background()
 
 	tests := []struct {
@@ -134,7 +134,7 @@ func TestRedisGetNonExistent(t *testing.T) {
 	})
 	defer client.Close()
 
-	service := NewRedisService(client, time.Hour)
+	service := NewRedisService(client, time.Hour, 1000)
 	ctx := context.Background()
 
 	result, err := service.Get(ctx, "999")

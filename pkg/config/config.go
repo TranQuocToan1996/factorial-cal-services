@@ -7,9 +7,11 @@ import (
 )
 
 func LoadConfig() *Config {
-	maxFactorial, _ := strconv.Atoi(getEnvOrDefault("MAX_FACTORIAL", "20000"))
-	redisThreshold, _ := strconv.Atoi(getEnvOrDefault("REDIS_THRESHOLD", "10000"))
+	maxFactorial, _ := strconv.Atoi(getEnvOrDefault("MAX_FACTORIAL", "10000"))
+	redisThreshold, _ := strconv.Atoi(getEnvOrDefault("REDIS_THRESHOLD", "1000"))
 	redisDB, _ := strconv.Atoi(getEnvOrDefault("REDIS_DB", "0"))
+	workerBatchSize, _ := strconv.Atoi(getEnvOrDefault("WORKER_BATCH_SIZE", "100"))
+	workerMaxBatches, _ := strconv.Atoi(getEnvOrDefault("WORKER_MAX_BATCHES", "16"))
 
 	return &Config{
 		SERVER_PORT:                       os.Getenv("SERVER_PORT"),
@@ -19,6 +21,7 @@ func LoadConfig() *Config {
 		DB_PORT:                           os.Getenv("DB_PORT"),
 		DB_NAME:                           os.Getenv("DB_NAME"),
 		DB_SSLMODE:                        os.Getenv("DB_SSLMODE"),
+		DB_TYPE:                           getEnvOrDefault("DB_TYPE", "postgres"),
 		RABBITMQ_USER:                     os.Getenv("RABBITMQ_USER"),
 		RABBITMQ_PASSWORD:                 os.Getenv("RABBITMQ_PASSWORD"),
 		RABBITMQ_HOST:                     os.Getenv("RABBITMQ_HOST"),
@@ -33,8 +36,12 @@ func LoadConfig() *Config {
 		AWS_REGION:                        os.Getenv("AWS_REGION"),
 		S3_BUCKET_NAME:                    os.Getenv("S3_BUCKET_NAME"),
 		STEP_FUNCTIONS_ARN:                os.Getenv("STEP_FUNCTIONS_ARN"),
+		STORAGE_TYPE:                      getEnvOrDefault("STORAGE_TYPE", "local"),
+		QUEUE_TYPE:                        getEnvOrDefault("QUEUE_TYPE", "rabbitmq"),
 		MAX_FACTORIAL:                     maxFactorial,
 		REDIS_THRESHOLD:                   redisThreshold,
+		WORKER_BATCH_SIZE:                 workerBatchSize,
+		WORKER_MAX_BATCHES:                workerMaxBatches,
 	}
 }
 
@@ -46,6 +53,7 @@ type Config struct {
 	DB_PORT                           string `mapstructure:"DB_PORT"`
 	DB_NAME                           string `mapstructure:"DB_NAME"`
 	DB_SSLMODE                        string `mapstructure:"DB_SSLMODE"`
+	DB_TYPE                           string `mapstructure:"DB_TYPE"`
 	RABBITMQ_USER                     string `mapstructure:"RABBITMQ_USER"`
 	RABBITMQ_PASSWORD                 string `mapstructure:"RABBITMQ_PASSWORD"`
 	RABBITMQ_HOST                     string `mapstructure:"RABBITMQ_HOST"`
@@ -60,8 +68,12 @@ type Config struct {
 	AWS_REGION                        string `mapstructure:"AWS_REGION"`
 	S3_BUCKET_NAME                    string `mapstructure:"S3_BUCKET_NAME"`
 	STEP_FUNCTIONS_ARN                string `mapstructure:"STEP_FUNCTIONS_ARN"`
+	STORAGE_TYPE                      string `mapstructure:"STORAGE_TYPE"`
+	QUEUE_TYPE                        string `mapstructure:"QUEUE_TYPE"`
 	MAX_FACTORIAL                     int    `mapstructure:"MAX_FACTORIAL"`
 	REDIS_THRESHOLD                   int    `mapstructure:"REDIS_THRESHOLD"`
+	WORKER_BATCH_SIZE                 int    `mapstructure:"WORKER_BATCH_SIZE"`
+	WORKER_MAX_BATCHES                int    `mapstructure:"WORKER_MAX_BATCHES"`
 }
 
 func (c *Config) DSN() string {

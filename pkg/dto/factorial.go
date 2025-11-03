@@ -1,10 +1,42 @@
 package dto
 
+// APIResponse represents the standard API response wrapper
+type APIResponse struct {
+	Code    int         `json:"code"`
+	Status  string      `json:"status"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+
 // CalculateRequest represents the request to calculate a factorial
 type CalculateRequest struct {
 	Number string `json:"number" binding:"required"`
 }
 
+// CalculateResponseData represents the data payload for calculate response
+type CalculateResponseData struct {
+	Number string `json:"number,omitempty"`
+}
+
+// ResultResponseData represents the data payload for result response
+type ResultResponseData struct {
+	Number          string `json:"number"`
+	FactorialResult string `json:"factorial_result"`
+}
+
+// MetadataResponseData represents the data payload for metadata response
+type MetadataResponseData struct {
+	ID              string `json:"id"`
+	Number          string `json:"number"`
+	FactorialResult string `json:"factorial_result,omitempty"`
+	S3Key           string `json:"s3_key,omitempty"`
+	Checksum        string `json:"checksum,omitempty"`
+	Status          string `json:"status"`
+	CreatedAt       string `json:"created_at"`
+	UpdatedAt       string `json:"updated_at"`
+}
+
+// Legacy DTOs for backward compatibility (deprecated, use APIResponse wrapper)
 // CalculateResponse represents the response after submitting a factorial calculation
 type CalculateResponse struct {
 	Number string `json:"number"`

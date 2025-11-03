@@ -3,9 +3,9 @@ package handler
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"factorial-cal-services/pkg/domain"
 	"factorial-cal-services/pkg/dto"
@@ -14,6 +14,24 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+// sendAPIResponse sends a standardized API response
+func sendAPIResponse(c *gin.Context, code int, status string, message string, data interface{}) {
+	c.JSON(code, dto.APIResponse{
+		Code:    code,
+		Status:  status,
+		Message: message,
+		Data:    data,
+	})
+}
+
+// sendErrorResponse sends an error response in the new format
+func sendErrorResponse(c *gin.Context, code int, status string, message string) {
+	sendAPIResponse(c, code, status, message, dto.ErrorResponse{
+		Error:   status,
+		Message: message,
+	})
+}
 
 // FactorialHandler handles factorial calculation HTTP requests
 type FactorialHandler struct {
@@ -59,20 +77,14 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 	var req dto.CalculateRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error:   "invalid_request",
-			Message: err.Error(),
-		})
+		sendErrorResponse(c, http.StatusBadRequest, "fail", err.Error())
 		return
 	}
 
 	// Validate number
 	_, err := h.factorialService.ValidateNumber(req.Number)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error:   "invalid_number",
-			Message: err.Error(),
-		})
+		sendErrorResponse(c, http.StatusBadRequest, "fail", err.Error())
 		return
 	}
 
@@ -80,17 +92,24 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 	existing, err := h.repository.FindByNumber(req.Number)
 	if err != nil {
 		log.Printf("Error checking existing calculation: %v", err)
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error:   "internal_error",
-			Message: "Failed to check calculation status",
-		})
+		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to check calculation status")
 		return
 	}
 
 	if existing != nil && existing.Status == domain.StatusDone {
-		c.JSON(http.StatusOK, dto.CalculateResponse{
-			Number: req.Number,
-			Status: "already_calculated",
+		// Return result if already calculated
+		ctx := context.Background()
+		var factorialResult string
+		if h.redisService.ShouldCache(req.Number) {
+			factorialResult, _ = h.redisService.Get(ctx, req.Number)
+		}
+		if factorialResult == "" {
+			factorialResult, _ = h.s3Service.DownloadFactorial(ctx, existing.S3Key)
+		}
+		
+		sendAPIResponse(c, http.StatusOK, "ok", "done", dto.ResultResponseData{
+			Number:          req.Number,
+			FactorialResult: factorialResult,
 		})
 		return
 	}
@@ -102,17 +121,12 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 	err = h.producer.Publish(context.Background(), h.queueName, messageBytes)
 	if err != nil {
 		log.Printf("Error publishing message: %v", err)
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error:   "internal_error",
-			Message: "Failed to submit calculation",
-		})
+		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to submit calculation")
 		return
 	}
 
-	c.JSON(http.StatusAccepted, dto.CalculateResponse{
-		Number: req.Number,
-		Status: "accepted",
-	})
+	// Return calculating status
+	sendAPIResponse(c, http.StatusOK, "ok", "calculating", dto.CalculateResponseData{})
 }
 
 // GetResult godoc
@@ -131,10 +145,7 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 	// Validate number format
 	_, err := h.factorialService.ValidateNumber(number)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error:   "invalid_number",
-			Message: err.Error(),
-		})
+		sendErrorResponse(c, http.StatusBadRequest, "fail", err.Error())
 		return
 	}
 
@@ -147,10 +158,9 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 		if err != nil {
 			log.Printf("Redis error: %v", err)
 		} else if result != "" {
-			c.JSON(http.StatusOK, dto.ResultResponse{
-				Number: number,
-				Result: result,
-				Status: "done",
+			sendAPIResponse(c, http.StatusOK, "ok", "done", dto.ResultResponseData{
+				Number:          number,
+				FactorialResult: result,
 			})
 			return
 		}
@@ -160,26 +170,23 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 	calc, err := h.repository.FindByNumber(number)
 	if err != nil {
 		log.Printf("Error finding calculation: %v", err)
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error:   "internal_error",
-			Message: "Failed to retrieve calculation",
-		})
+		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to retrieve calculation")
 		return
 	}
 
 	if calc == nil {
-		c.JSON(http.StatusNotFound, dto.ErrorResponse{
-			Error:   "not_found",
-			Message: "Calculation not found or not yet completed",
-		})
+		// Not found - publish event and return calculating status (per flow.md)
+		message := map[string]string{"number": number}
+		messageBytes, _ := json.Marshal(message)
+		if err := h.producer.Publish(ctx, h.queueName, messageBytes); err != nil {
+			log.Printf("Error publishing event: %v", err)
+		}
+		sendAPIResponse(c, http.StatusOK, "ok", "calculating", dto.CalculateResponseData{})
 		return
 	}
 
 	if calc.Status != domain.StatusDone {
-		c.JSON(http.StatusAccepted, dto.ErrorResponse{
-			Error:   "processing",
-			Message: fmt.Sprintf("Calculation is still in progress (status: %s)", calc.Status),
-		})
+		sendAPIResponse(c, http.StatusOK, "ok", "calculating", dto.CalculateResponseData{})
 		return
 	}
 
@@ -187,10 +194,7 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 	result, err := h.s3Service.DownloadFactorial(ctx, calc.S3Key)
 	if err != nil {
 		log.Printf("Error downloading from S3: %v", err)
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error:   "internal_error",
-			Message: "Failed to retrieve result from storage",
-		})
+		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to retrieve result from storage")
 		return
 	}
 
@@ -201,10 +205,9 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, dto.ResultResponse{
-		Number: number,
-		Result: result,
-		Status: "done",
+	sendAPIResponse(c, http.StatusOK, "ok", "done", dto.ResultResponseData{
+		Number:          number,
+		FactorialResult: result,
 	})
 }
 
@@ -224,10 +227,7 @@ func (h *FactorialHandler) GetMetadata(c *gin.Context) {
 	// Validate number format
 	_, err := h.factorialService.ValidateNumber(number)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.ErrorResponse{
-			Error:   "invalid_number",
-			Message: err.Error(),
-		})
+		sendErrorResponse(c, http.StatusBadRequest, "fail", err.Error())
 		return
 	}
 
@@ -235,26 +235,31 @@ func (h *FactorialHandler) GetMetadata(c *gin.Context) {
 	calc, err := h.repository.FindByNumber(number)
 	if err != nil {
 		log.Printf("Error finding calculation: %v", err)
-		c.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Error:   "internal_error",
-			Message: "Failed to retrieve metadata",
-		})
+		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to retrieve metadata")
 		return
 	}
 
 	if calc == nil {
-		c.JSON(http.StatusNotFound, dto.ErrorResponse{
-			Error:   "not_found",
-			Message: "Calculation not found",
-		})
+		sendAPIResponse(c, http.StatusOK, "ok", "calculating", dto.CalculateResponseData{})
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.MetadataResponse{
-		Number:    calc.Number,
-		Status:    calc.Status,
-		S3Key:     calc.S3Key,
-		CreatedAt: calc.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+	ctx := context.Background()
+	var factorialResult string
+	if calc.Status == domain.StatusDone {
+		// Download factorial result if status is done
+		factorialResult, _ = h.s3Service.DownloadFactorial(ctx, calc.S3Key)
+	}
+
+	sendAPIResponse(c, http.StatusOK, "ok", "done", dto.MetadataResponseData{
+		ID:              strconv.FormatInt(calc.ID, 10),
+		Number:          calc.Number,
+		FactorialResult: factorialResult,
+		S3Key:           calc.S3Key,
+		Checksum:        calc.Checksum,
+		Status:          calc.Status,
+		CreatedAt:       calc.CreatedAt.Format("2006-01-02T15:04:05Z07:00"),
+		UpdatedAt:       calc.UpdatedAt.Format("2006-01-02T15:04:05Z07:00"),
 	})
 }
 
