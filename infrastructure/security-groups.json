@@ -1,0 +1,461 @@
+{
+    "SecurityGroups": [
+        {
+            "Description": "SG for application",
+            "GroupName": "express-nodejs-demo-application",
+            "IpPermissions": [
+                {
+                    "FromPort": 8080,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 8080,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-029853ea536615004",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 22,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 22,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0826779e45be79bf9",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 3000,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 3000,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-029853ea536615004",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 443,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 443,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0eda5df6af283ac2f",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 8081,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 8081,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-029853ea536615004",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                }
+            ],
+            "OwnerId": "218435950768",
+            "GroupId": "sg-0eda5df6af283ac2f",
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "UserIdGroupPairs": []
+                }
+            ],
+            "VpcId": "vpc-0956e9914efe15691"
+        },
+        {
+            "Description": "dev instance",
+            "GroupName": "express-nodejs-demo-dev",
+            "IpPermissions": [
+                {
+                    "FromPort": 22,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 22,
+                    "UserIdGroupPairs": []
+                }
+            ],
+            "OwnerId": "218435950768",
+            "GroupId": "sg-0826779e45be79bf9",
+            "IpPermissionsEgress": [],
+            "VpcId": "vpc-0956e9914efe15691"
+        },
+        {
+            "Description": "Security group attached to instances to securely connect to order-simple-postgres-db. Modification could lead to connection loss.",
+            "GroupName": "ec2-rds-1",
+            "IpPermissions": [],
+            "OwnerId": "218435950768",
+            "GroupId": "sg-08cc0e98b2464baa9",
+            "IpPermissionsEgress": [
+                {
+                    "FromPort": 5432,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 5432,
+                    "UserIdGroupPairs": [
+                        {
+                            "Description": "Rule to allow connections to order-simple-postgres-db from any instances this security group is attached to",
+                            "GroupId": "sg-0ce4e5e1efef20f2d",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                }
+            ],
+            "VpcId": "vpc-0956e9914efe15691"
+        },
+        {
+            "Description": "default VPC security group",
+            "GroupName": "default",
+            "IpPermissions": [
+                {
+                    "IpProtocol": "-1",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-01094a008028b41f9",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                }
+            ],
+            "OwnerId": "218435950768",
+            "GroupId": "sg-01094a008028b41f9",
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "UserIdGroupPairs": []
+                }
+            ],
+            "VpcId": "vpc-0956e9914efe15691"
+        },
+        {
+            "Description": "Postgres",
+            "GroupName": "express-nodejs-demo-postgres",
+            "IpPermissions": [
+                {
+                    "FromPort": 5432,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 5432,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0eda5df6af283ac2f",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 22,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 22,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0826779e45be79bf9",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                }
+            ],
+            "OwnerId": "218435950768",
+            "GroupId": "sg-08deee793218845f6",
+            "IpPermissionsEgress": [],
+            "VpcId": "vpc-0956e9914efe15691"
+        },
+        {
+            "Description": "queue-stream-sg",
+            "GroupName": "queue-stream-sg",
+            "IpPermissions": [
+                {
+                    "FromPort": 5672,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 5672,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0eda5df6af283ac2f",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 5671,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 5671,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0eda5df6af283ac2f",
+                            "UserId": "218435950768"
+                        },
+                        {
+                            "GroupId": "sg-0826779e45be79bf9",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 15672,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 15672,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0eda5df6af283ac2f",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                }
+            ],
+            "OwnerId": "218435950768",
+            "GroupId": "sg-05c48ab7b3f4244be",
+            "IpPermissionsEgress": [
+                {
+                    "IpProtocol": "-1",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "UserIdGroupPairs": []
+                }
+            ],
+            "VpcId": "vpc-0956e9914efe15691"
+        },
+        {
+            "Description": "express-nodejs-demo publish SG",
+            "GroupName": "express-nodejs-demo-pub",
+            "IpPermissions": [
+                {
+                    "FromPort": 80,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32",
+                            "Description": "Allow HTTPS from user anywhere to ALB"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 80,
+                    "UserIdGroupPairs": []
+                },
+                {
+                    "FromPort": 81,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 81,
+                    "UserIdGroupPairs": []
+                },
+                {
+                    "FromPort": 8080,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 8080,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0eda5df6af283ac2f",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 3000,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 3000,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0eda5df6af283ac2f",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 443,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "183.80.39.60/32",
+                            "Description": "Allow HTTPS from user anywhere to ALB"
+                        },
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 443,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0eda5df6af283ac2f",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                },
+                {
+                    "FromPort": 8081,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 8081,
+                    "UserIdGroupPairs": [
+                        {
+                            "GroupId": "sg-0eda5df6af283ac2f",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                }
+            ],
+            "OwnerId": "218435950768",
+            "GroupId": "sg-029853ea536615004",
+            "IpPermissionsEgress": [
+                {
+                    "FromPort": 8080,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 8080,
+                    "UserIdGroupPairs": []
+                },
+                {
+                    "FromPort": 3000,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [
+                        {
+                            "CidrIp": "0.0.0.0/0"
+                        }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 3000,
+                    "UserIdGroupPairs": []
+                }
+            ],
+            "VpcId": "vpc-0956e9914efe15691"
+        },
+        {
+            "Description": "Security group attached to order-simple-postgres-db to allow EC2 instances with specific security groups attached to connect to the database. Modification could lead to connection loss.",
+            "GroupName": "rds-ec2-1",
+            "IpPermissions": [
+                {
+                    "FromPort": 5432,
+                    "IpProtocol": "tcp",
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": [],
+                    "ToPort": 5432,
+                    "UserIdGroupPairs": [
+                        {
+                            "Description": "Rule to allow connections from EC2 instances with sg-08cc0e98b2464baa9 attached",
+                            "GroupId": "sg-08cc0e98b2464baa9",
+                            "UserId": "218435950768"
+                        }
+                    ]
+                }
+            ],
+            "OwnerId": "218435950768",
+            "GroupId": "sg-0ce4e5e1efef20f2d",
+            "IpPermissionsEgress": [],
+            "VpcId": "vpc-0956e9914efe15691"
+        }
+    ]
+}

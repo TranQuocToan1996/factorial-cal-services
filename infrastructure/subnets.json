@@ -1,0 +1,345 @@
+{
+    "Subnets": [
+        {
+            "AvailabilityZone": "us-east-1a",
+            "AvailabilityZoneId": "use1-az4",
+            "AvailableIpAddressCount": 122,
+            "CidrBlock": "10.0.16.0/25",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false,
+            "MapCustomerOwnedIpOnLaunch": false,
+            "State": "available",
+            "SubnetId": "subnet-0df4d5efedbb155bc",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "RDS-Pvt-subnet-1"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:218435950768:subnet/subnet-0df4d5efedbb155bc",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            }
+        },
+        {
+            "AvailabilityZone": "us-east-1b",
+            "AvailabilityZoneId": "use1-az6",
+            "AvailableIpAddressCount": 123,
+            "CidrBlock": "10.0.17.128/25",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false,
+            "MapCustomerOwnedIpOnLaunch": false,
+            "State": "available",
+            "SubnetId": "subnet-03bf713327aafdf4e",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "RDS-Pvt-subnet-4"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:218435950768:subnet/subnet-03bf713327aafdf4e",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            }
+        },
+        {
+            "AvailabilityZone": "us-east-1e",
+            "AvailabilityZoneId": "use1-az3",
+            "AvailableIpAddressCount": 123,
+            "CidrBlock": "10.0.17.0/25",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false,
+            "MapCustomerOwnedIpOnLaunch": false,
+            "State": "available",
+            "SubnetId": "subnet-095a79cc11201be12",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "RDS-Pvt-subnet-3"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:218435950768:subnet/subnet-095a79cc11201be12",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            }
+        },
+        {
+            "AvailabilityZone": "us-east-1a",
+            "AvailabilityZoneId": "use1-az4",
+            "AvailableIpAddressCount": 1019,
+            "CidrBlock": "10.0.8.0/22",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false,
+            "MapCustomerOwnedIpOnLaunch": false,
+            "State": "available",
+            "SubnetId": "subnet-0911715bbcfeaf63f",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "department",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "name",
+                    "Value": "express-nodejs-demo-express-app"
+                },
+                {
+                    "Key": "owner",
+                    "Value": "MrT"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "express-nodejs-demo-subnet-private1-us-east-1a"
+                },
+                {
+                    "Key": "env",
+                    "Value": "production"
+                },
+                {
+                    "Key": "project",
+                    "Value": "express-nodejs-demo"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:218435950768:subnet/subnet-0911715bbcfeaf63f",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            }
+        },
+        {
+            "AvailabilityZone": "us-east-1b",
+            "AvailabilityZoneId": "use1-az6",
+            "AvailableIpAddressCount": 1019,
+            "CidrBlock": "10.0.12.0/22",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false,
+            "MapCustomerOwnedIpOnLaunch": false,
+            "State": "available",
+            "SubnetId": "subnet-0484b1c030d49a464",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "department",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "name",
+                    "Value": "express-nodejs-demo-express-app"
+                },
+                {
+                    "Key": "owner",
+                    "Value": "MrT"
+                },
+                {
+                    "Key": "project",
+                    "Value": "express-nodejs-demo"
+                },
+                {
+                    "Key": "env",
+                    "Value": "production"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "express-nodejs-demo-subnet-private2-us-east-1b"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:218435950768:subnet/subnet-0484b1c030d49a464",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            }
+        },
+        {
+            "AvailabilityZone": "us-east-1d",
+            "AvailabilityZoneId": "use1-az2",
+            "AvailableIpAddressCount": 123,
+            "CidrBlock": "10.0.16.128/25",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false,
+            "MapCustomerOwnedIpOnLaunch": false,
+            "State": "available",
+            "SubnetId": "subnet-01935147ce4a55773",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "RDS-Pvt-subnet-2"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:218435950768:subnet/subnet-01935147ce4a55773",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            }
+        },
+        {
+            "AvailabilityZone": "us-east-1c",
+            "AvailabilityZoneId": "use1-az1",
+            "AvailableIpAddressCount": 123,
+            "CidrBlock": "10.0.18.0/25",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false,
+            "MapCustomerOwnedIpOnLaunch": false,
+            "State": "available",
+            "SubnetId": "subnet-05c045bcabdc0e6b3",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "RDS-Pvt-subnet-5"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:218435950768:subnet/subnet-05c045bcabdc0e6b3",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            }
+        },
+        {
+            "AvailabilityZone": "us-east-1a",
+            "AvailabilityZoneId": "use1-az4",
+            "AvailableIpAddressCount": 1017,
+            "CidrBlock": "10.0.0.0/22",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false,
+            "MapCustomerOwnedIpOnLaunch": false,
+            "State": "available",
+            "SubnetId": "subnet-0e880da0367cea511",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "owner",
+                    "Value": "MrT"
+                },
+                {
+                    "Key": "department",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "name",
+                    "Value": "express-nodejs-demo-express-app"
+                },
+                {
+                    "Key": "project",
+                    "Value": "express-nodejs-demo"
+                },
+                {
+                    "Key": "env",
+                    "Value": "production"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "express-nodejs-demo-subnet-public1-us-east-1a"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:218435950768:subnet/subnet-0e880da0367cea511",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            }
+        },
+        {
+            "AvailabilityZone": "us-east-1b",
+            "AvailabilityZoneId": "use1-az6",
+            "AvailableIpAddressCount": 1018,
+            "CidrBlock": "10.0.4.0/22",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false,
+            "MapCustomerOwnedIpOnLaunch": false,
+            "State": "available",
+            "SubnetId": "subnet-0db43c54701e39c28",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+                {
+                    "Key": "env",
+                    "Value": "production"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "express-nodejs-demo-subnet-public2-us-east-1b"
+                },
+                {
+                    "Key": "department",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "owner",
+                    "Value": "MrT"
+                },
+                {
+                    "Key": "name",
+                    "Value": "express-nodejs-demo-express-app"
+                },
+                {
+                    "Key": "project",
+                    "Value": "express-nodejs-demo"
+                }
+            ],
+            "SubnetArn": "arn:aws:ec2:us-east-1:218435950768:subnet/subnet-0db43c54701e39c28",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+                "HostnameType": "ip-name",
+                "EnableResourceNameDnsARecord": false,
+                "EnableResourceNameDnsAAAARecord": false
+            }
+        }
+    ]
+}

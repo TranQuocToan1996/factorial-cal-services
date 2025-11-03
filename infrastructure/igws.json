@@ -1,0 +1,40 @@
+{
+    "InternetGateways": [
+        {
+            "Attachments": [
+                {
+                    "State": "available",
+                    "VpcId": "vpc-0956e9914efe15691"
+                }
+            ],
+            "InternetGatewayId": "igw-03ec83faa21e2b617",
+            "OwnerId": "218435950768",
+            "Tags": [
+                {
+                    "Key": "department",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "name",
+                    "Value": "express-nodejs-demo-express-app"
+                },
+                {
+                    "Key": "owner",
+                    "Value": "MrT"
+                },
+                {
+                    "Key": "env",
+                    "Value": "production"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "express-nodejs-demo-igw"
+                },
+                {
+                    "Key": "project",
+                    "Value": "express-nodejs-demo"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,247 @@
+{
+    "RouteTables": [
+        {
+            "Associations": [
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-000328c2307de5548",
+                    "RouteTableId": "rtb-0c0651ddc85d78dd7",
+                    "SubnetId": "subnet-03bf713327aafdf4e",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-0142ecd0cf21cf2b7",
+                    "RouteTableId": "rtb-0c0651ddc85d78dd7",
+                    "SubnetId": "subnet-01935147ce4a55773",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-070394f96e1e2e923",
+                    "RouteTableId": "rtb-0c0651ddc85d78dd7",
+                    "SubnetId": "subnet-0df4d5efedbb155bc",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-028e8b2d79bb6fde0",
+                    "RouteTableId": "rtb-0c0651ddc85d78dd7",
+                    "SubnetId": "subnet-095a79cc11201be12",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-0317024e9079ad3b5",
+                    "RouteTableId": "rtb-0c0651ddc85d78dd7",
+                    "SubnetId": "subnet-05c045bcabdc0e6b3",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-0c0651ddc85d78dd7",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "RDS-Pvt-rt"
+                }
+            ],
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768"
+        },
+        {
+            "Associations": [
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-0765ea2452b6bda26",
+                    "RouteTableId": "rtb-071153a5346a78a3b",
+                    "SubnetId": "subnet-0911715bbcfeaf63f",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-071153a5346a78a3b",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "express-nodejs-demo-rtb-private1-us-east-1a"
+                },
+                {
+                    "Key": "env",
+                    "Value": "production"
+                },
+                {
+                    "Key": "project",
+                    "Value": "express-nodejs-demo"
+                },
+                {
+                    "Key": "owner",
+                    "Value": "MrT"
+                },
+                {
+                    "Key": "name",
+                    "Value": "express-nodejs-demo-express-app"
+                },
+                {
+                    "Key": "department",
+                    "Value": "dev"
+                }
+            ],
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768"
+        },
+        {
+            "Associations": [
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-093acf1d9cb61cff7",
+                    "RouteTableId": "rtb-0ee20646ab7f180f2",
+                    "SubnetId": "subnet-0484b1c030d49a464",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-0ee20646ab7f180f2",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "name",
+                    "Value": "express-nodejs-demo-express-app"
+                },
+                {
+                    "Key": "project",
+                    "Value": "express-nodejs-demo"
+                },
+                {
+                    "Key": "owner",
+                    "Value": "MrT"
+                },
+                {
+                    "Key": "env",
+                    "Value": "production"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "express-nodejs-demo-rtb-private2-us-east-1b"
+                },
+                {
+                    "Key": "department",
+                    "Value": "dev"
+                }
+            ],
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768"
+        },
+        {
+            "Associations": [
+                {
+                    "Main": true,
+                    "RouteTableAssociationId": "rtbassoc-0bf2c9fc30b0733c7",
+                    "RouteTableId": "rtb-0cda54aac64462baa",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-04310ff1b4aeac362",
+                    "RouteTableId": "rtb-0cda54aac64462baa",
+                    "SubnetId": "subnet-0db43c54701e39c28",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                },
+                {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-033ce0d9ec2ee5ba3",
+                    "RouteTableId": "rtb-0cda54aac64462baa",
+                    "SubnetId": "subnet-0e880da0367cea511",
+                    "AssociationState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-0cda54aac64462baa",
+            "Routes": [
+                {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                },
+                {
+                    "DestinationCidrBlock": "0.0.0.0/0",
+                    "GatewayId": "igw-03ec83faa21e2b617",
+                    "Origin": "CreateRoute",
+                    "State": "active"
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "department",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "express-nodejs-demo-rtb-public"
+                },
+                {
+                    "Key": "name",
+                    "Value": "express-nodejs-demo-express-app"
+                },
+                {
+                    "Key": "owner",
+                    "Value": "MrT"
+                },
+                {
+                    "Key": "project",
+                    "Value": "express-nodejs-demo"
+                },
+                {
+                    "Key": "env",
+                    "Value": "production"
+                }
+            ],
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768"
+        }
+    ]
+}

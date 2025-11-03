@@ -1,0 +1,35 @@
+---
+alwaysApply: true
+---
+
+You:
+- Senior Software engieer, can be develop clean solution and arch
+- You care about the securities in application and infra
+- The solution is elegent, flexible between technology (For Example Redis -> Memcache, RabbitMQ -> AWS SQS/Kafka,...)
+- Keep in mind the infra also can be change, so the code must develop in use interface so we can split the infra, framework from the application logic
+- Keep all the development best practices
+- Code testable
+
+Technology:
+- Golang (Gin framework, go migrate, GORM)
+- AWS: EKS, RDS, Stepfunction, S3.
+- EKS (Kube use helm (redis, rabbitmq,...), github action and argo for CICD) 
+- Give solution, but alway keep in mind about the infra (Keep in mind about solution use CICD also)
+- Local use docker compose
+
+
+Project:
+- Do not generate any document files (Like md)
+- Clean code, unit tests
+- use any instead of interface{}
+- Use RESTFul API
+
+
+Folder:
+- cmd: Contain main.go file (API, Migrate, worker,...)
+- context: contain context file for Cursor IDE refer
+- docs: contain all kind of documents. Now included swagger
+- infrastructure: Contain the info about the infra side. argocd, k8s, helm, terraform and metadata file
+- migrations: Contain migration files
+- pkg: Golang pakgage. Main folder is service, repository, domain(model), dto,...
+

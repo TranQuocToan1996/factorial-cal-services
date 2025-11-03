@@ -1,0 +1,48 @@
+{
+    "Vpcs": [
+        {
+            "CidrBlock": "10.0.0.0/16",
+            "DhcpOptionsId": "dopt-0dba8c5a97367adfb",
+            "State": "available",
+            "VpcId": "vpc-0956e9914efe15691",
+            "OwnerId": "218435950768",
+            "InstanceTenancy": "default",
+            "CidrBlockAssociationSet": [
+                {
+                    "AssociationId": "vpc-cidr-assoc-0310ba7a8643956be",
+                    "CidrBlock": "10.0.0.0/16",
+                    "CidrBlockState": {
+                        "State": "associated"
+                    }
+                }
+            ],
+            "IsDefault": false,
+            "Tags": [
+                {
+                    "Key": "name",
+                    "Value": "express-nodejs-demo-express-app"
+                },
+                {
+                    "Key": "department",
+                    "Value": "dev"
+                },
+                {
+                    "Key": "Name",
+                    "Value": "express-nodejs-demo-vpc"
+                },
+                {
+                    "Key": "env",
+                    "Value": "production"
+                },
+                {
+                    "Key": "project",
+                    "Value": "express-nodejs-demo"
+                },
+                {
+                    "Key": "owner",
+                    "Value": "MrT"
+                }
+            ]
+        }
+    ]
+}
