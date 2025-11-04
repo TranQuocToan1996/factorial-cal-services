@@ -1,26 +1,51 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"math/big"
 	"strconv"
+	"sync"
+
+	"factorial-cal-services/pkg/domain"
+	"factorial-cal-services/pkg/repository"
+
+	"gorm.io/gorm"
 )
 
 // FactorialService handles factorial calculations
 type FactorialService interface {
-	CalculateFactorial(number string) (string, error)
 	ValidateNumber(number string) (int64, error)
 }
 
 type factorialService struct {
-	maxFactorial int64
+	start bool
+	lock  sync.Mutex
+
+	maxFactorial                int64
+	repository                  repository.FactorialRepository
+	currentCalculatedRepository repository.CurrentCalculatedRepository
+	maxRequestRepository        repository.MaxRequestRepository
+	redisService                RedisService
+	s3Service                   S3Service
 }
 
 // NewFactorialService creates a new factorial service
-func NewFactorialService() FactorialService {
+func NewFactorialService(
+	repository repository.FactorialRepository,
+	currentCalculatedRepository repository.CurrentCalculatedRepository,
+	maxRequestRepository repository.MaxRequestRepository,
+	redisService RedisService,
+	s3Service S3Service,
+) FactorialService {
 	return &factorialService{
-		maxFactorial: 10000, // Default, should be overridden via NewFactorialServiceWithLimit
+		maxFactorial:                10000, // Default, should be overridden via NewFactorialServiceWithLimit
+		repository:                  repository,
+		currentCalculatedRepository: currentCalculatedRepository,
+		maxRequestRepository:        maxRequestRepository,
+		redisService:                redisService,
+		s3Service:                   s3Service,
 	}
 }
 
@@ -54,21 +79,65 @@ func (s *factorialService) ValidateNumber(number string) (int64, error) {
 	return n, nil
 }
 
-// CalculateFactorial calculates the factorial of a number given as string
-func (s *factorialService) CalculateFactorial(number string) (string, error) {
-	// Validate input
-	n, err := s.ValidateNumber(number)
+func (s *factorialService) backgroundContinuelyCalculateFactorial(privFactorial *big.Int) error {
+	max, err := s.maxRequestRepository.GetMaxNumber()
 	if err != nil {
-		return "", err
+		return fmt.Errorf("failed to get max number: %w", err)
+	}
+	// get current
+	current, err := s.currentCalculatedRepository.GetCurrentNumber()
+	if err != nil {
+		return fmt.Errorf("failed to get current number: %w", err)
 	}
 
-	// Calculate factorial using big.Int
-	result := big.NewInt(1)
-
-	for i := int64(2); i <= n; i++ {
-		result.Mul(result, big.NewInt(i))
+	if current > max {
+		return nil
 	}
 
-	// Return result as string
-	return result.String(), nil
+	factorial, err := s.repository.FindByNumber(current)
+	if factorial != nil && factorial.Status == domain.StatusDone {
+		return nil
+	}
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		err := s.repository.Create(&domain.FactorialCalculation{
+			Number: current,
+			Status: domain.StatusCalculating,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to create factorial record: %w", err)
+		}
+	}
+
+	if privFactorial == nil {
+		privFactorial, err = s.getPreviousFactorial(current)
+		if err != nil {
+			return fmt.Errorf("failed to get previous factorial: %w", err)
+		}
+	}
+
+	for i := current; i <= max; i++ {
+		nextFactorial := new(big.Int).Mul(privFactorial, big.NewInt(i))
+	}
+
+	// Save status calculating
+	// calculate current factorial
+	// save to S3
+	// Update state calculated and next number
+
+	return nil
+}
+
+func (s *factorialService) previousFactorialKey(number string) string {
+	n, _ := strconv.ParseInt(number, 10, 64)
+	return fmt.Sprintf("%d.txt", n-1)
+}
+
+func (s *factorialService) getPreviousFactorial(number string) (*big.Int, error) {
+	key := s.previousFactorialKey(number)
+	result, err := s.s3Service.DownloadFactorial(context.Background(), key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to download factorial from S3: %w", err)
+	}
+	currentFactorial, _ := new(big.Int).SetString(result, 10)
+	return currentFactorial, nil
 }

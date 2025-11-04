@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	DefaultRedisTTL   = 24 * time.Hour
-	RedisKeyPrefix    = "factorial:"
+	DefaultRedisTTL = 24 * time.Hour
+	RedisKeyPrefix  = "factorial:"
 )
 
 // RedisService handles Redis caching operations
@@ -42,8 +42,8 @@ func NewRedisService(client *redis.Client, ttl time.Duration, threshold int64) R
 	}
 }
 
-// formatKey creates a Redis key with prefix
-func (s *redisService) formatKey(number string) string {
+// factorialKey creates a Redis key with prefix
+func (s *redisService) factorialKey(number string) string {
 	return fmt.Sprintf("%s%s", RedisKeyPrefix, number)
 }
 
@@ -63,17 +63,17 @@ func (s *redisService) ShouldCache(number string) bool {
 
 // Get retrieves a factorial result from Redis cache
 func (s *redisService) Get(ctx context.Context, number string) (string, error) {
-	key := s.formatKey(number)
+	key := s.factorialKey(number)
 	result, err := s.client.Get(ctx, key).Result()
-	
+
 	if err == redis.Nil {
 		return "", nil // Cache miss, not an error
 	}
-	
+
 	if err != nil {
 		return "", fmt.Errorf("redis get error: %w", err)
 	}
-	
+
 	return result, nil
 }
 
@@ -83,14 +83,12 @@ func (s *redisService) Set(ctx context.Context, number string, result string) er
 	if !s.ShouldCache(number) {
 		return nil
 	}
-	
-	key := s.formatKey(number)
+
+	key := s.factorialKey(number)
 	err := s.client.Set(ctx, key, result, s.ttl).Err()
-	
 	if err != nil {
 		return fmt.Errorf("redis set error: %w", err)
 	}
-	
+
 	return nil
 }
-

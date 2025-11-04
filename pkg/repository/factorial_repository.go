@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"factorial-cal-services/pkg/domain"
 
@@ -141,8 +142,9 @@ func (r *factorialRepository) UpdateWithCurrentNumber(
 		if err := tx.First(&existing).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				// Create new record
+				n, _ := strconv.ParseInt(currentNumber, 10, 64)
 				curCalc := &domain.FactorialCurrentCalculatedNumber{
-					CurNumber: currentNumber,
+					CurNumber: n,
 				}
 				if err := tx.Create(curCalc).Error; err != nil {
 					return fmt.Errorf("failed to create current number: %w", err)

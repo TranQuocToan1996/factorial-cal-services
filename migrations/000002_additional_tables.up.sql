@@ -5,7 +5,7 @@
 -- Table to track the maximum requested factorial number
 CREATE TABLE IF NOT EXISTS factorial_max_request_numbers (
     id BIGSERIAL PRIMARY KEY,
-    max_number VARCHAR(100) NOT NULL,
+    max_number BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS factorial_max_request_numbers (
 -- Table to track the current calculated factorial number
 CREATE TABLE IF NOT EXISTS factorial_current_calculated_numbers (
     id BIGSERIAL PRIMARY KEY,
-    cur_number VARCHAR(100) NOT NULL,
+    cur_number BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

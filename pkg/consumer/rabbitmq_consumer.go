@@ -9,15 +9,17 @@ import (
 	"os"
 	"runtime"
 	"strings"
-	"sync"
+
+	"factorial-cal-services/pkg/utils/patterns"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 // RabbitMQConsumer implements Consumer for RabbitMQ
 type RabbitMQConsumer struct {
-	conn    *amqp.Connection
-	channel *amqp.Channel
+	conn      *amqp.Connection
+	channel   *amqp.Channel
+	semaphore *patterns.Semaphore
 }
 
 // NewRabbitMQConsumer creates a new RabbitMQ consumer
@@ -72,8 +74,9 @@ func NewRabbitMQConsumer(amqpURL string) (*RabbitMQConsumer, error) {
 	}
 
 	return &RabbitMQConsumer{
-		conn:    conn,
-		channel: ch,
+		conn:      conn,
+		channel:   ch,
+		semaphore: patterns.NewSemaphore(runtime.NumCPU() * 4),
 	}, nil
 }
 
@@ -83,51 +86,33 @@ func (c *RabbitMQConsumer) Consume(ctx context.Context, queueName string, handle
 	if err := c.setupQueues(queueName); err != nil {
 		return err
 	}
-	autoAck := false
-	exclusiveConsume := true
-	nowait := false
+	autoAck := false          // false: Manual acknowledgment (ack after processing), true: Auto-ack on delivery
+	exclusiveConsume := false // false: Multiple consumers can share the queue (load balancing), true: Only this consumer can consume from the queue
+	noLocal := false          // false: Can receive messages published on the same connection, true: Prevents receiving messages published on the same connection
+	nowait := false           // false: Wait for server confirmation, true: Fire-and-forget (no response)
 
-	// Start consuming messages
 	msgs, err := c.channel.Consume(
-		queueName,        // queue
-		"",               // consumer tag
-		autoAck,          // auto-ack = false (manual ack)
-		exclusiveConsume, // exclusive
-		false,            // no-local
-		nowait,           // no-wait
-		nil,              // args
+		queueName,
+		"",
+		autoAck,
+		exclusiveConsume,
+		noLocal,
+		nowait,
+		nil,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to register consumer: %w", err)
 	}
 
 	log.Printf("Started %v consuming from queue: %s", runtime.NumCPU(), queueName)
-	for i := 0; i < runtime.NumCPU(); i++ {
-		go c.consumeLoop(ctx, msgs, handler)
+	for msg := range msgs {
+		c.semaphore.Submit(func() error {
+			c.handleMessageAndAck(ctx, msg, handler)
+			return nil
+		})
 	}
 
 	return nil
-}
-
-// consumeLoop handles the main message consumption loop
-func (c *RabbitMQConsumer) consumeLoop(ctx context.Context, msgs <-chan amqp.Delivery, handler MessageHandler) {
-	var wg sync.WaitGroup
-	sem := make(chan struct{}, 16)
-	for msg := range msgs {
-		sem <- struct{}{}
-		wg.Add(1)
-		go func(msg amqp.Delivery) {
-			defer wg.Done()
-			defer func() {
-				if r := recover(); r != nil {
-					fmt.Printf("Recovered from panic in message handler: %v\n", r)
-				}
-			}()
-			defer func() { <-sem }()
-			c.handleMessageAndAck(ctx, msg, handler)
-		}(msg)
-	}
-	wg.Wait()
 }
 
 // Close closes the RabbitMQ connection and channel
@@ -143,8 +128,4 @@ func (c *RabbitMQConsumer) Close() error {
 		}
 	}
 	return nil
-}
-
-func (c *RabbitMQConsumer) IsHealthy() bool {
-	return false
 }
