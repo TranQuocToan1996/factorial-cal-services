@@ -1,18 +1,203 @@
-basePath: /
+basePath: /api/v1
+definitions:
+  dto.APIResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.CalculateRequest:
+    properties:
+      number:
+        type: string
+    required:
+    - number
+    type: object
+  dto.CalculateResponseData:
+    properties:
+      message:
+        type: string
+      number:
+        type: string
+    type: object
+  dto.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  dto.MetadataResponseData:
+    properties:
+      checksum:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      number:
+        type: string
+      s3_key:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.ResultResponseData:
+    properties:
+      factorial_result:
+        type: string
+      number:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
     email: support@example.com
     name: API Support
-  description: A simple order service with outbox/inbox pattern for reliable message
-    processing
+  description: Async factorial calculation service with RabbitMQ, Redis, and S3
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Simple Order Service API
+  title: Factorial Calculation Service API
   version: "1.0"
 paths:
+  /factorial:
+    post:
+      consumes:
+      - application/json
+      description: Submit a number for factorial calculation (async processing)
+      parameters:
+      - description: Calculation Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CalculateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Calculation submitted successfully
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CalculateResponseData'
+              type: object
+        "400":
+          description: Invalid request - number missing or invalid format
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ErrorResponse'
+              type: object
+        "500":
+          description: Internal server error - database or queue failure
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ErrorResponse'
+              type: object
+      summary: Submit factorial calculation
+      tags:
+      - factorial
+  /factorial/{number}:
+    get:
+      description: Get the factorial calculation result for a number
+      parameters:
+      - description: Number
+        in: path
+        name: number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Calculation in progress
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CalculateResponseData'
+              type: object
+        "400":
+          description: Invalid number format
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ErrorResponse'
+              type: object
+        "500":
+          description: Internal server error - database or storage failure
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ErrorResponse'
+              type: object
+      summary: Get factorial result
+      tags:
+      - factorial
+  /factorial/metadata/{number}:
+    get:
+      description: Get the metadata of a factorial calculation (status, S3 key, checksum,
+        etc.)
+      parameters:
+      - description: Number
+        in: path
+        name: number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Calculation not found or in progress
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CalculateResponseData'
+              type: object
+        "400":
+          description: Invalid number format
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ErrorResponse'
+              type: object
+        "500":
+          description: Internal server error - database failure
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ErrorResponse'
+              type: object
+      summary: Get factorial calculation metadata
+      tags:
+      - factorial
   /health:
     get:
       description: Check if the service is running
@@ -26,27 +211,6 @@ paths:
               type: string
             type: object
       summary: Health check
-      tags:
-      - health
-  /ready:
-    get:
-      description: Check if the service is ready to accept requests (database connection)
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "503":
-          description: Service Unavailable
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Readiness check
       tags:
       - health
 schemes:
