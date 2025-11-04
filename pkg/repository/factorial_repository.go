@@ -3,7 +3,6 @@ package repository
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
 	"factorial-cal-services/pkg/domain"
 
@@ -21,8 +20,8 @@ type FactorialRepository interface {
 	FindByNumber(number int64) (*domain.FactorialCalculation, error)
 	UpdateStatus(number string, status string) error
 	UpdateS3Key(number string, s3Key string, status string) error
-	UpdateS3KeyWithChecksum(number string, s3Key string, checksum string, size int64, status string) error
-	UpdateWithCurrentNumber(number string, s3Key string, checksum string, size int64, status string, currentNumber string) error
+	UpdateS3KeyWithChecksum(number int64, s3Key string, checksum string, size int64, status string) error
+	UpdateWithCurrentNumber(number int64, s3Key string, checksum string, size int64, status string) error
 }
 
 // NewFactorialRepository creates a new factorial repository
@@ -87,7 +86,7 @@ func (r *factorialRepository) UpdateS3Key(number string, s3Key string, status st
 }
 
 // UpdateS3KeyWithChecksum updates the S3 key, checksum, size, and status of a factorial calculation
-func (r *factorialRepository) UpdateS3KeyWithChecksum(number string, s3Key string, checksum string, size int64, status string) error {
+func (r *factorialRepository) UpdateS3KeyWithChecksum(number int64, s3Key string, checksum string, size int64, status string) error {
 	result := r.db.Model(&domain.FactorialCalculation{}).
 		Where("number = ?", number).
 		Updates(map[string]any{
@@ -110,12 +109,11 @@ func (r *factorialRepository) UpdateS3KeyWithChecksum(number string, s3Key strin
 
 // UpdateWithCurrentNumber atomically updates factorial metadata and current calculated number
 func (r *factorialRepository) UpdateWithCurrentNumber(
-	number string,
+	number int64,
 	s3Key string,
 	checksum string,
 	size int64,
 	status string,
-	currentNumber string,
 ) error {
 	// Use transaction to ensure atomicity
 	return r.db.Transaction(func(tx *gorm.DB) error {
@@ -142,9 +140,8 @@ func (r *factorialRepository) UpdateWithCurrentNumber(
 		if err := tx.First(&existing).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				// Create new record
-				n, _ := strconv.ParseInt(currentNumber, 10, 64)
 				curCalc := &domain.FactorialCurrentCalculatedNumber{
-					CurNumber: n,
+					CurNumber: number + 1,
 				}
 				if err := tx.Create(curCalc).Error; err != nil {
 					return fmt.Errorf("failed to create current number: %w", err)
@@ -154,7 +151,7 @@ func (r *factorialRepository) UpdateWithCurrentNumber(
 			}
 		} else {
 			// Update existing record
-			if err := tx.Model(&existing).Update("cur_number", currentNumber).Error; err != nil {
+			if err := tx.Model(&existing).Update("cur_number", number+1).Error; err != nil {
 				return fmt.Errorf("failed to update current number: %w", err)
 			}
 		}

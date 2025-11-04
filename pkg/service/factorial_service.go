@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"math/big"
 	"strconv"
-	"sync"
+	"time"
 
 	"factorial-cal-services/pkg/domain"
 	"factorial-cal-services/pkg/repository"
@@ -17,12 +18,10 @@ import (
 // FactorialService handles factorial calculations
 type FactorialService interface {
 	ValidateNumber(number string) (int64, error)
+	StartContinuelyCalculateFactorial()
 }
 
 type factorialService struct {
-	start bool
-	lock  sync.Mutex
-
 	maxFactorial                int64
 	repository                  repository.FactorialRepository
 	currentCalculatedRepository repository.CurrentCalculatedRepository
@@ -40,22 +39,11 @@ func NewFactorialService(
 	s3Service S3Service,
 ) FactorialService {
 	return &factorialService{
-		maxFactorial:                10000, // Default, should be overridden via NewFactorialServiceWithLimit
 		repository:                  repository,
 		currentCalculatedRepository: currentCalculatedRepository,
 		maxRequestRepository:        maxRequestRepository,
 		redisService:                redisService,
 		s3Service:                   s3Service,
-	}
-}
-
-// NewFactorialServiceWithLimit creates a new factorial service with custom max limit
-func NewFactorialServiceWithLimit(maxFactorial int64) FactorialService {
-	if maxFactorial <= 0 {
-		maxFactorial = 10000 // Default
-	}
-	return &factorialService{
-		maxFactorial: maxFactorial,
 	}
 }
 
@@ -79,62 +67,72 @@ func (s *factorialService) ValidateNumber(number string) (int64, error) {
 	return n, nil
 }
 
-func (s *factorialService) backgroundContinuelyCalculateFactorial(privFactorial *big.Int) error {
-	max, err := s.maxRequestRepository.GetMaxNumber()
-	if err != nil {
-		return fmt.Errorf("failed to get max number: %w", err)
-	}
-	// get current
-	current, err := s.currentCalculatedRepository.GetCurrentNumber()
-	if err != nil {
-		return fmt.Errorf("failed to get current number: %w", err)
-	}
+func (s *factorialService) StartContinuelyCalculateFactorial() {
+	go func() {
+		for {
+			time.Sleep(1 * time.Second)
+			current, err := s.currentCalculatedRepository.GetCurrentNumber()
+			if err != nil {
+				log.Printf("failed to get current number: %v", err)
+				continue
+			}
+			max, err := s.maxRequestRepository.GetMaxNumber()
+			if err != nil {
+				log.Printf("failed to get max number: %v", err)
+				continue
+			}
+			if current > max {
+				continue
+			}
+			err = s.continuelyCalculateFactorial(current, max, nil)
+			if err != nil {
+				log.Printf("failed to calculate factorial: %v", err)
+			}
+		}
+	}()
+}
 
-	if current > max {
-		return nil
-	}
+func (s *factorialService) continuelyCalculateFactorial(current, max int64, factorialBigInt *big.Int) error {
+	for ; current <= max; current++ {
+		// check status process
+		factorial, err := s.repository.FindByNumber(current)
+		if factorial != nil && factorial.Status == domain.StatusDone {
+			return nil
+		}
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err := s.repository.Create(&domain.FactorialCalculation{
+				Number: current,
+				Status: domain.StatusCalculating,
+			})
+			if err != nil {
+				return fmt.Errorf("failed to create factorial record: %w", err)
+			}
+		}
 
-	factorial, err := s.repository.FindByNumber(current)
-	if factorial != nil && factorial.Status == domain.StatusDone {
-		return nil
-	}
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		err := s.repository.Create(&domain.FactorialCalculation{
-			Number: current,
-			Status: domain.StatusCalculating,
-		})
+		if factorialBigInt == nil {
+			factorialBigInt, err = s.getPreviousFactorial(current - 1)
+			if err != nil {
+				return fmt.Errorf("failed to get previous factorial: %w", err)
+			}
+		}
+
+		// Calculate and save
+		factorialBigInt = new(big.Int).Mul(factorialBigInt, big.NewInt(current))
+		s3Key, err := s.s3Service.UploadFactorial(context.Background(), current, factorialBigInt.String())
 		if err != nil {
-			return fmt.Errorf("failed to create factorial record: %w", err)
+			return fmt.Errorf("failed to upload factorial to S3: %w", err)
+		}
+
+		err = s.repository.UpdateWithCurrentNumber(current, s3Key, factorialBigInt.String(), int64(factorialBigInt.BitLen()), domain.StatusDone)
+		if err != nil {
+			return fmt.Errorf("failed to update factorial record: %w", err)
 		}
 	}
-
-	// TODO;
-	// if privFactorial == nil {
-	// 	privFactorial, err = s.getPreviousFactorial(current)
-	// 	if err != nil {
-	// 		return fmt.Errorf("failed to get previous factorial: %w", err)
-	// 	}
-	// }
-
-	// for i := current; i <= max; i++ {
-	// 	nextFactorial := new(big.Int).Mul(privFactorial, big.NewInt(i))
-	// }
-
-	// Save status calculating
-	// calculate current factorial
-	// save to S3
-	// Update state calculated and next number
-
 	return nil
 }
 
-func (s *factorialService) previousFactorialKey(number string) string {
-	n, _ := strconv.ParseInt(number, 10, 64)
-	return fmt.Sprintf("%d.txt", n-1)
-}
-
-func (s *factorialService) getPreviousFactorial(number string) (*big.Int, error) {
-	key := s.previousFactorialKey(number)
+func (s *factorialService) getPreviousFactorial(number int64) (*big.Int, error) {
+	key := s.s3Service.GenerateS3Key(number - 1)
 	result, err := s.s3Service.DownloadFactorial(context.Background(), key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to download factorial from S3: %w", err)

@@ -82,14 +82,19 @@ func main() {
 	}
 	defer mqProducer.Close()
 
-	// Initialize services
-	factorialService := service.NewFactorialServiceWithLimit(int64(cfg.MAX_FACTORIAL))
 	redisService := service.NewRedisService(redisClient, 24*time.Hour, int64(cfg.REDIS_THRESHOLD))
 	s3Service := service.NewS3Service(ctx, cfg)
 
 	// Initialize repository
 	factorialRepo := repository.NewFactorialRepository(database)
-
+	// Initialize services
+	factorialService := service.NewFactorialService(
+		repository.NewFactorialRepository(database),
+		repository.NewCurrentCalculatedRepository(database),
+		repository.NewMaxRequestRepository(database),
+		redisService,
+		s3Service,
+	)
 	// Initialize handler
 	factorialHandler := handler.NewFactorialHandler(
 		factorialService,

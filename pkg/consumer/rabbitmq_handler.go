@@ -75,7 +75,7 @@ func (h *FactorialMessageHandler) HandleRequestCalculateFactorial(ctx context.Co
 	// Check if already calculated
 	rowAffected, err := h.maxRequestRepo.SetMaxNumberIfGreater(message.Number)
 	if rowAffected == 0 || err != nil {
-		return fmt.Errorf("max number %s is not greater than the current max number: %v - %v", message.Number, rowAffected, err)
+		return fmt.Errorf("max number %v is not greater than the current max number: %v - %v", message.Number, rowAffected, err)
 	}
 
 	return nil

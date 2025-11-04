@@ -20,11 +20,11 @@ const (
 
 // S3Service handles S3 storage operations
 type S3Service interface {
-	UploadFactorial(ctx context.Context, number string, result string) (string, error)
+	UploadFactorial(ctx context.Context, number int64, result string) (string, error)
 	DownloadFactorial(ctx context.Context, s3Key string) (string, error)
-	GenerateS3Key(number string) string
+	GenerateS3Key(number int64) string
 	// StorageService interface methods
-	Upload(ctx context.Context, number string, result string) (string, error)
+	Upload(ctx context.Context, number int64, result string) (string, error)
 	Download(ctx context.Context, key string) (string, error)
 }
 
@@ -49,12 +49,12 @@ func NewS3Service(ctx context.Context, cfg *config.Config) S3Service {
 }
 
 // GenerateS3Key generates an S3 key for a given number
-func (s *s3Service) GenerateS3Key(number string) string {
-	return fmt.Sprintf("%s%s.txt", S3KeyPrefix, number)
+func (s *s3Service) GenerateS3Key(number int64) string {
+	return fmt.Sprintf("%v.txt", number)
 }
 
 // UploadFactorial uploads a factorial result to S3
-func (s *s3Service) UploadFactorial(ctx context.Context, number string, result string) (string, error) {
+func (s *s3Service) UploadFactorial(ctx context.Context, number int64, result string) (string, error) {
 	key := s.GenerateS3Key(number)
 
 	// Convert result to byte buffer
@@ -96,7 +96,7 @@ func (s *s3Service) DownloadFactorial(ctx context.Context, s3Key string) (string
 }
 
 // Upload implements StorageService interface (alias for UploadFactorial)
-func (s *s3Service) Upload(ctx context.Context, number string, result string) (string, error) {
+func (s *s3Service) Upload(ctx context.Context, number int64, result string) (string, error) {
 	return s.UploadFactorial(ctx, number, result)
 }
 
