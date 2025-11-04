@@ -7,28 +7,28 @@ import (
 )
 
 func LoadConfig() *Config {
-	maxFactorial, _ := strconv.Atoi(getEnvOrDefault("MAX_FACTORIAL", "10000"))
-	redisThreshold, _ := strconv.Atoi(getEnvOrDefault("REDIS_THRESHOLD", "1000"))
+	maxFactorial, _ := strconv.Atoi(getEnvOrDefault("MAX_FACTORIAL", "100"))
+	redisThreshold, _ := strconv.Atoi(getEnvOrDefault("REDIS_THRESHOLD", "50"))
 	workerBatchSize, _ := strconv.Atoi(getEnvOrDefault("WORKER_BATCH_SIZE", "100"))
-	workerMaxBatches, _ := strconv.Atoi(getEnvOrDefault("WORKER_MAX_BATCHES", "16"))
+	workerMaxBatches, _ := strconv.Atoi(getEnvOrDefault("WORKER_MAX_BATCHES", "1"))
 
 	return &Config{
 		SERVER_PORT:                       getEnvOrDefault("SERVER_PORT", ":8080"),
 		DB_USER:                           getEnvOrDefault("DB_USER", "postgres"),
 		DB_PASSWORD:                       getEnvOrDefault("DB_PASSWORD", "password"),
-		DB_HOST:                           getEnvOrDefault("DB_HOST", "postgres"),
+		DB_HOST:                           getEnvOrDefault("DB_HOST", "localhost"),
 		DB_PORT:                           getEnvOrDefault("DB_PORT", "5432"),
 		DB_NAME:                           getEnvOrDefault("DB_NAME", "factorial-cal-services"),
 		DB_SSLMODE:                        getEnvOrDefault("DB_SSLMODE", "disable"),
 		DB_TYPE:                           getEnvOrDefault("DB_TYPE", "postgres"),
 		RABBITMQ_USER:                     getEnvOrDefault("RABBITMQ_USER", "guest"),
 		RABBITMQ_PASSWORD:                 getEnvOrDefault("RABBITMQ_PASSWORD", "guest"),
-		RABBITMQ_HOST:                     getEnvOrDefault("RABBITMQ_HOST", "rabbitmq"),
+		RABBITMQ_HOST:                     getEnvOrDefault("RABBITMQ_HOST", "localhost"),
 		RABBITMQ_PORT:                     getEnvOrDefault("RABBITMQ_PORT", "5672"),
 		FACTORIAL_CAL_SERVICES_QUEUE_NAME: getEnvOrDefault("FACTORIAL_CAL_SERVICES_QUEUE_NAME", "factorial-cal-queue"),
 		SWAGGER_HOST:                      getEnvOrDefault("SWAGGER_HOST", "localhost:8080"),
 		RABBITMQ_CA:                       getEnvOrDefault("RABBITMQ_CA", ""),
-		REDIS_HOST:                        getEnvOrDefault("REDIS_HOST", "redis"),
+		REDIS_HOST:                        getEnvOrDefault("REDIS_HOST", "localhost"),
 		REDIS_PORT:                        getEnvOrDefault("REDIS_PORT", "6379"),
 		REDIS_PASSWORD:                    getEnvOrDefault("REDIS_PASSWORD", ""),
 		AWS_REGION:                        getEnvOrDefault("AWS_REGION", "us-east-1"),
@@ -72,7 +72,8 @@ type Config struct {
 }
 
 func (c *Config) DSN() string {
-	return fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=%s",
+	// postgres://postgres:secret@localhost:5432/mydb?sslmode=disable
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		c.DB_USER, c.DB_PASSWORD, c.DB_HOST, c.DB_PORT, c.DB_NAME, c.DB_SSLMODE)
 }
 

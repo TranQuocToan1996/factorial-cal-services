@@ -48,13 +48,14 @@ func main() {
 		log.Fatalf("Configuration validation failed: %v", err)
 	}
 
+	dsn := cfg.DSN()
 	// Run migrations
-	if err := migrations.RunMigrations(cfg.DSN()); err != nil {
+	if err := migrations.RunMigrations(dsn); err != nil {
 		log.Printf("Migration failed: %v", err)
 	}
 
 	// Initialize database
-	database, err := db.NewGormDB(cfg.DSN())
+	database, err := db.NewGormDB(dsn)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -69,7 +70,7 @@ func main() {
 	// Test Redis connection
 	ctx := context.Background()
 	if err := redisClient.Ping(ctx).Err(); err != nil {
-		log.Printf("Warning: Redis connection failed: %v", err)
+		log.Fatalf("Warning: Redis connection failed: %v", err)
 	} else {
 		log.Println("Connected to Redis successfully")
 	}

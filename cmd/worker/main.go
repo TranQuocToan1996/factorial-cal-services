@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
@@ -67,7 +68,7 @@ func main() {
 	incrementalService := service.NewIncrementalFactorialService(factorialService, currentCalculatedRepo)
 
 	// Create batch handler
-	batchHandler := consumer.NewFactorialBatchHandler(
+	batchHandler := consumer.NewFactorialMessageHandler(
 		factorialService,
 		redisService,
 		s3Service,
@@ -86,29 +87,56 @@ func main() {
 		batchSize = 100 // Default
 	}
 
-	log.Printf("Starting %d batch consumers with batch size %d", maxBatches, batchSize)
+	// Create cancellable context for graceful shutdown
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	// Start multiple batch consumers concurrently
-	for i := 0; i < maxBatches; i++ {
-		go func(batchID int) {
-			if err := mqConsumer.ConsumeBatch(ctx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, batchSize, batchHandler); err != nil {
-				log.Fatalf("Failed to start batch consumer %d: %v", batchID, err)
-			}
-			log.Printf("Batch consumer %d started", batchID)
-		}(i)
+	// Setup signal handling
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	// Worker pool with WaitGroup
+	var wg sync.WaitGroup
+	workerCount := maxBatches
+	if workerCount <= 0 {
+		workerCount = 1
 	}
+
+	log.Printf("Starting %d batch consumers with batch size %d", workerCount, batchSize)
+
+	// Start consumer in a goroutine
+	var consumeErr error
+	wg.Go(func() {
+		consumeErr = mqConsumer.Consume(ctx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, batchHandler)
+		if consumeErr != nil && ctx.Err() == nil {
+			log.Printf("Consumer error: %v", consumeErr)
+		}
+	})
 
 	log.Println("Worker started, waiting for messages...")
 
-	// Wait for interrupt signal for graceful shutdown
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	// Wait for interrupt signal
 	<-quit
+	log.Println("Received shutdown signal, starting graceful shutdown...")
 
-	log.Println("Shutting down worker...")
+	// Cancel context to signal all workers to stop
+	cancel()
 
-	// Give time for current message processing to complete
-	time.Sleep(2 * time.Second)
+	// Wait for workers to finish with timeout
+	done := make(chan struct{})
+	go func() {
+		wg.Wait()
+		close(done)
+	}()
+
+	// Wait for graceful shutdown or timeout
+	shutdownTimeout := 30 * time.Second
+	select {
+	case <-done:
+		log.Println("All workers finished gracefully")
+	case <-time.After(shutdownTimeout):
+		log.Printf("Shutdown timeout (%v) exceeded, forcing exit", shutdownTimeout)
+	}
 
 	log.Println("Worker stopped")
 }

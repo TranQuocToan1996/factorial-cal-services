@@ -72,7 +72,7 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - FACTORIAL_CAL_SERVICES_QUEUE_NAME=factorial-cal-queue
-      - SWAGGER_HOST=localhost:8080
+      - SWAGGER_HOST=api:8080
       - RABBITMQ_CA=
       - REDIS_HOST=redis
       - REDIS_PORT=6379
