@@ -7,7 +7,7 @@ type APIResponse struct {
 	Code    int         `json:"code"`
 	Status  string      `json:"status"`
 	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
+	Data    any `json:"data"`
 }
 
 // CalculateRequest represents the request to calculate a factorial

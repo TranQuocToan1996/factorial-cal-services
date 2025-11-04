@@ -17,7 +17,7 @@ type maxRequestRepository struct {
 type MaxRequestRepository interface {
 	GetMaxNumber() (string, error)
 	UpdateMaxNumber(maxNumber string) error
-	SetMaxNumberIfGreater(maxNumber string) error
+	SetMaxNumberIfGreater(maxNumber string) (int64, error)
 }
 
 // NewMaxRequestRepository creates a new max request repository
@@ -65,19 +65,13 @@ func (r *maxRequestRepository) UpdateMaxNumber(maxNumber string) error {
 }
 
 // SetMaxNumberIfGreater updates the max number only if the new value is greater
-func (r *maxRequestRepository) SetMaxNumberIfGreater(maxNumber string) error {
-	currentMax, err := r.GetMaxNumber()
-	if err != nil {
-		return err
+func (r *maxRequestRepository) SetMaxNumberIfGreater(maxNumber string) (int64, error) {
+	query := r.db.Model(&domain.FactorialMaxRequestNumber{}).
+		Where("max_number < ?", maxNumber).
+		Update("max_number", maxNumber)
+	rowAffected, err := query.RowsAffected, query.Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return rowAffected, nil
 	}
-
-	// Compare as strings (numbers as strings)
-	// Simple comparison: if new number is longer, it's greater
-	// If same length, compare lexicographically
-	if len(maxNumber) > len(currentMax) ||
-		(len(maxNumber) == len(currentMax) && maxNumber > currentMax) {
-		return r.UpdateMaxNumber(maxNumber)
-	}
-
-	return nil
+	return rowAffected, err
 }

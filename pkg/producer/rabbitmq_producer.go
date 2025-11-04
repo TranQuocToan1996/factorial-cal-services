@@ -100,8 +100,3 @@ func (p *RabbitMQProducer) Close() error {
 	}
 	return nil
 }
-
-// IsHealthy checks if the RabbitMQ connection is alive
-func (p *RabbitMQProducer) IsHealthy() bool {
-	return p.conn != nil && !p.conn.IsClosed() && p.channel != nil
-}

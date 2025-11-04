@@ -9,6 +9,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"sync"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -100,7 +101,7 @@ func (c *RabbitMQConsumer) Consume(ctx context.Context, queueName string, handle
 		return fmt.Errorf("failed to register consumer: %w", err)
 	}
 
-	log.Printf("Started consuming from queue: %s", queueName)
+	log.Printf("Started %v consuming from queue: %s", runtime.NumCPU(), queueName)
 	for i := 0; i < runtime.NumCPU(); i++ {
 		go c.consumeLoop(ctx, msgs, handler)
 	}
@@ -110,19 +111,23 @@ func (c *RabbitMQConsumer) Consume(ctx context.Context, queueName string, handle
 
 // consumeLoop handles the main message consumption loop
 func (c *RabbitMQConsumer) consumeLoop(ctx context.Context, msgs <-chan amqp.Delivery, handler MessageHandler) {
-	for {
-		select {
-		case <-ctx.Done():
-			log.Println("Consumer context cancelled, stopping...")
-			return
-		case msg, ok := <-msgs:
-			if !ok {
-				log.Println("Message channel closed")
-				return
-			}
+	var wg sync.WaitGroup
+	sem := make(chan struct{}, 16)
+	for msg := range msgs {
+		sem <- struct{}{}
+		wg.Add(1)
+		go func(msg amqp.Delivery) {
+			defer wg.Done()
+			defer func() {
+				if r := recover(); r != nil {
+					fmt.Printf("Recovered from panic in message handler: %v\n", r)
+				}
+			}()
+			defer func() { <-sem }()
 			c.handleMessageAndAck(ctx, msg, handler)
-		}
+		}(msg)
 	}
+	wg.Wait()
 }
 
 // Close closes the RabbitMQ connection and channel
@@ -140,7 +145,6 @@ func (c *RabbitMQConsumer) Close() error {
 	return nil
 }
 
-// IsHealthy checks if the RabbitMQ connection is alive
 func (c *RabbitMQConsumer) IsHealthy() bool {
-	return c.conn != nil && !c.conn.IsClosed() && c.channel != nil
+	return false
 }

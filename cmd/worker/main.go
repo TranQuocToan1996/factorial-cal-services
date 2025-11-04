@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 
@@ -65,17 +64,14 @@ func main() {
 	}
 	defer mqConsumer.Close()
 
-	incrementalService := service.NewIncrementalFactorialService(factorialService, currentCalculatedRepo)
-
 	// Create batch handler
-	batchHandler := consumer.NewFactorialMessageHandler(
+	factorialMessageHandler := consumer.NewFactorialMessageHandler(
 		factorialService,
 		redisService,
 		s3Service,
 		factorialRepo,
 		maxRequestRepo,
 		currentCalculatedRepo,
-		incrementalService,
 	)
 
 	batchSize := cfg.WORKER_BATCH_SIZE
@@ -87,16 +83,11 @@ func main() {
 		batchSize = 100 // Default
 	}
 
-	// Create cancellable context for graceful shutdown
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
 	// Setup signal handling
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	// Worker pool with WaitGroup
-	var wg sync.WaitGroup
 	workerCount := maxBatches
 	if workerCount <= 0 {
 		workerCount = 1
@@ -105,13 +96,10 @@ func main() {
 	log.Printf("Starting %d batch consumers with batch size %d", workerCount, batchSize)
 
 	// Start consumer in a goroutine
-	var consumeErr error
-	wg.Go(func() {
-		consumeErr = mqConsumer.Consume(ctx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, batchHandler)
-		if consumeErr != nil && ctx.Err() == nil {
-			log.Printf("Consumer error: %v", consumeErr)
-		}
-	})
+	err = mqConsumer.Consume(ctx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, factorialMessageHandler)
+	if err != nil && ctx.Err() == nil {
+		log.Fatalf("Consumer error: %v", err)
+	}
 
 	log.Println("Worker started, waiting for messages...")
 
@@ -119,24 +107,8 @@ func main() {
 	<-quit
 	log.Println("Received shutdown signal, starting graceful shutdown...")
 
-	// Cancel context to signal all workers to stop
-	cancel()
-
-	// Wait for workers to finish with timeout
-	done := make(chan struct{})
-	go func() {
-		wg.Wait()
-		close(done)
-	}()
-
 	// Wait for graceful shutdown or timeout
-	shutdownTimeout := 30 * time.Second
-	select {
-	case <-done:
-		log.Println("All workers finished gracefully")
-	case <-time.After(shutdownTimeout):
-		log.Printf("Shutdown timeout (%v) exceeded, forcing exit", shutdownTimeout)
-	}
+	<-time.After(5 * time.Second)
 
 	log.Println("Worker stopped")
 }

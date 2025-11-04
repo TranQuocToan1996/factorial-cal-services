@@ -64,7 +64,7 @@ func (s *factorialService) CalculateFactorial(number string) (string, error) {
 
 	// Calculate factorial using big.Int
 	result := big.NewInt(1)
-	
+
 	for i := int64(2); i <= n; i++ {
 		result.Mul(result, big.NewInt(i))
 	}
@@ -72,4 +72,3 @@ func (s *factorialService) CalculateFactorial(number string) (string, error) {
 	// Return result as string
 	return result.String(), nil
 }
-
