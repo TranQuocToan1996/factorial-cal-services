@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS factorial_calculations (
     id BIGSERIAL PRIMARY KEY,
-    number VARCHAR(100) NOT NULL UNIQUE,
+    number BIGINT NOT NULL UNIQUE,
     status VARCHAR(20) NOT NULL,
     s3_key VARCHAR(512) NOT NULL,
     checksum VARCHAR(64),

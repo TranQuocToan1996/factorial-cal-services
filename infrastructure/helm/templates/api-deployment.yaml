@@ -74,6 +74,18 @@ spec:
           value: {{ .Values.config.maxFactorial | quote }}
         - name: REDIS_THRESHOLD
           value: {{ .Values.config.redisThreshold | quote }}
+        - name: WORKER_BATCH_SIZE
+          value: {{ .Values.config.workerBatchSize | quote }}
+        - name: WORKER_MAX_BATCHES
+          value: {{ .Values.config.workerMaxBatches | quote }}
+        - name: STORAGE_TYPE
+          value: {{ .Values.config.storageType }}
+        - name: QUEUE_TYPE
+          value: {{ .Values.config.queueType }}
+        - name: SWAGGER_HOST
+          value: {{ include "factorial-service.fullname" . }}-api:{{ .Values.api.service.port }}
+        - name: RABBITMQ_CA
+          value: ""
         resources:
           {{- toYaml .Values.api.resources | nindent 10 }}
         livenessProbe:

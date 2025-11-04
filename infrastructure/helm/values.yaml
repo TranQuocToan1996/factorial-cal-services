@@ -35,16 +35,39 @@ worker:
     maxReplicas: 10
     targetCPUUtilizationPercentage: 70
 
+calculator:
+  replicaCount: 1
+  image:
+    repository: factorial-calculator
+    tag: latest
+    pullPolicy: Always
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 70
+
 config:
   serverPort: ":8080"
   maxFactorial: 20000
   redisThreshold: 10000
-  queueName: "factorial_queue"
+  queueName: "factorial-cal-queue"
+  workerBatchSize: 100
+  workerMaxBatches: 16
+  storageType: "s3"
+  queueType: "rabbitmq"
 
 database:
   host: "postgres-service"
   port: "5432"
-  name: "factorial_db"
+  name: "factorial-cal-services"
   user: "postgres"
   sslmode: "disable"
 
@@ -60,8 +83,10 @@ redis:
 
 aws:
   region: "us-east-1"
-  s3Bucket: "factorial-results"
+  s3Bucket: "factorial-cal-services"
   stepFunctionsArn: ""
+  # AWS credentials should be provided via IAM role (IRSA) or AWS credentials file
+  # Set via serviceAccount.annotations for EKS IRSA
 
 serviceAccount:
   create: true

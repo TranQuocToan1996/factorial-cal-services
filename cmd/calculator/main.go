@@ -33,7 +33,7 @@ func main() {
 	// Test Redis connection
 	ctx := context.Background()
 	if err := redisClient.Ping(ctx).Err(); err != nil {
-		log.Printf("Warning: Redis connection failed: %v", err)
+		log.Fatalf("Warning: Redis connection failed: %v", err)
 	} else {
 		log.Println("Connected to Redis successfully")
 	}
@@ -68,5 +68,5 @@ func main() {
 	// Wait for graceful shutdown or timeout
 	<-time.After(5 * time.Second)
 
-	log.Println("Worker stopped")
+	log.Println("Calculator stopped")
 }

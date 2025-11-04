@@ -67,6 +67,7 @@ func (s *factorialService) ValidateNumber(number string) (int64, error) {
 	return n, nil
 }
 
+// TODO: Add ctx, graceful shutdown
 func (s *factorialService) StartContinuelyCalculateFactorial() {
 	go func() {
 		for {

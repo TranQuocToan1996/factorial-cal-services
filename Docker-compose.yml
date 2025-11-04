@@ -140,7 +140,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: calculate
+      target: calculator
     container_name: factorial-cal-services-calculate
     depends_on:
       postgres:

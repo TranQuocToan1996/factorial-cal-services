@@ -19,8 +19,8 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o api ./cmd/api
 # Build Worker binary
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o worker ./cmd/worker
 
-# Build Calculate binary
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o calculate ./cmd/calculate
+# Build Calculator binary
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o calculator ./cmd/calculator
 
 # API Image
 FROM alpine:3.18 AS api
@@ -38,9 +38,9 @@ RUN apk add --no-cache ca-certificates
 COPY --from=builder /app/worker /app/worker
 ENTRYPOINT ["/app/worker"]
 
-# Calculate Image
-FROM alpine:3.18 AS calculate
+# Calculator Image
+FROM alpine:3.18 AS calculator
 WORKDIR /app
 RUN apk add --no-cache ca-certificates
-COPY --from=builder /app/calculate /app/calculate
-ENTRYPOINT ["/app/calculate"]
+COPY --from=builder /app/calculator /app/calculator
+ENTRYPOINT ["/app/calculator"]
