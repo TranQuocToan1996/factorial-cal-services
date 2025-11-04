@@ -94,6 +94,7 @@ func main() {
 			if err := mqConsumer.ConsumeBatch(ctx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, batchSize, batchHandler); err != nil {
 				log.Fatalf("Failed to start batch consumer %d: %v", batchID, err)
 			}
+			log.Printf("Batch consumer %d started", batchID)
 		}(i)
 	}
 

@@ -83,11 +83,49 @@ services:
       - WORKER_MAX_BATCHES=16
       - AWS_REGION=us-east-1
       - S3_BUCKET_NAME=factorial-cal-services
-      - STEP_FUNCTIONS_ARN=
       - STORAGE_TYPE=s3
       - QUEUE_TYPE=rabbitmq
     ports:
       - "8080:8080"
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: worker
+    container_name: factorial-cal-services-worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=factorial-cal-services
+      - DB_SSLMODE=disable
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - FACTORIAL_CAL_SERVICES_QUEUE_NAME=factorial-cal-queue
+      - RABBITMQ_CA=
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - MAX_FACTORIAL=10000
+      - REDIS_THRESHOLD=1000
+      - WORKER_BATCH_SIZE=100
+      - WORKER_MAX_BATCHES=16
+      - AWS_REGION=us-east-1
+      - S3_BUCKET_NAME=factorial-cal-services
+      - STORAGE_TYPE=s3
+      - QUEUE_TYPE=rabbitmq
     restart: unless-stopped
 
 volumes:

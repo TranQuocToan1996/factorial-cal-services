@@ -33,7 +33,6 @@ func LoadConfig() *Config {
 		REDIS_PASSWORD:                    os.Getenv("REDIS_PASSWORD"),
 		AWS_REGION:                        os.Getenv("AWS_REGION"),
 		S3_BUCKET_NAME:                    os.Getenv("S3_BUCKET_NAME"),
-		STEP_FUNCTIONS_ARN:                os.Getenv("STEP_FUNCTIONS_ARN"),
 		STORAGE_TYPE:                      getEnvOrDefault("STORAGE_TYPE", "local"),
 		QUEUE_TYPE:                        getEnvOrDefault("QUEUE_TYPE", "rabbitmq"),
 		MAX_FACTORIAL:                     maxFactorial,
@@ -64,7 +63,6 @@ type Config struct {
 	REDIS_PASSWORD                    string `mapstructure:"REDIS_PASSWORD"`
 	AWS_REGION                        string `mapstructure:"AWS_REGION"`
 	S3_BUCKET_NAME                    string `mapstructure:"S3_BUCKET_NAME"`
-	STEP_FUNCTIONS_ARN                string `mapstructure:"STEP_FUNCTIONS_ARN"`
 	STORAGE_TYPE                      string `mapstructure:"STORAGE_TYPE"`
 	QUEUE_TYPE                        string `mapstructure:"QUEUE_TYPE"`
 	MAX_FACTORIAL                     int    `mapstructure:"MAX_FACTORIAL"`

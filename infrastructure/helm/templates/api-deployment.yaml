@@ -70,8 +70,6 @@ spec:
           value: {{ .Values.aws.region }}
         - name: S3_BUCKET_NAME
           value: {{ .Values.aws.s3Bucket }}
-        - name: STEP_FUNCTIONS_ARN
-          value: {{ .Values.aws.stepFunctionsArn }}
         - name: MAX_FACTORIAL
           value: {{ .Values.config.maxFactorial | quote }}
         - name: REDIS_THRESHOLD
