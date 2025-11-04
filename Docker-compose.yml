@@ -81,10 +81,10 @@ services:
       - REDIS_THRESHOLD=1000
       - WORKER_BATCH_SIZE=100
       - WORKER_MAX_BATCHES=16
-      - AWS_REGION=
-      - S3_BUCKET_NAME=
+      - AWS_REGION=us-east-1
+      - S3_BUCKET_NAME=factorial-cal-services
       - STEP_FUNCTIONS_ARN=
-      - STORAGE_TYPE=local
+      - STORAGE_TYPE=s3
       - QUEUE_TYPE=rabbitmq
     ports:
       - "8080:8080"
