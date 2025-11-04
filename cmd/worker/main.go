@@ -97,7 +97,7 @@ func main() {
 
 	// Start consumer in a goroutine
 	err = mqConsumer.Consume(ctx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, factorialMessageHandler)
-	if err != nil && ctx.Err() == nil {
+	if err != nil {
 		log.Fatalf("Consumer error: %v", err)
 	}
 

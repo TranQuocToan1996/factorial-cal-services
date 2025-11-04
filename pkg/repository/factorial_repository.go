@@ -18,7 +18,7 @@ type factorialRepository struct {
 // FactorialRepository defines the interface for factorial data operations
 type FactorialRepository interface {
 	Create(calc *domain.FactorialCalculation) error
-	FindByNumber(number string) (*domain.FactorialCalculation, error)
+	FindByNumber(number int64) (*domain.FactorialCalculation, error)
 	UpdateStatus(number string, status string) error
 	UpdateS3Key(number string, s3Key string, status string) error
 	UpdateS3KeyWithChecksum(number string, s3Key string, checksum string, size int64, status string) error
@@ -38,7 +38,7 @@ func (r *factorialRepository) Create(calc *domain.FactorialCalculation) error {
 }
 
 // FindByNumber retrieves a factorial calculation by number
-func (r *factorialRepository) FindByNumber(number string) (*domain.FactorialCalculation, error) {
+func (r *factorialRepository) FindByNumber(number int64) (*domain.FactorialCalculation, error) {
 	var calc domain.FactorialCalculation
 	result := r.db.Where("number = ?", number).First(&calc)
 

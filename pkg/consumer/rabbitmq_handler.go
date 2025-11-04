@@ -2,10 +2,10 @@ package consumer
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 
+	"factorial-cal-services/pkg/dto"
 	"factorial-cal-services/pkg/repository"
 	"factorial-cal-services/pkg/service"
 
@@ -64,11 +64,9 @@ func NewFactorialMessageHandler(
 }
 
 func (h *FactorialMessageHandler) HandleRequestCalculateFactorial(ctx context.Context, body []byte) error {
-	var message struct {
-		Number string `json:"number"`
-	}
+	var message dto.FactorialMessage
 
-	if err := json.Unmarshal(body, &message); err != nil {
+	if err := message.Unmarshal(body); err != nil {
 		return fmt.Errorf("failed to parse message: %w", err)
 	}
 

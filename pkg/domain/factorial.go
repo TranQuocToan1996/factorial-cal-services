@@ -15,7 +15,7 @@ const (
 // FactorialCalculation represents a factorial calculation record
 type FactorialCalculation struct {
 	ID        int64     `gorm:"primaryKey;autoIncrement" json:"id"`
-	Number    string    `gorm:"type:varchar(100);not null;uniqueIndex" json:"number"`
+	Number    int64     `gorm:"type:bigint;not null;uniqueIndex" json:"number"`
 	Status    string    `gorm:"type:varchar(20);not null;index" json:"status"`
 	S3Key     string    `gorm:"type:varchar(512);not null" json:"s3_key"`
 	Checksum  string    `gorm:"type:varchar(64)" json:"checksum,omitempty"`

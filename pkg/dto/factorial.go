@@ -4,20 +4,20 @@ import "time"
 
 // APIResponse represents the standard API response wrapper
 type APIResponse struct {
-	Code    int         `json:"code"`
-	Status  string      `json:"status"`
-	Message string      `json:"message"`
-	Data    any `json:"data"`
+	Code    int    `json:"code"`
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Data    any    `json:"data"`
 }
 
 // CalculateRequest represents the request to calculate a factorial
 type CalculateRequest struct {
-	Number string `json:"number" binding:"required"`
+	Number int64 `json:"number" binding:"required"`
 }
 
 // CalculateResponseData represents the data payload for calculate response
 type CalculateResponseData struct {
-	Number  string `json:"number,omitempty"`
+	Number  int64  `json:"number,omitempty"`
 	Message string `json:"message,omitempty"`
 }
 
@@ -30,7 +30,7 @@ type ResultResponseData struct {
 // MetadataResponseData represents the data payload for metadata response
 type MetadataResponseData struct {
 	ID        string    `json:"id"`
-	Number    string    `json:"number"`
+	Number    int64     `json:"number"`
 	S3Key     string    `json:"s3_key,omitempty"`
 	Checksum  string    `json:"checksum,omitempty"`
 	Status    string    `json:"status"`

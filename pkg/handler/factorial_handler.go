@@ -67,14 +67,14 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 	}
 
 	// Validate number
-	_, err := h.factorialService.ValidateNumber(req.Number)
+	_, err := h.factorialService.ValidateNumber(fmt.Sprintf("%d", req.Number))
 	if err != nil {
 		sendErrorResponse(c, http.StatusBadRequest, "fail", err.Error())
 		return
 	}
 
-	messageBytes := fmt.Appendf(nil, "{\"number\": \"%s\"}", req.Number)
-	err = h.producer.Publish(c.Request.Context(), h.queueName, messageBytes)
+	msg := dto.FactorialMessage{Number: req.Number}
+	err = h.producer.Publish(c.Request.Context(), h.queueName, msg.Bytes())
 	if err != nil {
 		log.Printf("Error publishing message: %v", err)
 		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to submit calculation")
@@ -107,7 +107,7 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 	number := c.Param("number")
 
 	// Validate number format
-	_, err := h.factorialService.ValidateNumber(number)
+	numberInt, err := h.factorialService.ValidateNumber(number)
 	if err != nil {
 		sendErrorResponse(c, http.StatusBadRequest, "fail", err.Error())
 		return
@@ -129,7 +129,7 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 	}
 
 	// Not in cache or large number, check DB for S3 key
-	calc, err := h.factCalRepo.FindByNumber(number)
+	calc, err := h.factCalRepo.FindByNumber(numberInt)
 	if err != nil {
 		log.Printf("Error finding calculation: %v", err)
 		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to retrieve calculation")
@@ -184,14 +184,14 @@ func (h *FactorialHandler) GetMetadata(c *gin.Context) {
 	number := c.Param("number")
 
 	// Validate number format
-	_, err := h.factorialService.ValidateNumber(number)
+	numberInt, err := h.factorialService.ValidateNumber(number)
 	if err != nil {
 		sendErrorResponse(c, http.StatusBadRequest, "fail", err.Error())
 		return
 	}
 
 	// Query DB
-	calc, err := h.factCalRepo.FindByNumber(number)
+	calc, err := h.factCalRepo.FindByNumber(numberInt)
 	if err != nil {
 		log.Printf("Error finding calculation: %v", err)
 		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to retrieve metadata")

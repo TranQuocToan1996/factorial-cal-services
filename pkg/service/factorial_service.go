@@ -108,16 +108,17 @@ func (s *factorialService) backgroundContinuelyCalculateFactorial(privFactorial 
 		}
 	}
 
-	if privFactorial == nil {
-		privFactorial, err = s.getPreviousFactorial(current)
-		if err != nil {
-			return fmt.Errorf("failed to get previous factorial: %w", err)
-		}
-	}
+	// TODO;
+	// if privFactorial == nil {
+	// 	privFactorial, err = s.getPreviousFactorial(current)
+	// 	if err != nil {
+	// 		return fmt.Errorf("failed to get previous factorial: %w", err)
+	// 	}
+	// }
 
-	for i := current; i <= max; i++ {
-		nextFactorial := new(big.Int).Mul(privFactorial, big.NewInt(i))
-	}
+	// for i := current; i <= max; i++ {
+	// 	nextFactorial := new(big.Int).Mul(privFactorial, big.NewInt(i))
+	// }
 
 	// Save status calculating
 	// calculate current factorial
