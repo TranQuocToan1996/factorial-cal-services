@@ -80,10 +80,6 @@ func main() {
 		incrementalService,
 	)
 
-	// Start batch consuming with multiple concurrent batches
-	consumeCtx, cancelConsume := context.WithCancel(context.Background())
-	defer cancelConsume()
-
 	batchSize := cfg.WORKER_BATCH_SIZE
 	maxBatches := cfg.WORKER_MAX_BATCHES
 	if maxBatches <= 0 {
@@ -98,7 +94,7 @@ func main() {
 	// Start multiple batch consumers concurrently
 	for i := 0; i < maxBatches; i++ {
 		go func(batchID int) {
-			if err := mqConsumer.ConsumeBatch(consumeCtx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, batchSize, batchHandler); err != nil {
+			if err := mqConsumer.ConsumeBatch(ctx, cfg.FACTORIAL_CAL_SERVICES_QUEUE_NAME, batchSize, batchHandler); err != nil {
 				log.Fatalf("Failed to start batch consumer %d: %v", batchID, err)
 			}
 		}(i)
@@ -112,7 +108,6 @@ func main() {
 	<-quit
 
 	log.Println("Shutting down worker...")
-	cancelConsume()
 
 	// Give time for current message processing to complete
 	time.Sleep(2 * time.Second)
