@@ -74,6 +74,18 @@ services:
       - FACTORIAL_CAL_SERVICES_QUEUE_NAME=factorial-cal-queue
       - SWAGGER_HOST=localhost:8080
       - RABBITMQ_CA=
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - MAX_FACTORIAL=10000
+      - REDIS_THRESHOLD=1000
+      - WORKER_BATCH_SIZE=100
+      - WORKER_MAX_BATCHES=16
+      - AWS_REGION=
+      - S3_BUCKET_NAME=
+      - STEP_FUNCTIONS_ARN=
+      - STORAGE_TYPE=local
+      - QUEUE_TYPE=rabbitmq
     ports:
       - "8080:8080"
     restart: unless-stopped

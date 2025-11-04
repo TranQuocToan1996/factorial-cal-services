@@ -9,7 +9,6 @@ import (
 func LoadConfig() *Config {
 	maxFactorial, _ := strconv.Atoi(getEnvOrDefault("MAX_FACTORIAL", "10000"))
 	redisThreshold, _ := strconv.Atoi(getEnvOrDefault("REDIS_THRESHOLD", "1000"))
-	redisDB, _ := strconv.Atoi(getEnvOrDefault("REDIS_DB", "0"))
 	workerBatchSize, _ := strconv.Atoi(getEnvOrDefault("WORKER_BATCH_SIZE", "100"))
 	workerMaxBatches, _ := strconv.Atoi(getEnvOrDefault("WORKER_MAX_BATCHES", "16"))
 
@@ -32,7 +31,6 @@ func LoadConfig() *Config {
 		REDIS_HOST:                        os.Getenv("REDIS_HOST"),
 		REDIS_PORT:                        os.Getenv("REDIS_PORT"),
 		REDIS_PASSWORD:                    os.Getenv("REDIS_PASSWORD"),
-		REDIS_DB:                          redisDB,
 		AWS_REGION:                        os.Getenv("AWS_REGION"),
 		S3_BUCKET_NAME:                    os.Getenv("S3_BUCKET_NAME"),
 		STEP_FUNCTIONS_ARN:                os.Getenv("STEP_FUNCTIONS_ARN"),
@@ -64,7 +62,6 @@ type Config struct {
 	REDIS_HOST                        string `mapstructure:"REDIS_HOST"`
 	REDIS_PORT                        string `mapstructure:"REDIS_PORT"`
 	REDIS_PASSWORD                    string `mapstructure:"REDIS_PASSWORD"`
-	REDIS_DB                          int    `mapstructure:"REDIS_DB"`
 	AWS_REGION                        string `mapstructure:"AWS_REGION"`
 	S3_BUCKET_NAME                    string `mapstructure:"S3_BUCKET_NAME"`
 	STEP_FUNCTIONS_ARN                string `mapstructure:"STEP_FUNCTIONS_ARN"`

@@ -118,7 +118,6 @@ func TestIntegrationFullFlow(t *testing.T) {
 	// Initialize services
 	factorialService := service.NewFactorialServiceWithLimit(10000)
 	redisService := service.NewRedisService(redisClient, 24*time.Hour, 1000)
-	checksumService := service.NewChecksumService()
 
 	// Initialize repositories
 	factorialRepo := repository.NewFactorialRepository(db)
@@ -136,7 +135,6 @@ func TestIntegrationFullFlow(t *testing.T) {
 		factorialRepo,
 		maxRequestRepo,
 		currentCalculatedRepo,
-		checksumService,
 		service.NewIncrementalFactorialService(factorialService, currentCalculatedRepo),
 	)
 

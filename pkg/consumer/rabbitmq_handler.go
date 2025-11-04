@@ -2,6 +2,7 @@ package consumer
 
 import (
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -45,7 +46,6 @@ type FactorialMessageHandler struct {
 	repository            repository.FactorialRepository
 	maxRequestRepo        repository.MaxRequestRepository
 	currentCalculatedRepo repository.CurrentCalculatedRepository
-	checksumService       service.ChecksumService
 	incrementalService    service.IncrementalFactorialService
 }
 
@@ -56,7 +56,6 @@ func NewFactorialMessageHandler(
 	s3Service service.S3Service,
 	repository repository.FactorialRepository,
 	maxRequestRepo repository.MaxRequestRepository,
-	checksumService service.ChecksumService,
 ) MessageHandler {
 	handler := &FactorialMessageHandler{
 		factorialService: factorialService,
@@ -64,7 +63,6 @@ func NewFactorialMessageHandler(
 		s3Service:        s3Service,
 		repository:       repository,
 		maxRequestRepo:   maxRequestRepo,
-		checksumService:  checksumService,
 	}
 	return handler.Handle
 }
@@ -77,7 +75,6 @@ func NewFactorialBatchHandler(
 	repository repository.FactorialRepository,
 	maxRequestRepo repository.MaxRequestRepository,
 	currentCalculatedRepo repository.CurrentCalculatedRepository,
-	checksumService service.ChecksumService,
 	incrementalService service.IncrementalFactorialService,
 ) BatchMessageHandler {
 	handler := &FactorialMessageHandler{
@@ -87,7 +84,6 @@ func NewFactorialBatchHandler(
 		repository:            repository,
 		maxRequestRepo:        maxRequestRepo,
 		currentCalculatedRepo: currentCalculatedRepo,
-		checksumService:       checksumService,
 		incrementalService:    incrementalService,
 	}
 	return handler.HandleBatch
@@ -144,7 +140,7 @@ func (h *FactorialMessageHandler) Handle(ctx context.Context, body []byte) error
 	log.Printf("Factorial calculated for %s (result length: %d characters)", message.Number, len(result))
 
 	// Calculate checksum
-	checksum := h.checksumService.Calculate(result)
+	checksum := h.Calculate(result)
 	size := int64(len(result))
 
 	// Upload to S3 (all results go to S3)
@@ -301,7 +297,7 @@ func (h *FactorialMessageHandler) processSingleNumber(ctx context.Context, numbe
 	log.Printf("Factorial calculated for %s (result length: %d characters)", number, len(result))
 
 	// Calculate checksum
-	checksum := h.checksumService.Calculate(result)
+	checksum := h.Calculate(result)
 	size := int64(len(result))
 
 	// Upload to S3 (all results go to S3)
@@ -460,7 +456,7 @@ func (h *FactorialMessageHandler) processIncrementalBatch(ctx context.Context, c
 		log.Printf("Calculated factorial for %d (result length: %d characters)", i, len(factorialResult))
 
 		// Calculate checksum
-		checksum := h.checksumService.Calculate(factorialResult)
+		checksum := h.Calculate(factorialResult)
 		size := int64(len(factorialResult))
 
 		// Upload to S3
@@ -495,4 +491,10 @@ func (h *FactorialMessageHandler) processIncrementalBatch(ctx context.Context, c
 
 	log.Printf("Incremental batch processing completed: calculated from %d to %d", curNum+1, maxNum)
 	return nil
+}
+
+// Calculate calculates SHA256 checksum for the given data
+func (s *FactorialMessageHandler) Calculate(data string) string {
+	hash := sha256.Sum256([]byte(data))
+	return fmt.Sprintf("%x", hash)
 }

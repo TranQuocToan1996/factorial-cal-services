@@ -36,7 +36,6 @@ func main() {
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     cfg.RedisAddr(),
 		Password: cfg.REDIS_PASSWORD,
-		DB:       cfg.REDIS_DB,
 	})
 
 	// Test Redis connection
@@ -52,7 +51,6 @@ func main() {
 	factorialService := service.NewFactorialServiceWithLimit(int64(cfg.MAX_FACTORIAL))
 	redisService := service.NewRedisService(redisClient, 24*time.Hour, int64(cfg.REDIS_THRESHOLD))
 	s3Service := service.NewS3Service(ctx, cfg)
-	checksumService := service.NewChecksumService()
 
 	// Initialize repositories
 	factorialRepo := repository.NewFactorialRepository(database)
@@ -76,7 +74,6 @@ func main() {
 		factorialRepo,
 		maxRequestRepo,
 		currentCalculatedRepo,
-		checksumService,
 		incrementalService,
 	)
 

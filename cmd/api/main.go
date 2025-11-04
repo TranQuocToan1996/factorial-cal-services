@@ -63,7 +63,6 @@ func main() {
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     cfg.RedisAddr(),
 		Password: cfg.REDIS_PASSWORD,
-		DB:       cfg.REDIS_DB,
 	})
 	defer redisClient.Close()
 
