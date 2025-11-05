@@ -82,7 +82,7 @@ services:
       - WORKER_BATCH_SIZE=100
       - WORKER_MAX_BATCHES=16
       - AWS_REGION=us-east-1
-      - S3_BUCKET_NAME=factorial-cal-services
+      - S3_BUCKET_NAME=factorial-calculator-service
       - STORAGE_TYPE=s3
       - QUEUE_TYPE=rabbitmq
     ports:
@@ -128,7 +128,7 @@ services:
       - WORKER_BATCH_SIZE=100
       - WORKER_MAX_BATCHES=16
       - AWS_REGION=us-east-1
-      - S3_BUCKET_NAME=factorial-cal-services
+      - S3_BUCKET_NAME=factorial-calculator-service
       - STORAGE_TYPE=s3
       - QUEUE_TYPE=rabbitmq
     restart: unless-stopped
@@ -170,7 +170,7 @@ services:
       - WORKER_BATCH_SIZE=100
       - WORKER_MAX_BATCHES=16
       - AWS_REGION=us-east-1
-      - S3_BUCKET_NAME=factorial-cal-services
+      - S3_BUCKET_NAME=factorial-calculator-service
       - STORAGE_TYPE=s3
       - QUEUE_TYPE=rabbitmq
     restart: unless-stopped
