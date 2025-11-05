@@ -26,7 +26,7 @@ type factorialService struct {
 	repository                  repository.FactorialRepository
 	currentCalculatedRepository repository.CurrentCalculatedRepository
 	maxRequestRepository        repository.MaxRequestRepository
-	s3Service                   S3Service
+	storage                     StorageService
 }
 
 // NewFactorialService creates a new factorial service
@@ -34,13 +34,13 @@ func NewFactorialService(
 	repository repository.FactorialRepository,
 	currentCalculatedRepository repository.CurrentCalculatedRepository,
 	maxRequestRepository repository.MaxRequestRepository,
-	s3Service S3Service,
+	storage StorageService,
 ) FactorialService {
 	return &factorialService{
 		repository:                  repository,
 		currentCalculatedRepository: currentCalculatedRepository,
 		maxRequestRepository:        maxRequestRepository,
-		s3Service:                   s3Service,
+		storage:                     storage,
 	}
 }
 
@@ -116,7 +116,7 @@ func (s *factorialService) continuelyCalculateFactorial(current, max int64, fact
 
 		// Calculate and save
 		factorialBigInt = new(big.Int).Mul(factorialBigInt, big.NewInt(current))
-		s3Key, err := s.s3Service.UploadFactorial(context.Background(), current, factorialBigInt.String())
+		s3Key, err := s.storage.UploadFactorial(context.Background(), current, factorialBigInt.String())
 		if err != nil {
 			return fmt.Errorf("failed to upload factorial to S3: %w", err)
 		}
@@ -130,8 +130,8 @@ func (s *factorialService) continuelyCalculateFactorial(current, max int64, fact
 }
 
 func (s *factorialService) getPreviousFactorial(number int64) (*big.Int, error) {
-	key := s.s3Service.GenerateS3Key(number - 1)
-	result, err := s.s3Service.DownloadFactorial(context.Background(), key)
+	key := s.storage.GenerateKey(number - 1)
+	result, err := s.storage.DownloadFactorial(context.Background(), key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to download factorial from S3: %w", err)
 	}

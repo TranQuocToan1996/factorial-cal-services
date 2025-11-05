@@ -34,7 +34,7 @@ type s3Service struct {
 }
 
 // NewS3Service creates a new S3 service
-func NewS3Service(ctx context.Context, cfg *config.Config) S3Service {
+func NewS3Service(ctx context.Context, cfg *config.Config) StorageService {
 	if cfg.AWS_REGION == "" || cfg.S3_BUCKET_NAME == "" {
 		log.Fatalf("AWS_REGION and S3_BUCKET_NAME must be set")
 	}
@@ -48,14 +48,14 @@ func NewS3Service(ctx context.Context, cfg *config.Config) S3Service {
 	}
 }
 
-// GenerateS3Key generates an S3 key for a given number
-func (s *s3Service) GenerateS3Key(number int64) string {
+// GenerateKey generates an S3 key for a given number
+func (s *s3Service) GenerateKey(number int64) string {
 	return fmt.Sprintf("%v.txt", number)
 }
 
 // UploadFactorial uploads a factorial result to S3
 func (s *s3Service) UploadFactorial(ctx context.Context, number int64, result string) (string, error) {
-	key := s.GenerateS3Key(number)
+	key := s.GenerateKey(number)
 
 	// Convert result to byte buffer
 	body := bytes.NewReader([]byte(result))

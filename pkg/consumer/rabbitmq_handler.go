@@ -37,7 +37,7 @@ func (c *RabbitMQConsumer) handleMessageAndAck(ctx context.Context, msg amqp.Del
 type FactorialMessageHandler struct {
 	factorialService      service.FactorialService
 	redisService          service.RedisService
-	s3Service             service.S3Service
+	storage               service.StorageService
 	factRepository        repository.FactorialRepository
 	maxRequestRepo        repository.MaxRequestRepository
 	currentCalculatedRepo repository.CurrentCalculatedRepository
@@ -47,7 +47,7 @@ type FactorialMessageHandler struct {
 func NewFactorialMessageHandler(
 	factorialService service.FactorialService,
 	redisService service.RedisService,
-	s3Service service.S3Service,
+	storage service.StorageService,
 	repository repository.FactorialRepository,
 	maxRequestRepo repository.MaxRequestRepository,
 	currentCalculatedRepo repository.CurrentCalculatedRepository,
@@ -55,7 +55,7 @@ func NewFactorialMessageHandler(
 	handler := &FactorialMessageHandler{
 		factorialService:      factorialService,
 		redisService:          redisService,
-		s3Service:             s3Service,
+		storage:               storage,
 		factRepository:        repository,
 		maxRequestRepo:        maxRequestRepo,
 		currentCalculatedRepo: currentCalculatedRepo,
@@ -70,7 +70,7 @@ func (h *FactorialMessageHandler) HandleRequestCalculateFactorial(ctx context.Co
 		return fmt.Errorf("failed to parse message: %w", err)
 	}
 
-	log.Printf("Update max request number for number: %s", message.Number)
+	log.Printf("Update max request number for number: %v", message.Number)
 
 	// Check if already calculated
 	rowAffected, err := h.maxRequestRepo.SetMaxNumberIfGreater(message.Number)

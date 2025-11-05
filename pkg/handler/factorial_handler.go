@@ -19,7 +19,7 @@ import (
 type FactorialHandler struct {
 	factorialService service.FactorialService
 	redisService     service.RedisService
-	s3Service        service.S3Service
+	storage          service.StorageService
 	factCalRepo      repository.FactorialRepository
 	producer         producer.Producer
 	queueName        string
@@ -29,7 +29,7 @@ type FactorialHandler struct {
 func NewFactorialHandler(
 	factorialService service.FactorialService,
 	redisService service.RedisService,
-	s3Service service.S3Service,
+	storage service.StorageService,
 	repository repository.FactorialRepository,
 	producer producer.Producer,
 	queueName string,
@@ -37,7 +37,7 @@ func NewFactorialHandler(
 	return &FactorialHandler{
 		factorialService: factorialService,
 		redisService:     redisService,
-		s3Service:        s3Service,
+		storage:          storage,
 		factCalRepo:      repository,
 		producer:         producer,
 		queueName:        queueName,
@@ -150,7 +150,7 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 		return
 	}
 
-	result, err := h.s3Service.DownloadFactorial(c.Request.Context(), calc.S3Key)
+	result, err := h.storage.DownloadFactorial(c.Request.Context(), calc.S3Key)
 	if err != nil {
 		log.Printf("Error downloading from S3: %v", err)
 		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to retrieve result from storage")

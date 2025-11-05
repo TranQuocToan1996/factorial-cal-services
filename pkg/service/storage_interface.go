@@ -6,8 +6,7 @@ import (
 
 // StorageService handles storage operations (S3, local filesystem, etc.)
 type StorageService interface {
-	Upload(ctx context.Context, number string, result string) (string, error)
-	Download(ctx context.Context, key string) (string, error)
-	GenerateS3Key(number string) string
+	UploadFactorial(ctx context.Context, number int64, result string) (string, error)
+	DownloadFactorial(ctx context.Context, s3Key string) (string, error)
+	GenerateKey(number int64) string
 }
-
