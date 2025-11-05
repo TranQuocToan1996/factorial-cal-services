@@ -1,7 +1,6 @@
 services:
   postgres:
     image: postgres:17
-    container_name: postgres
     environment:
       POSTGRES_DB: factorial-cal-services
       POSTGRES_USER: postgres
@@ -18,7 +17,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: redis
     ports:
       - "6379:6379"
     volumes:
@@ -32,7 +30,6 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
@@ -47,6 +44,42 @@ services:
       timeout: 5s
       retries: 5
 
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrate
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - SERVER_PORT=:8080
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=factorial-cal-services
+      - DB_SSLMODE=disable
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - FACTORIAL_CAL_SERVICES_QUEUE_NAME=factorial-cal-queue
+      - SWAGGER_HOST=api:8080
+      - RABBITMQ_CA=
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+      - MAX_FACTORIAL=10000
+      - REDIS_THRESHOLD=1000
+      - WORKER_BATCH_SIZE=100
+      - WORKER_MAX_BATCHES=16
+      - AWS_REGION=us-east-1
+      - S3_BUCKET_NAME=factorial-cal-services
+      - STORAGE_TYPE=s3
+      - QUEUE_TYPE=rabbitmq
+    restart: "no"
+
   api:
     build:
       context: .
@@ -60,6 +93,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     environment:
       - SERVER_PORT=:8080
       - DB_USER=postgres
@@ -145,6 +180,7 @@ services:
         condition: service_healthy
     environment:
       - SERVER_PORT=:8080
+      - SERVER_PORT=:8080
       - DB_USER=postgres
       - DB_PASSWORD=password
       - DB_HOST=postgres
@@ -156,6 +192,7 @@ services:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - FACTORIAL_CAL_SERVICES_QUEUE_NAME=factorial-cal-queue
+      - SWAGGER_HOST=api:8080
       - SWAGGER_HOST=api:8080
       - RABBITMQ_CA=
       - REDIS_HOST=redis
