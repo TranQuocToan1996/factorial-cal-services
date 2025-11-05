@@ -26,7 +26,6 @@ type factorialService struct {
 	repository                  repository.FactorialRepository
 	currentCalculatedRepository repository.CurrentCalculatedRepository
 	maxRequestRepository        repository.MaxRequestRepository
-	redisService                RedisService
 	s3Service                   S3Service
 }
 
@@ -35,14 +34,12 @@ func NewFactorialService(
 	repository repository.FactorialRepository,
 	currentCalculatedRepository repository.CurrentCalculatedRepository,
 	maxRequestRepository repository.MaxRequestRepository,
-	redisService RedisService,
 	s3Service S3Service,
 ) FactorialService {
 	return &factorialService{
 		repository:                  repository,
 		currentCalculatedRepository: currentCalculatedRepository,
 		maxRequestRepository:        maxRequestRepository,
-		redisService:                redisService,
 		s3Service:                   s3Service,
 	}
 }

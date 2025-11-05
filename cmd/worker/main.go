@@ -48,13 +48,12 @@ func main() {
 	defer redisClient.Close()
 
 	redisService := service.NewRedisService(redisClient, 24*time.Hour, int64(cfg.REDIS_THRESHOLD))
-	s3Service := service.NewS3Service(ctx, cfg)
 	// Initialize services
+	s3Service := service.NewS3Service(ctx, cfg)
 	factorialService := service.NewFactorialService(
 		repository.NewFactorialRepository(database),
 		repository.NewCurrentCalculatedRepository(database),
 		repository.NewMaxRequestRepository(database),
-		redisService,
 		s3Service,
 	)
 

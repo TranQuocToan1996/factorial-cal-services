@@ -92,7 +92,6 @@ func main() {
 		repository.NewFactorialRepository(database),
 		repository.NewCurrentCalculatedRepository(database),
 		repository.NewMaxRequestRepository(database),
-		redisService,
 		s3Service,
 	)
 	// Initialize handler

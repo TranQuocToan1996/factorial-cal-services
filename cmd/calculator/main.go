@@ -12,8 +12,6 @@ import (
 	"factorial-cal-services/pkg/db"
 	"factorial-cal-services/pkg/repository"
 	"factorial-cal-services/pkg/service"
-
-	"github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -24,34 +22,17 @@ func main() {
 		log.Fatalf("Configuration validation failed: %v", err)
 	}
 
-	// Initialize Redis
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     cfg.RedisAddr(),
-		Password: cfg.REDIS_PASSWORD,
-	})
-
-	// Test Redis connection
-	ctx := context.Background()
-	if err := redisClient.Ping(ctx).Err(); err != nil {
-		log.Fatalf("Warning: Redis connection failed: %v", err)
-	} else {
-		log.Println("Connected to Redis successfully")
-	}
-	defer redisClient.Close()
-
-	redisService := service.NewRedisService(redisClient, 24*time.Hour, int64(cfg.REDIS_THRESHOLD))
-
 	database, err := db.NewGormDB(cfg.DSN())
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	log.Println("Connected to database")
 
+	ctx := context.Background()
 	factorialService := service.NewFactorialService(
 		repository.NewFactorialRepository(database),
 		repository.NewCurrentCalculatedRepository(database),
 		repository.NewMaxRequestRepository(database),
-		redisService,
 		service.NewS3Service(ctx, cfg),
 	)
 
