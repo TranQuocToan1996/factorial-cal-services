@@ -43,7 +43,7 @@ func (r *currentCalculatedRepository) GetCurrentNumber() (int64, error) {
 func (r *currentCalculatedRepository) UpdateCurrentNumber(curNumber int64) error {
 	// Check if record exists
 	var existing domain.FactorialCurrentCalculatedNumber
-	result := r.db.First(&existing)
+	result := r.db.Order("cur_number DESC").First(&existing).Limit(1)
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		// Create new record

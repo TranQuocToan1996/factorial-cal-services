@@ -18,16 +18,6 @@ const (
 	S3KeyPrefix = "factorials/"
 )
 
-// S3Service handles S3 storage operations
-type S3Service interface {
-	UploadFactorial(ctx context.Context, number int64, result string) (string, error)
-	DownloadFactorial(ctx context.Context, s3Key string) (string, error)
-	GenerateS3Key(number int64) string
-	// StorageService interface methods
-	Upload(ctx context.Context, number int64, result string) (string, error)
-	Download(ctx context.Context, key string) (string, error)
-}
-
 type s3Service struct {
 	client     *s3.Client
 	bucketName string

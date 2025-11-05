@@ -1,6 +1,7 @@
 package patterns
 
 import (
+	"fmt"
 	"log"
 	"sync"
 )
@@ -13,6 +14,10 @@ type Semaphore struct {
 
 // NewSemaphore creates a new semaphore with a concurrency limit.
 func NewSemaphore(maxConcurrent int) *Semaphore {
+	if maxConcurrent <= 0 {
+		maxConcurrent = 1
+		fmt.Println("maxConcurrent is less than 1, setting to 1")
+	}
 	return &Semaphore{
 		limit: make(chan struct{}, maxConcurrent),
 	}

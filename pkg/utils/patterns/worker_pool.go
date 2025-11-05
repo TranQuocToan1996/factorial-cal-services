@@ -1,6 +1,7 @@
 package patterns
 
 import (
+	"fmt"
 	"log"
 	"sync"
 )
@@ -14,6 +15,10 @@ type WorkerPool struct {
 
 // NewWorkerPool creates a new worker pool with a given number of workers.
 func NewWorkerPool(numWorkers int) *WorkerPool {
+	if numWorkers <= 0 {
+		numWorkers = 1
+		fmt.Println("numWorkers is less than 1, setting to 1")
+	}
 	return &WorkerPool{
 		numWorkers: numWorkers,
 		tasks:      make(chan func() error),

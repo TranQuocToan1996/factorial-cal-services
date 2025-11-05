@@ -103,7 +103,7 @@ func (c *RabbitMQConsumer) Consume(ctx context.Context, queueName string, handle
 	if err != nil {
 		return fmt.Errorf("failed to register consumer: %w", err)
 	}
-
+	// TODO: Fix bug and add graceful shutdown
 	log.Printf("Started %v consuming from queue: %s", runtime.NumCPU(), queueName)
 	for msg := range msgs {
 		c.semaphore.Submit(func() error {

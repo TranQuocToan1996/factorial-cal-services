@@ -140,6 +140,9 @@ func (s *factorialService) getPreviousFactorial(number int64) (*big.Int, error) 
 	if err != nil {
 		return nil, fmt.Errorf("failed to download factorial from S3: %w", err)
 	}
-	currentFactorial, _ := new(big.Int).SetString(result, 10)
+	currentFactorial, ok := new(big.Int).SetString(result, 10)
+	if !ok || currentFactorial == nil {
+		return nil, fmt.Errorf("failed to parse factorial result: invalid format")
+	}
 	return currentFactorial, nil
 }
