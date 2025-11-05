@@ -13,12 +13,12 @@ CREATE TABLE IF NOT EXISTS factorial_max_request_numbers (
 -- Table to track the current calculated factorial number
 CREATE TABLE IF NOT EXISTS factorial_current_calculated_numbers (
     id BIGSERIAL PRIMARY KEY,
-    cur_number BIGINT NOT NULL,
+    next_number BIGINT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create indexes
 CREATE INDEX IF NOT EXISTS idx_max_request_number ON factorial_max_request_numbers (max_number);
-CREATE INDEX IF NOT EXISTS idx_current_calculated_number ON factorial_current_calculated_numbers (cur_number);
+CREATE INDEX IF NOT EXISTS idx_current_calculated_number ON factorial_current_calculated_numbers (next_number);
 

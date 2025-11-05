@@ -29,26 +29,26 @@ func NewCurrentCalculatedRepository(db *gorm.DB) CurrentCalculatedRepository {
 // GetCurrentNumber retrieves the current calculated number
 func (r *currentCalculatedRepository) GetCurrentNumber() (int64, error) {
 	var curCalc domain.FactorialCurrentCalculatedNumber
-	result := r.db.Order("cur_number DESC").First(&curCalc)
+	result := r.db.Order("next_number DESC").First(&curCalc)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return 0, nil // Return "0" if no record exists
 		}
 		return 0, result.Error
 	}
-	return curCalc.CurNumber, nil
+	return curCalc.NextNumber, nil
 }
 
 // UpdateCurrentNumber updates the current calculated number
 func (r *currentCalculatedRepository) UpdateCurrentNumber(curNumber int64) error {
 	// Check if record exists
 	var existing domain.FactorialCurrentCalculatedNumber
-	result := r.db.Order("cur_number DESC").First(&existing).Limit(1)
+	result := r.db.Order("next_number DESC").First(&existing).Limit(1)
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		// Create new record
 		curCalc := &domain.FactorialCurrentCalculatedNumber{
-			CurNumber: curNumber,
+			NextNumber: curNumber,
 		}
 		return r.db.Create(curCalc).Error
 	}
@@ -58,5 +58,5 @@ func (r *currentCalculatedRepository) UpdateCurrentNumber(curNumber int64) error
 	}
 
 	// Update existing record
-	return r.db.Model(&existing).Update("cur_number", curNumber).Error
+	return r.db.Model(&existing).Update("next_number", curNumber).Error
 }

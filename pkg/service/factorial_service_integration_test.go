@@ -99,7 +99,7 @@ func setupBaseCases(t *testing.T, db *gorm.DB, storage StorageService, ctx conte
 
 	// Set current calculated number to 4
 	curCalc := &domain.FactorialCurrentCalculatedNumber{
-		CurNumber: 4,
+		NextNumber: 4,
 	}
 	if err := db.Create(curCalc).Error; err != nil {
 		t.Fatalf("Failed to create current calculated number: %v", err)
@@ -513,7 +513,7 @@ func BenchmarkFactorialService_CalculateUpTo10(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		// Reset database state
 		db.Exec("DELETE FROM factorial_calculations WHERE number > 3")
-		db.Exec("UPDATE factorial_current_calculated_numbers SET cur_number = 4")
+		db.Exec("UPDATE factorial_current_calculated_numbers SET next_number = 4")
 
 		maxRequestRepo.UpdateMaxNumber(10)
 		current, _ := currentCalculatedRepo.GetCurrentNumber()

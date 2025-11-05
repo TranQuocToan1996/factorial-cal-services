@@ -51,6 +51,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: api
     container_name: factorial-cal-services-api
     depends_on:
       postgres:
@@ -88,16 +89,12 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
-    deploy:
-      mode: replicated
-      replicas: 2
 
   worker:
     build:
       context: .
       dockerfile: Dockerfile
       target: worker
-    container_name: factorial-cal-services-worker
     depends_on:
       postgres:
         condition: service_healthy
@@ -141,7 +138,6 @@ services:
       context: .
       dockerfile: Dockerfile
       target: calculator
-    container_name: factorial-cal-services-calculate
     depends_on:
       postgres:
         condition: service_healthy

@@ -32,7 +32,7 @@ func LoadConfig() *Config {
 		REDIS_PORT:                        getEnvOrDefault("REDIS_PORT", "6379"),
 		REDIS_PASSWORD:                    getEnvOrDefault("REDIS_PASSWORD", ""),
 		AWS_REGION:                        getEnvOrDefault("AWS_REGION", "us-east-1"),
-		S3_BUCKET_NAME:                    getEnvOrDefault("S3_BUCKET_NAME", "factorial-cal-services"),
+		S3_BUCKET_NAME:                    getEnvOrDefault("S3_BUCKET_NAME", "factorial-calculator-service"),
 		STORAGE_TYPE:                      getEnvOrDefault("STORAGE_TYPE", "local"),
 		QUEUE_TYPE:                        getEnvOrDefault("QUEUE_TYPE", "rabbitmq"),
 		MAX_FACTORIAL:                     maxFactorial,

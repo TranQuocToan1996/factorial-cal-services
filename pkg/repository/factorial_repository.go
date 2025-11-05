@@ -146,7 +146,7 @@ func (r *factorialRepository) UpdateWithCurrentNumber(
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				// Create new record
 				curCalc := &domain.FactorialCurrentCalculatedNumber{
-					CurNumber: number + 1,
+					NextNumber: number + 1,
 				}
 				if err := tx.Create(curCalc).Error; err != nil {
 					return fmt.Errorf("failed to create current number: %w", err)
@@ -156,7 +156,7 @@ func (r *factorialRepository) UpdateWithCurrentNumber(
 			}
 		} else {
 			// Update existing record
-			if err := tx.Model(&existing).Update("cur_number", number+1).Error; err != nil {
+			if err := tx.Model(&existing).Update("next_number", number+1).Error; err != nil {
 				return fmt.Errorf("failed to update current number: %w", err)
 			}
 		}

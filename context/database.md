@@ -41,12 +41,12 @@ Tracks the current calculated factorial number for incremental calculation.
 ```sql
 CREATE TABLE IF NOT EXISTS factorial_current_calculated_numbers (
     id BIGSERIAL PRIMARY KEY,
-    cur_number VARCHAR(100) NOT NULL,
+    next_number VARCHAR(100) NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_current_calculated_number ON factorial_current_calculated_numbers (cur_number);
+CREATE INDEX IF NOT EXISTS idx_current_calculated_number ON factorial_current_calculated_numbers (next_number);
 ```
 
 ## Notes

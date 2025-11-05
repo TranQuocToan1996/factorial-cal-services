@@ -54,13 +54,5 @@ VALUES (
 )
 ON CONFLICT (number) DO NOTHING;
 
--- Update current calculated number to 4 (since 0, 1, 2, 3 are already done)
--- This ensures the calculator starts calculating from 4
-UPDATE factorial_current_calculated_numbers 
-SET cur_number = 4 
-WHERE id IN (SELECT id FROM factorial_current_calculated_numbers ORDER BY cur_number DESC LIMIT 1);
-
--- If no record exists, create one
-INSERT INTO factorial_current_calculated_numbers (cur_number)
-SELECT 4
-WHERE NOT EXISTS (SELECT 1 FROM factorial_current_calculated_numbers);
+INSERT INTO factorial_current_calculated_numbers (next_number) VALUES (3);
+INSERT INTO factorial_max_request_numbers (max_number) VALUES (3);
