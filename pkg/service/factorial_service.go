@@ -41,6 +41,7 @@ func NewFactorialService(
 		currentCalculatedRepository: currentCalculatedRepository,
 		maxRequestRepository:        maxRequestRepository,
 		storage:                     storage,
+		maxFactorial:                100000,
 	}
 }
 
@@ -80,6 +81,10 @@ func (s *factorialService) StartContinuelyCalculateFactorial() {
 				continue
 			}
 			if current > max {
+				continue
+			}
+			if current > s.maxFactorial {
+				log.Printf("current number exceeds maximum allowed value of %d", s.maxFactorial)
 				continue
 			}
 			err = s.continuelyCalculateFactorial(current, max, nil)
