@@ -7,6 +7,7 @@ import (
 	"factorial-cal-services/pkg/domain"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // factorialRepository implements FactorialRepository interface
@@ -39,7 +40,11 @@ func (r *factorialRepository) Create(calc *domain.FactorialCalculation) error {
 // FindByNumber retrieves a factorial calculation by number
 func (r *factorialRepository) FindByNumber(number int64) (*domain.FactorialCalculation, error) {
 	var calc domain.FactorialCalculation
-	result := r.db.Where("number = ?", number).First(&calc)
+
+	db := r.db.Session(&gorm.Session{
+		Logger: logger.Discard, // Disable print error when not found
+	})
+	result := db.Where("number = ?", number).First(&calc)
 
 	if result.Error != nil {
 		return nil, result.Error

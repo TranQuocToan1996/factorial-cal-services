@@ -6,6 +6,7 @@ import (
 	"factorial-cal-services/pkg/domain"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 // maxRequestRepository implements MaxRequestRepository interface
@@ -46,7 +47,10 @@ func (r *maxRequestRepository) GetMaxNumber() (int64, error) {
 func (r *maxRequestRepository) UpdateMaxNumber(maxNumber int64) error {
 	// Check if record exists
 	var existing domain.FactorialMaxRequestNumber
-	result := r.db.First(&existing)
+	db := r.db.Session(&gorm.Session{
+		Logger: logger.Discard, // Disable print error when not found
+	})
+	result := db.First(&existing)
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		// Create new record

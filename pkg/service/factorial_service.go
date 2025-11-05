@@ -100,7 +100,10 @@ func (s *factorialService) continuelyCalculateFactorial(current, max int64, fact
 		// check status process
 		factorial, err := s.repository.FindByNumber(current)
 		if factorial != nil && factorial.Status == domain.StatusDone {
-			return nil
+			continue // Skip already done factorial, continue to next
+		}
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return fmt.Errorf("failed to query factorial %d: %w", current, err)
 		}
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			err := s.repository.Create(&domain.FactorialCalculation{
@@ -121,12 +124,14 @@ func (s *factorialService) continuelyCalculateFactorial(current, max int64, fact
 
 		// Calculate and save
 		factorialBigInt = new(big.Int).Mul(factorialBigInt, big.NewInt(current))
-		s3Key, err := s.storage.UploadFactorial(context.Background(), current, factorialBigInt.String())
+		factorialStr := factorialBigInt.String()
+		s3Key, err := s.storage.UploadFactorial(context.Background(), current, factorialStr)
 		if err != nil {
 			return fmt.Errorf("failed to upload factorial to S3: %w", err)
 		}
 
-		err = s.repository.UpdateWithCurrentNumber(current, s3Key, factorialBigInt.String(), int64(factorialBigInt.BitLen()), domain.StatusDone)
+		// Size should be the string length (bytes), not bit length
+		err = s.repository.UpdateWithCurrentNumber(current, s3Key, factorialStr, int64(len(factorialStr)), domain.StatusDone)
 		if err != nil {
 			return fmt.Errorf("failed to update factorial record: %w", err)
 		}
@@ -135,7 +140,13 @@ func (s *factorialService) continuelyCalculateFactorial(current, max int64, fact
 }
 
 func (s *factorialService) getPreviousFactorial(number int64) (*big.Int, error) {
-	key := s.storage.GenerateKey(number - 1)
+	// number is already (current - 1), so we use it directly
+	// For example: if current=4, we call getPreviousFactorial(3), so we want factorial(3)
+	if number < 0 {
+		// Factorial of 0 is 1, no previous needed
+		return big.NewInt(1), nil
+	}
+	key := s.storage.GenerateKey(number)
 	result, err := s.storage.DownloadFactorial(context.Background(), key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to download factorial from S3: %w", err)
