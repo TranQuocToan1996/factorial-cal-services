@@ -52,4 +52,5 @@ FROM alpine:3.18 AS migrate
 WORKDIR /app
 RUN apk add --no-cache ca-certificates
 COPY --from=builder /app/migrate /app/migrate
+COPY --from=builder /app/migrations /app/migrations
 ENTRYPOINT ["/app/migrate"]
