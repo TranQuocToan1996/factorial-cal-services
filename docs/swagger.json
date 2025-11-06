@@ -304,7 +304,7 @@
             ],
             "properties": {
                 "number": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -315,7 +315,7 @@
                     "type": "string"
                 },
                 "number": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -333,6 +333,9 @@
         "dto.MetadataResponseData": {
             "type": "object",
             "properties": {
+                "bucket": {
+                    "type": "string"
+                },
                 "checksum": {
                     "type": "string"
                 },
@@ -340,10 +343,10 @@
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "number": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "s3_key": {
                     "type": "string"

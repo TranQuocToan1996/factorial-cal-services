@@ -1,0 +1,153 @@
+{
+    "family": "factorial-service-worker-tf",
+    "containerDefinitions": [
+        {
+            "cpu": 0,
+            "environment": [],
+            "essential": true,
+            "image": "218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/worker:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/factorial-service-worker-tf",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "mountPoints": [],
+            "name": "factorial-service-worker",
+            "portMappings": [],
+            "restartPolicy": {
+                "enabled": true
+            },
+            "secrets": [
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:AWS_ACCESS_KEY_ID::"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:AWS_REGION::"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:AWS_SECRET_ACCESS_KEY::"
+                },
+                {
+                    "name": "DB_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_HOST::"
+                },
+                {
+                    "name": "DB_NAME",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_NAME::"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_PASSWORD::"
+                },
+                {
+                    "name": "DB_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_PORT::"
+                },
+                {
+                    "name": "DB_SSLMODE",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_SSLMODE::"
+                },
+                {
+                    "name": "DB_TYPE",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_TYPE::"
+                },
+                {
+                    "name": "DB_USER",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_USER::"
+                },
+                {
+                    "name": "FACTORIAL_CAL_SERVICES_QUEUE_NAME",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:FACTORIAL_CAL_SERVICES_QUEUE_NAME::"
+                },
+                {
+                    "name": "MAX_FACTORIAL",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:MAX_FACTORIAL::"
+                },
+                {
+                    "name": "RABBITMQ_CA",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:RABBITMQ_CA::"
+                },
+                {
+                    "name": "RABBITMQ_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:RABBITMQ_HOST::"
+                },
+                {
+                    "name": "RABBITMQ_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:RABBITMQ_PASSWORD::"
+                },
+                {
+                    "name": "RABBITMQ_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:RABBITMQ_PORT::"
+                },
+                {
+                    "name": "RABBITMQ_USER",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:RABBITMQ_USER::"
+                },
+                {
+                    "name": "REDIS_DB",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:REDIS_DB::"
+                },
+                {
+                    "name": "REDIS_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:REDIS_HOST::"
+                },
+                {
+                    "name": "REDIS_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:REDIS_PASSWORD::"
+                },
+                {
+                    "name": "REDIS_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:REDIS_PORT::"
+                },
+                {
+                    "name": "REDIS_THRESHOLD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:REDIS_THRESHOLD::"
+                },
+                {
+                    "name": "S3_BUCKET_NAME",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:S3_BUCKET_NAME::"
+                },
+                {
+                    "name": "SERVER_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:SERVER_PORT::"
+                },
+                {
+                    "name": "SWAGGER_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:SWAGGER_HOST::"
+                },
+                {
+                    "name": "WORKER_BATCH_SIZE",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:WORKER_BATCH_SIZE::"
+                },
+                {
+                    "name": "WORKER_MAX_BATCHES",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:WORKER_MAX_BATCHES::"
+                }
+            ],
+            "systemControls": [],
+            "volumesFrom": []
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::218435950768:role/ecs-task-role",
+    "executionRoleArn": "arn:aws:iam::218435950768:role/ecs-task-execution-role",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "enableFaultInjection": false
+}

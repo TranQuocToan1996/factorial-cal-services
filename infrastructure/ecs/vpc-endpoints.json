@@ -1,0 +1,404 @@
+{
+    "VpcEndpoints": [
+        {
+            "VpcEndpointId": "vpce-07298c665c989ae27",
+            "VpcEndpointType": "Interface",
+            "VpcId": "vpc-0956e9914efe15691",
+            "ServiceName": "com.amazonaws.vpce.us-east-1.vpce-svc-0eebfe45c3819d4fb",
+            "State": "available",
+            "PolicyDocument": "{\n  \"Statement\": [\n    {\n      \"Action\": \"*\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+            "RouteTableIds": [],
+            "SubnetIds": [
+                "subnet-0911715bbcfeaf63f"
+            ],
+            "Groups": [
+                {
+                    "GroupId": "sg-05c48ab7b3f4244be",
+                    "GroupName": "queue-stream-sg"
+                }
+            ],
+            "IpAddressType": "ipv4",
+            "DnsOptions": {
+                "DnsRecordIpType": "ipv4"
+            },
+            "PrivateDnsEnabled": false,
+            "RequesterManaged": true,
+            "NetworkInterfaceIds": [
+                "eni-0819afa7d2b6327af"
+            ],
+            "DnsEntries": [
+                {
+                    "DnsName": "vpce-07298c665c989ae27-b7tlul0x.vpce-svc-0eebfe45c3819d4fb.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-07298c665c989ae27-b7tlul0x-us-east-1a.vpce-svc-0eebfe45c3819d4fb.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                }
+            ],
+            "CreationTimestamp": "2025-11-06T13:48:00.330000+00:00",
+            "Tags": [
+                {
+                    "Key": "AMQManaged",
+                    "Value": "true"
+                },
+                {
+                    "Key": "Broker",
+                    "Value": "b-08193775-de78-49e3-9f38-e98847124784"
+                }
+            ],
+            "OwnerId": "218435950768"
+        },
+        {
+            "VpcEndpointId": "vpce-0020b4eae8a52a96f",
+            "VpcEndpointType": "Interface",
+            "VpcId": "vpc-0956e9914efe15691",
+            "ServiceName": "com.amazonaws.us-east-1.ecr.api",
+            "State": "available",
+            "PolicyDocument": "{\n  \"Statement\": [\n    {\n      \"Action\": \"*\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+            "RouteTableIds": [],
+            "SubnetIds": [
+                "subnet-0484b1c030d49a464",
+                "subnet-0911715bbcfeaf63f"
+            ],
+            "Groups": [
+                {
+                    "GroupId": "sg-0eda5df6af283ac2f",
+                    "GroupName": "express-nodejs-demo-application"
+                }
+            ],
+            "IpAddressType": "ipv4",
+            "DnsOptions": {
+                "DnsRecordIpType": "ipv4"
+            },
+            "PrivateDnsEnabled": true,
+            "RequesterManaged": false,
+            "NetworkInterfaceIds": [
+                "eni-04a8674a03db3162d",
+                "eni-0300cd78f49fa57c8"
+            ],
+            "DnsEntries": [
+                {
+                    "DnsName": "vpce-0020b4eae8a52a96f-tc7545oa.api.ecr.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-0020b4eae8a52a96f-tc7545oa-us-east-1b.api.ecr.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-0020b4eae8a52a96f-tc7545oa-us-east-1a.api.ecr.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "api.ecr.us-east-1.amazonaws.com",
+                    "HostedZoneId": "Z0663698KAGVCC3SSOU1"
+                },
+                {
+                    "DnsName": "ecr.us-east-1.api.aws",
+                    "HostedZoneId": "Z042898214DFKP7FM1RGE"
+                }
+            ],
+            "CreationTimestamp": "2025-11-06T14:51:24.190000+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "ecr.api"
+                }
+            ],
+            "OwnerId": "218435950768"
+        },
+        {
+            "VpcEndpointId": "vpce-091bd2590637ae439",
+            "VpcEndpointType": "Interface",
+            "VpcId": "vpc-0956e9914efe15691",
+            "ServiceName": "com.amazonaws.us-east-1.ecr.dkr",
+            "State": "available",
+            "PolicyDocument": "{\n  \"Statement\": [\n    {\n      \"Action\": \"*\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+            "RouteTableIds": [],
+            "SubnetIds": [
+                "subnet-0484b1c030d49a464",
+                "subnet-0911715bbcfeaf63f"
+            ],
+            "Groups": [
+                {
+                    "GroupId": "sg-0eda5df6af283ac2f",
+                    "GroupName": "express-nodejs-demo-application"
+                }
+            ],
+            "IpAddressType": "ipv4",
+            "DnsOptions": {
+                "DnsRecordIpType": "ipv4"
+            },
+            "PrivateDnsEnabled": true,
+            "RequesterManaged": false,
+            "NetworkInterfaceIds": [
+                "eni-05970b6c1c5187bc0",
+                "eni-074e6dd7757a3ad18"
+            ],
+            "DnsEntries": [
+                {
+                    "DnsName": "vpce-091bd2590637ae439-1gkfbw0j.dkr.ecr.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-091bd2590637ae439-1gkfbw0j-us-east-1b.dkr.ecr.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-091bd2590637ae439-1gkfbw0j-us-east-1a.dkr.ecr.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "dkr.ecr.us-east-1.amazonaws.com",
+                    "HostedZoneId": "Z06639752RVOWL1HWPEY3"
+                },
+                {
+                    "DnsName": "*.dkr.ecr.us-east-1.amazonaws.com",
+                    "HostedZoneId": "Z06639752RVOWL1HWPEY3"
+                },
+                {
+                    "DnsName": "dkr-ecr.us-east-1.on.aws",
+                    "HostedZoneId": "Z0067183MMZ024MJ32PR"
+                },
+                {
+                    "DnsName": "*.dkr-ecr.us-east-1.on.aws",
+                    "HostedZoneId": "Z0067183MMZ024MJ32PR"
+                }
+            ],
+            "CreationTimestamp": "2025-11-06T14:52:33.320000+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "ecr.dkr"
+                }
+            ],
+            "OwnerId": "218435950768"
+        },
+        {
+            "VpcEndpointId": "vpce-04c81223a6b7c413b",
+            "VpcEndpointType": "Interface",
+            "VpcId": "vpc-0956e9914efe15691",
+            "ServiceName": "com.amazonaws.us-east-1.logs",
+            "State": "available",
+            "PolicyDocument": "{\n  \"Statement\": [\n    {\n      \"Action\": \"*\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+            "RouteTableIds": [],
+            "SubnetIds": [
+                "subnet-0484b1c030d49a464",
+                "subnet-0911715bbcfeaf63f"
+            ],
+            "Groups": [
+                {
+                    "GroupId": "sg-0eda5df6af283ac2f",
+                    "GroupName": "express-nodejs-demo-application"
+                },
+                {
+                    "GroupId": "sg-08deee793218845f6",
+                    "GroupName": "express-nodejs-demo-postgres"
+                },
+                {
+                    "GroupId": "sg-05c48ab7b3f4244be",
+                    "GroupName": "queue-stream-sg"
+                }
+            ],
+            "IpAddressType": "ipv4",
+            "DnsOptions": {
+                "DnsRecordIpType": "ipv4"
+            },
+            "PrivateDnsEnabled": true,
+            "RequesterManaged": false,
+            "NetworkInterfaceIds": [
+                "eni-04a56ac3ec88bb42f",
+                "eni-0ad395a75786b6710"
+            ],
+            "DnsEntries": [
+                {
+                    "DnsName": "vpce-04c81223a6b7c413b-2p93drbz.logs.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-04c81223a6b7c413b-2p93drbz-us-east-1a.logs.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-04c81223a6b7c413b-2p93drbz-us-east-1b.logs.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "logs.us-east-1.amazonaws.com",
+                    "HostedZoneId": "Z08201192MO2NARAOMFS1"
+                },
+                {
+                    "DnsName": "streaming-logs.us-east-1.amazonaws.com",
+                    "HostedZoneId": "Z082033025FPBOMHNH5G4"
+                },
+                {
+                    "DnsName": "streaming-logs.us-east-1.api.aws",
+                    "HostedZoneId": "Z00667193L1UXJRY50ZGZ"
+                },
+                {
+                    "DnsName": "logs.us-east-1.api.aws",
+                    "HostedZoneId": "Z067133715JFOITW3LDV6"
+                }
+            ],
+            "CreationTimestamp": "2025-11-06T14:53:34.698000+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "logs"
+                }
+            ],
+            "OwnerId": "218435950768"
+        },
+        {
+            "VpcEndpointId": "vpce-09a1fc1d3d57f3c4c",
+            "VpcEndpointType": "Gateway",
+            "VpcId": "vpc-0956e9914efe15691",
+            "ServiceName": "com.amazonaws.us-east-1.s3",
+            "State": "available",
+            "PolicyDocument": "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"*\",\"Resource\":\"*\"}]}",
+            "RouteTableIds": [
+                "rtb-0c0651ddc85d78dd7",
+                "rtb-071153a5346a78a3b",
+                "rtb-0ee20646ab7f180f2",
+                "rtb-0cda54aac64462baa"
+            ],
+            "SubnetIds": [],
+            "Groups": [],
+            "IpAddressType": "ipv4",
+            "DnsOptions": {
+                "DnsRecordIpType": "service-defined"
+            },
+            "PrivateDnsEnabled": false,
+            "RequesterManaged": false,
+            "NetworkInterfaceIds": [],
+            "DnsEntries": [],
+            "CreationTimestamp": "2025-11-06T14:56:11+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "s3-gateway"
+                }
+            ],
+            "OwnerId": "218435950768"
+        },
+        {
+            "VpcEndpointId": "vpce-0189034616eac5fc4",
+            "VpcEndpointType": "Interface",
+            "VpcId": "vpc-0956e9914efe15691",
+            "ServiceName": "com.amazonaws.us-east-1.secretsmanager",
+            "State": "available",
+            "PolicyDocument": "{\n  \"Statement\": [\n    {\n      \"Action\": \"*\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+            "RouteTableIds": [],
+            "SubnetIds": [
+                "subnet-0484b1c030d49a464",
+                "subnet-0911715bbcfeaf63f"
+            ],
+            "Groups": [
+                {
+                    "GroupId": "sg-0eda5df6af283ac2f",
+                    "GroupName": "express-nodejs-demo-application"
+                },
+                {
+                    "GroupId": "sg-08deee793218845f6",
+                    "GroupName": "express-nodejs-demo-postgres"
+                }
+            ],
+            "IpAddressType": "ipv4",
+            "DnsOptions": {
+                "DnsRecordIpType": "ipv4"
+            },
+            "PrivateDnsEnabled": true,
+            "RequesterManaged": false,
+            "NetworkInterfaceIds": [
+                "eni-0a3ad1e132a0177d3",
+                "eni-040466fa4aca29e40"
+            ],
+            "DnsEntries": [
+                {
+                    "DnsName": "vpce-0189034616eac5fc4-1so9i7kp.secretsmanager.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-0189034616eac5fc4-1so9i7kp-us-east-1a.secretsmanager.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-0189034616eac5fc4-1so9i7kp-us-east-1b.secretsmanager.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "secretsmanager.us-east-1.amazonaws.com",
+                    "HostedZoneId": "Z08244802NVB41WGG7K14"
+                }
+            ],
+            "CreationTimestamp": "2025-11-06T14:57:34.604000+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "secret-manager"
+                }
+            ],
+            "OwnerId": "218435950768"
+        },
+        {
+            "VpcEndpointId": "vpce-09df3a14864cc8685",
+            "VpcEndpointType": "Interface",
+            "VpcId": "vpc-0956e9914efe15691",
+            "ServiceName": "com.amazonaws.us-east-1.mq",
+            "State": "available",
+            "PolicyDocument": "{\n  \"Statement\": [\n    {\n      \"Action\": \"*\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Resource\": \"*\"\n    }\n  ]\n}",
+            "RouteTableIds": [],
+            "SubnetIds": [
+                "subnet-0484b1c030d49a464",
+                "subnet-0911715bbcfeaf63f"
+            ],
+            "Groups": [
+                {
+                    "GroupId": "sg-0eda5df6af283ac2f",
+                    "GroupName": "express-nodejs-demo-application"
+                },
+                {
+                    "GroupId": "sg-05c48ab7b3f4244be",
+                    "GroupName": "queue-stream-sg"
+                }
+            ],
+            "IpAddressType": "ipv4",
+            "DnsOptions": {
+                "DnsRecordIpType": "ipv4"
+            },
+            "PrivateDnsEnabled": true,
+            "RequesterManaged": false,
+            "NetworkInterfaceIds": [
+                "eni-07ac22b09d3ae8568",
+                "eni-0436bf32700484e20"
+            ],
+            "DnsEntries": [
+                {
+                    "DnsName": "vpce-09df3a14864cc8685-evicrw4o.mq.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-09df3a14864cc8685-evicrw4o-us-east-1b.mq.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "vpce-09df3a14864cc8685-evicrw4o-us-east-1a.mq.us-east-1.vpce.amazonaws.com",
+                    "HostedZoneId": "Z7HUB22UULQXV"
+                },
+                {
+                    "DnsName": "mq.us-east-1.api.aws",
+                    "HostedZoneId": "Z0093891167TFY00ZZCJI"
+                }
+            ],
+            "CreationTimestamp": "2025-11-06T14:58:23.649000+00:00",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "mq"
+                }
+            ],
+            "OwnerId": "218435950768"
+        }
+    ]
+}

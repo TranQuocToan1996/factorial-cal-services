@@ -1,0 +1,5 @@
+resource "aws_s3_bucket_policy" "tfer--aws-cloudtrail-logs-218435950768-6da8860e" {
+  bucket = "aws-cloudtrail-logs-218435950768-6da8860e"
+  policy = "{\"Statement\":[{\"Action\":\"s3:GetBucketAcl\",\"Condition\":{\"StringEquals\":{\"AWS:SourceArn\":\"arn:aws:cloudtrail:us-east-1:218435950768:trail/management-events\"}},\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"cloudtrail.amazonaws.com\"},\"Resource\":\"arn:aws:s3:::aws-cloudtrail-logs-218435950768-6da8860e\",\"Sid\":\"AWSCloudTrailAclCheck20150319-8841942a-e2fa-42e8-b516-54f3604fa8f9\"},{\"Action\":\"s3:PutObject\",\"Condition\":{\"StringEquals\":{\"AWS:SourceArn\":\"arn:aws:cloudtrail:us-east-1:218435950768:trail/management-events\",\"s3:x-amz-acl\":\"bucket-owner-full-control\"}},\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"cloudtrail.amazonaws.com\"},\"Resource\":\"arn:aws:s3:::aws-cloudtrail-logs-218435950768-6da8860e/AWSLogs/218435950768/*\",\"Sid\":\"AWSCloudTrailWrite20150319-57aee438-f822-470a-ab14-945b300326db\"}],\"Version\":\"2012-10-17\"}"
+  region = "us-east-1"
+}

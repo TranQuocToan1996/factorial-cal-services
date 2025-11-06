@@ -1,0 +1,930 @@
+{
+    "services": [
+        {
+            "serviceArn": "arn:aws:ecs:us-east-1:218435950768:service/factorial_calculate_cluster/factorial-service-calculator",
+            "serviceName": "factorial-service-calculator",
+            "clusterArn": "arn:aws:ecs:us-east-1:218435950768:cluster/factorial_calculate_cluster",
+            "loadBalancers": [],
+            "serviceRegistries": [],
+            "status": "ACTIVE",
+            "desiredCount": 1,
+            "runningCount": 1,
+            "pendingCount": 0,
+            "launchType": "FARGATE",
+            "platformVersion": "LATEST",
+            "platformFamily": "Linux",
+            "taskDefinition": "arn:aws:ecs:us-east-1:218435950768:task-definition/factorial-service-calculator-tf:4",
+            "deploymentConfiguration": {
+                "deploymentCircuitBreaker": {
+                    "enable": true,
+                    "rollback": true
+                },
+                "maximumPercent": 200,
+                "minimumHealthyPercent": 100
+            },
+            "deployments": [
+                {
+                    "id": "ecs-svc/8959545847709796882",
+                    "status": "PRIMARY",
+                    "taskDefinition": "arn:aws:ecs:us-east-1:218435950768:task-definition/factorial-service-calculator-tf:4",
+                    "desiredCount": 1,
+                    "pendingCount": 0,
+                    "runningCount": 1,
+                    "failedTasks": 0,
+                    "createdAt": "2025-11-07T00:28:25.115000+07:00",
+                    "updatedAt": "2025-11-07T00:32:37.157000+07:00",
+                    "launchType": "FARGATE",
+                    "platformVersion": "1.4.0",
+                    "platformFamily": "Linux",
+                    "networkConfiguration": {
+                        "awsvpcConfiguration": {
+                            "subnets": [
+                                "subnet-0911715bbcfeaf63f"
+                            ],
+                            "securityGroups": [
+                                "sg-0eda5df6af283ac2f"
+                            ],
+                            "assignPublicIp": "DISABLED"
+                        }
+                    },
+                    "rolloutState": "COMPLETED",
+                    "rolloutStateReason": "ECS deployment ecs-svc/8959545847709796882 completed."
+                }
+            ],
+            "roleArn": "arn:aws:iam::218435950768:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+            "events": [
+                {
+                    "id": "bdaf29dd-9985-40b7-a2fe-5d53b3cc7eed",
+                    "createdAt": "2025-11-07T00:32:37.163000+07:00",
+                    "message": "(service factorial-service-calculator) has reached a steady state."
+                },
+                {
+                    "id": "d20d3f67-3201-4559-aad2-3786d729e265",
+                    "createdAt": "2025-11-07T00:32:37.162000+07:00",
+                    "message": "(service factorial-service-calculator) (deployment ecs-svc/8959545847709796882) deployment completed."
+                },
+                {
+                    "id": "789d5960-5c8a-4130-a986-4beb04d94c18",
+                    "createdAt": "2025-11-07T00:29:41.389000+07:00",
+                    "message": "(service factorial-service-calculator) has stopped 1 running tasks: (task 57e25f496d3540b78b53cc72c227e449)."
+                },
+                {
+                    "id": "0f236e04-a780-411a-b897-5c3a79183614",
+                    "createdAt": "2025-11-07T00:28:40.315000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 048ffa2cbb884df98d0f09e57b0d4514)."
+                },
+                {
+                    "id": "11b33848-af30-43d5-bb9b-ab3e4397cf93",
+                    "createdAt": "2025-11-07T00:14:58.325000+07:00",
+                    "message": "(service factorial-service-calculator) has reached a steady state."
+                },
+                {
+                    "id": "0904c292-c205-4e04-955c-0251d34be0ff",
+                    "createdAt": "2025-11-07T00:14:58.324000+07:00",
+                    "message": "(service factorial-service-calculator) (deployment ecs-svc/6664898440020279863) deployment completed."
+                },
+                {
+                    "id": "ff1fc25e-6a3d-4296-8d66-39b98af52e3c",
+                    "createdAt": "2025-11-07T00:12:24.950000+07:00",
+                    "message": "(service factorial-service-calculator) has stopped 1 running tasks: (task 612fe6c08e064e5987b55f4141f1bbd1)."
+                },
+                {
+                    "id": "9fe7c7e7-ff17-49d5-9b7f-b7f2366892f9",
+                    "createdAt": "2025-11-07T00:11:23.795000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 57e25f496d3540b78b53cc72c227e449)."
+                },
+                {
+                    "id": "aeadde96-5787-4f2f-a016-6aba79225af7",
+                    "createdAt": "2025-11-07T00:08:58.289000+07:00",
+                    "message": "(service factorial-service-calculator) has reached a steady state."
+                },
+                {
+                    "id": "edc25df7-eae2-4fdd-9277-bab54a9429e1",
+                    "createdAt": "2025-11-07T00:08:58.288000+07:00",
+                    "message": "(service factorial-service-calculator) (deployment ecs-svc/6438433958048425313) deployment completed."
+                },
+                {
+                    "id": "7f4a4619-5c27-41b7-b57b-a255cd3132df",
+                    "createdAt": "2025-11-07T00:06:46.107000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "ba16e742-6e36-4f7e-aa43-611805138b58",
+                    "createdAt": "2025-11-07T00:06:35.327000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 612fe6c08e064e5987b55f4141f1bbd1)."
+                },
+                {
+                    "id": "e1bdb04a-e745-4b08-865b-aead656132d9",
+                    "createdAt": "2025-11-07T00:06:16.307000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 7d9c4f3025044519bfd816d2da000384)."
+                },
+                {
+                    "id": "d8c47c1f-3874-4f44-a75a-f50426606fcf",
+                    "createdAt": "2025-11-07T00:04:35.583000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "794a3626-a83d-4c16-82c0-6cb50e325101",
+                    "createdAt": "2025-11-07T00:03:57.137000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 4049d0e719f740c194d816562acdce4f)."
+                },
+                {
+                    "id": "4b608043-36ff-4554-a6cc-41836d50a103",
+                    "createdAt": "2025-11-07T00:03:26.743000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "cdada3c5-07d2-406d-9d19-4360687dd5ed",
+                    "createdAt": "2025-11-07T00:02:57.378000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 20a8736784714007975b38e59a2e04fb)."
+                },
+                {
+                    "id": "e7e7a1d8-c916-4a63-90fe-2430db684332",
+                    "createdAt": "2025-11-07T00:02:25.611000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "669df3b3-2654-41ad-b227-e42dd160d281",
+                    "createdAt": "2025-11-07T00:01:47.819000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 6f8c7da8da9e495d87094a5369aba699)."
+                },
+                {
+                    "id": "5605319c-222a-4ba8-a9eb-6488319e08a7",
+                    "createdAt": "2025-11-07T00:01:16.994000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "74225625-3ed7-48ca-a9bb-489200b28125",
+                    "createdAt": "2025-11-07T00:00:48.475000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 082bbcb0923a4b5eb57cb552db4af5e5)."
+                },
+                {
+                    "id": "0ec9a393-2bd9-4fe8-98b9-370b07bf18f7",
+                    "createdAt": "2025-11-07T00:00:16.192000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "cd6eef80-52b3-4cdf-9d0e-d3ec2f0f4201",
+                    "createdAt": "2025-11-07T00:00:11.352000+07:00",
+                    "message": "(service factorial-service-calculator) (deployment ecs-svc/7246468359247432760) deployment failed: tasks failed to start."
+                },
+                {
+                    "id": "5aadff2f-5166-4cf9-8e60-38d70943e4e6",
+                    "createdAt": "2025-11-06T23:59:43.088000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task a633c6f9b9254710b934de48b969877e)."
+                },
+                {
+                    "id": "0a7e5478-4f2c-4314-9f26-455d574dc70c",
+                    "createdAt": "2025-11-06T23:59:42.679000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 0336b2caa6094bebade58cffa720092e)."
+                },
+                {
+                    "id": "8b25542e-6780-476c-96d1-a85285975558",
+                    "createdAt": "2025-11-06T23:59:10.296000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "8699c640-3752-4b5a-bb88-a31659f9e03e",
+                    "createdAt": "2025-11-06T23:58:31.710000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 8cd746c5966742abb8f61ff8e0f8cf38)."
+                },
+                {
+                    "id": "8ac37ab4-e783-4a33-b031-0ec9a7cb6fd4",
+                    "createdAt": "2025-11-06T23:58:31.060000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task da0acfd110f5468d8466e17bf56eede7)."
+                },
+                {
+                    "id": "791a815e-c566-4c9c-a985-aa1418f8280e",
+                    "createdAt": "2025-11-06T23:57:49.282000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "1cbe3b43-7788-4f4f-bf77-ed3ede4dbd6f",
+                    "createdAt": "2025-11-06T23:57:21.511000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task d2574a688a6e4ed385517c3e42a91c25)."
+                },
+                {
+                    "id": "f14ddc32-ed05-4725-9ad1-9c3616877784",
+                    "createdAt": "2025-11-06T23:57:20.860000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 60812ea168f8466199ab1d20d7709542)."
+                },
+                {
+                    "id": "e63bdab7-8ef8-440c-a30c-9f5c499b199a",
+                    "createdAt": "2025-11-06T23:56:40.301000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "b2a0e5d1-58a3-4afa-b5e2-e1162254e5d0",
+                    "createdAt": "2025-11-06T23:56:19.353000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 44047f105dc94b66881dad2036624c2a)."
+                },
+                {
+                    "id": "6672d45f-5531-4c13-9d0a-380109c065ea",
+                    "createdAt": "2025-11-06T23:56:09.596000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 4230dad76e724da18fd28901d9c709df)."
+                },
+                {
+                    "id": "41cd63fd-d50b-43c6-b0a6-cfab30a148df",
+                    "createdAt": "2025-11-06T23:55:38.882000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "f40ec84a-ba46-490d-abb8-dbed3915b109",
+                    "createdAt": "2025-11-06T23:55:05.775000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 8ee8011c13d04451b3bc0ba357dd2fb0)."
+                },
+                {
+                    "id": "467f3e0c-2837-45a4-92d3-48480dca9438",
+                    "createdAt": "2025-11-06T23:54:34.070000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "b386cc8c-c1bf-426a-a194-c5f8d949cc94",
+                    "createdAt": "2025-11-06T23:53:55.051000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task f963dcd974344a64883db98f1ab264dd)."
+                },
+                {
+                    "id": "0ab9fc96-6873-4d1f-bcc8-dd1ec1f025b4",
+                    "createdAt": "2025-11-06T23:53:23.297000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "6d8fc281-3452-45d8-86f0-daaf1f808c15",
+                    "createdAt": "2025-11-06T23:52:55.625000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task 39b0f5e6b4c543ba8c3280cbaa2a1a70)."
+                },
+                {
+                    "id": "451e5073-a9d8-46a9-b2b1-b2059111f17d",
+                    "createdAt": "2025-11-06T23:52:24.360000+07:00",
+                    "message": "(service factorial-service-calculator) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "d82732cc-5fa6-4387-aeb8-8f77877c0895",
+                    "createdAt": "2025-11-06T23:51:54.117000+07:00",
+                    "message": "(service factorial-service-calculator) has started 1 tasks: (task cc13845c7ff94881ba4350c1e12b8eb6)."
+                }
+            ],
+            "createdAt": "2025-11-06T23:51:42.485000+07:00",
+            "placementConstraints": [],
+            "placementStrategy": [],
+            "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "subnet-0911715bbcfeaf63f"
+                    ],
+                    "securityGroups": [
+                        "sg-0eda5df6af283ac2f"
+                    ],
+                    "assignPublicIp": "DISABLED"
+                }
+            },
+            "healthCheckGracePeriodSeconds": 0,
+            "schedulingStrategy": "REPLICA",
+            "deploymentController": {
+                "type": "ECS"
+            },
+            "createdBy": "arn:aws:iam::218435950768:user/anto_dev",
+            "enableECSManagedTags": true,
+            "propagateTags": "NONE",
+            "enableExecuteCommand": false
+        },
+        {
+            "serviceArn": "arn:aws:ecs:us-east-1:218435950768:service/factorial_calculate_cluster/factorial-service-worker",
+            "serviceName": "factorial-service-worker",
+            "clusterArn": "arn:aws:ecs:us-east-1:218435950768:cluster/factorial_calculate_cluster",
+            "loadBalancers": [],
+            "serviceRegistries": [],
+            "status": "ACTIVE",
+            "desiredCount": 1,
+            "runningCount": 1,
+            "pendingCount": 0,
+            "launchType": "FARGATE",
+            "platformVersion": "LATEST",
+            "platformFamily": "Linux",
+            "taskDefinition": "arn:aws:ecs:us-east-1:218435950768:task-definition/factorial-service-worker-tf:4",
+            "deploymentConfiguration": {
+                "deploymentCircuitBreaker": {
+                    "enable": true,
+                    "rollback": true
+                },
+                "maximumPercent": 200,
+                "minimumHealthyPercent": 100
+            },
+            "deployments": [
+                {
+                    "id": "ecs-svc/0646928425331986150",
+                    "status": "PRIMARY",
+                    "taskDefinition": "arn:aws:ecs:us-east-1:218435950768:task-definition/factorial-service-worker-tf:4",
+                    "desiredCount": 1,
+                    "pendingCount": 0,
+                    "runningCount": 1,
+                    "failedTasks": 0,
+                    "createdAt": "2025-11-07T00:28:06.926000+07:00",
+                    "updatedAt": "2025-11-07T00:32:14.428000+07:00",
+                    "launchType": "FARGATE",
+                    "platformVersion": "1.4.0",
+                    "platformFamily": "Linux",
+                    "networkConfiguration": {
+                        "awsvpcConfiguration": {
+                            "subnets": [
+                                "subnet-0484b1c030d49a464"
+                            ],
+                            "securityGroups": [
+                                "sg-0eda5df6af283ac2f"
+                            ],
+                            "assignPublicIp": "DISABLED"
+                        }
+                    },
+                    "rolloutState": "COMPLETED",
+                    "rolloutStateReason": "ECS deployment ecs-svc/0646928425331986150 completed."
+                }
+            ],
+            "roleArn": "arn:aws:iam::218435950768:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+            "events": [
+                {
+                    "id": "c45ec2ce-f2df-43fa-98e3-31406a430d36",
+                    "createdAt": "2025-11-07T00:32:14.435000+07:00",
+                    "message": "(service factorial-service-worker) has reached a steady state."
+                },
+                {
+                    "id": "f12db267-85fa-4a09-aa44-84dbcae96de7",
+                    "createdAt": "2025-11-07T00:32:14.434000+07:00",
+                    "message": "(service factorial-service-worker) (deployment ecs-svc/0646928425331986150) deployment completed."
+                },
+                {
+                    "id": "145d12b0-a7e8-47af-8ea2-164a2bb35939",
+                    "createdAt": "2025-11-07T00:29:29.005000+07:00",
+                    "message": "(service factorial-service-worker) has stopped 1 running tasks: (task cf6ffdcd40b743eabab449894670c9dc)."
+                },
+                {
+                    "id": "22dae940-3322-41aa-bd7a-049d48fc80da",
+                    "createdAt": "2025-11-07T00:28:18.271000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 8aa24e7c0aca4c2c9e6bf2c13fb54edf)."
+                },
+                {
+                    "id": "e71c1aaf-7c9c-4a31-aee9-ccdc6ebae022",
+                    "createdAt": "2025-11-07T00:25:44.547000+07:00",
+                    "message": "(service factorial-service-worker) has reached a steady state."
+                },
+                {
+                    "id": "a72c8fd2-96de-4039-b888-e164a8226885",
+                    "createdAt": "2025-11-07T00:25:44.546000+07:00",
+                    "message": "(service factorial-service-worker) (deployment ecs-svc/0345262085383913233) deployment completed."
+                },
+                {
+                    "id": "8a1e7554-4048-4f57-981f-53ed62054e2c",
+                    "createdAt": "2025-11-07T00:23:21.454000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task cf6ffdcd40b743eabab449894670c9dc)."
+                },
+                {
+                    "id": "285db15a-7906-40a2-9cac-65c2530a12c2",
+                    "createdAt": "2025-11-07T00:15:21.270000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task db5d2f72c28a4d32aa6bb621d2ef07a1)."
+                },
+                {
+                    "id": "2d7615bb-4a9d-476a-948e-f151a304c816",
+                    "createdAt": "2025-11-07T00:15:20.708000+07:00",
+                    "message": "(service factorial-service-worker) (deployment ecs-svc/3215120132599888564) deployment failed: tasks failed to start."
+                },
+                {
+                    "id": "f0dc14f4-a7cd-4aaa-a625-2823d75ffe30",
+                    "createdAt": "2025-11-07T00:14:22.384000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task e204edaabb03427386fbf28fdad7a0af)."
+                },
+                {
+                    "id": "9754c669-130c-4a00-80b1-511571e5aaf8",
+                    "createdAt": "2025-11-07T00:13:22.653000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 1e06a271b16d430480627b0aa515f7d5)."
+                },
+                {
+                    "id": "00ecfed4-3695-4a5e-a495-5147f147fc26",
+                    "createdAt": "2025-11-07T00:12:23.376000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task ccb3855cdeb04cdb901bb96a939a1cb0)."
+                },
+                {
+                    "id": "b06f206b-85a5-4c1d-ae62-c569e8b5368f",
+                    "createdAt": "2025-11-07T00:11:23.623000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task a2a76e1a45374415ad12b9135742f338)."
+                },
+                {
+                    "id": "9b5335da-5ea3-4b56-b5d7-b4c316aca743",
+                    "createdAt": "2025-11-07T00:10:08.526000+07:00",
+                    "message": "(service factorial-service-worker) (deployment ecs-svc/0777079100873561479) deployment failed: tasks failed to start."
+                },
+                {
+                    "id": "bf54d831-411e-4881-8c12-31ae893d2f38",
+                    "createdAt": "2025-11-07T00:09:46.403000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 24307831c3e0428a8b9c711f237b820d)."
+                },
+                {
+                    "id": "12eed423-a1f2-46d2-91de-36f37b38e159",
+                    "createdAt": "2025-11-07T00:08:45.898000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 1c3ca8a819964269b7327574f675fa9c)."
+                },
+                {
+                    "id": "4e83f971-6833-4323-95e4-7a6627f22174",
+                    "createdAt": "2025-11-07T00:07:46.606000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 6d49b579134c44a593d0f799da5c03d8)."
+                },
+                {
+                    "id": "36008284-64dc-4445-a94d-52ff4d5e7524",
+                    "createdAt": "2025-11-07T00:06:46.740000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task ad8ab4ec7f184717a0abf9ce5f2c3399)."
+                },
+                {
+                    "id": "279c6986-4d23-455f-b38d-6fb49d2154ae",
+                    "createdAt": "2025-11-07T00:01:06.752000+07:00",
+                    "message": "(service factorial-service-worker) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "b22c0cd0-d925-42ed-9041-7678ade5a9b3",
+                    "createdAt": "2025-11-07T00:00:51.298000+07:00",
+                    "message": "(service factorial-service-worker) (deployment ecs-svc/6976666314021700775) deployment failed: tasks failed to start."
+                },
+                {
+                    "id": "27d1e2bc-61e9-47eb-a25a-ccc8f6ff579e",
+                    "createdAt": "2025-11-07T00:00:32.993000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 62f3fd03bb3242669af149814f892bad)."
+                },
+                {
+                    "id": "6d2a2352-9991-45e1-b582-375b33f2ee5e",
+                    "createdAt": "2025-11-07T00:00:00.607000+07:00",
+                    "message": "(service factorial-service-worker) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "756c33c0-7287-49ec-8e22-935c307eb1b1",
+                    "createdAt": "2025-11-06T23:59:21.565000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 6c2f3c99d636495ca398505b3e80c897)."
+                },
+                {
+                    "id": "178a3954-b527-4498-a148-9fdf77687749",
+                    "createdAt": "2025-11-06T23:58:49.114000+07:00",
+                    "message": "(service factorial-service-worker) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "5b81b8b6-e526-47c6-b506-876ed2959b79",
+                    "createdAt": "2025-11-06T23:58:09.806000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 0adf7ff6902647a0800999cbdb0bd59b)."
+                },
+                {
+                    "id": "84a6fe66-e20c-4ed1-ab22-d430964fb77d",
+                    "createdAt": "2025-11-06T23:57:38.352000+07:00",
+                    "message": "(service factorial-service-worker) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "a3d8b14a-c941-4f13-8f15-0252023bce78",
+                    "createdAt": "2025-11-06T23:56:59.705000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 76b07d679b8d45a1b910be717474233a)."
+                },
+                {
+                    "id": "b194dc0f-18df-4931-9aad-6dec04b9711a",
+                    "createdAt": "2025-11-06T23:56:26.650000+07:00",
+                    "message": "(service factorial-service-worker) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "31e8a8d5-1d06-4800-9efb-73735f24cd00",
+                    "createdAt": "2025-11-06T23:55:50.521000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 3133986ff8af4a2183b5c24d969b4aef)."
+                },
+                {
+                    "id": "1588d291-2005-40d7-9342-3932be6946ea",
+                    "createdAt": "2025-11-06T23:54:05.503000+07:00",
+                    "message": "(service factorial-service-worker) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "b4451e55-b211-4083-8e78-ae8f2003c0d2",
+                    "createdAt": "2025-11-06T23:53:49.914000+07:00",
+                    "message": "(service factorial-service-worker) (deployment ecs-svc/8153045446197573935) deployment failed: tasks failed to start."
+                },
+                {
+                    "id": "d4cddc13-0d36-4a5b-b337-d5792805c66d",
+                    "createdAt": "2025-11-06T23:53:34.487000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 01410f2d81b24c1183d4a98ba70d2422)."
+                },
+                {
+                    "id": "55fe5016-0270-49e2-a967-4af566aadd7a",
+                    "createdAt": "2025-11-06T23:53:02.160000+07:00",
+                    "message": "(service factorial-service-worker) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "239d53a1-df09-4e76-b763-0e5355718f56",
+                    "createdAt": "2025-11-06T23:52:32.966000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 1ec6b623e4494045be6210eef1f4afa9)."
+                },
+                {
+                    "id": "2a3c9bfd-5e28-4cd8-b71a-fab2b7ca26a3",
+                    "createdAt": "2025-11-06T23:52:01.057000+07:00",
+                    "message": "(service factorial-service-worker) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "eb1d9d27-4991-433b-8f85-f6990030a299",
+                    "createdAt": "2025-11-06T23:51:21.187000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 0bf987a4b2984df6a36f8d56d40ab7bb)."
+                },
+                {
+                    "id": "839516c5-469c-4455-888b-89b1a1b1b958",
+                    "createdAt": "2025-11-06T23:50:51.494000+07:00",
+                    "message": "(service factorial-service-worker) was unable to place a task. Reason: ResourceInitializationError: unable to pull secrets or registry auth: execution resource retrieval failed: unable to retrieve secret from asm: service call has been retried 1 time(s): secrets manager: failed to retrieve secret from arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/simple-order-service/api-FCJNv4:SecretString:SWAGGER_HOST::: unexpected ARN format with parameters when trying to retrieve ASM secret."
+                },
+                {
+                    "id": "e304a353-71b4-4698-8109-31ef663b926a",
+                    "createdAt": "2025-11-06T23:50:22.212000+07:00",
+                    "message": "(service factorial-service-worker) has started 1 tasks: (task 650460692d5d4fc8babb34117f6e3833)."
+                }
+            ],
+            "createdAt": "2025-11-06T23:50:03.978000+07:00",
+            "placementConstraints": [],
+            "placementStrategy": [],
+            "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "subnet-0484b1c030d49a464"
+                    ],
+                    "securityGroups": [
+                        "sg-0eda5df6af283ac2f"
+                    ],
+                    "assignPublicIp": "DISABLED"
+                }
+            },
+            "healthCheckGracePeriodSeconds": 0,
+            "schedulingStrategy": "REPLICA",
+            "deploymentController": {
+                "type": "ECS"
+            },
+            "createdBy": "arn:aws:iam::218435950768:user/anto_dev",
+            "enableECSManagedTags": true,
+            "propagateTags": "NONE",
+            "enableExecuteCommand": true
+        },
+        {
+            "serviceArn": "arn:aws:ecs:us-east-1:218435950768:service/factorial_calculate_cluster/factorial-service-api-service",
+            "serviceName": "factorial-service-api-service",
+            "clusterArn": "arn:aws:ecs:us-east-1:218435950768:cluster/factorial_calculate_cluster",
+            "loadBalancers": [
+                {
+                    "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4",
+                    "containerName": "factorial-service-api",
+                    "containerPort": 8080
+                }
+            ],
+            "serviceRegistries": [],
+            "status": "ACTIVE",
+            "desiredCount": 1,
+            "runningCount": 1,
+            "pendingCount": 0,
+            "launchType": "FARGATE",
+            "platformVersion": "LATEST",
+            "platformFamily": "Linux",
+            "taskDefinition": "arn:aws:ecs:us-east-1:218435950768:task-definition/factorial-service-api-tf:3",
+            "deploymentConfiguration": {
+                "deploymentCircuitBreaker": {
+                    "enable": true,
+                    "rollback": true
+                },
+                "maximumPercent": 200,
+                "minimumHealthyPercent": 100
+            },
+            "deployments": [
+                {
+                    "id": "ecs-svc/1477770382827216098",
+                    "status": "PRIMARY",
+                    "taskDefinition": "arn:aws:ecs:us-east-1:218435950768:task-definition/factorial-service-api-tf:3",
+                    "desiredCount": 1,
+                    "pendingCount": 0,
+                    "runningCount": 1,
+                    "failedTasks": 0,
+                    "createdAt": "2025-11-07T00:28:44.157000+07:00",
+                    "updatedAt": "2025-11-07T00:31:37.588000+07:00",
+                    "launchType": "FARGATE",
+                    "platformVersion": "1.4.0",
+                    "platformFamily": "Linux",
+                    "networkConfiguration": {
+                        "awsvpcConfiguration": {
+                            "subnets": [
+                                "subnet-0911715bbcfeaf63f"
+                            ],
+                            "securityGroups": [
+                                "sg-0eda5df6af283ac2f"
+                            ],
+                            "assignPublicIp": "DISABLED"
+                        }
+                    },
+                    "rolloutState": "COMPLETED",
+                    "rolloutStateReason": "ECS deployment ecs-svc/1477770382827216098 completed."
+                }
+            ],
+            "roleArn": "arn:aws:iam::218435950768:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+            "events": [
+                {
+                    "id": "4f4b990f-24c6-4386-a02e-9f2a132b1996",
+                    "createdAt": "2025-11-07T00:31:37.595000+07:00",
+                    "message": "(service factorial-service-api-service) has reached a steady state."
+                },
+                {
+                    "id": "494f2133-899a-415c-b2ad-4e1830448873",
+                    "createdAt": "2025-11-07T00:31:37.594000+07:00",
+                    "message": "(service factorial-service-api-service) (deployment ecs-svc/1477770382827216098) deployment completed."
+                },
+                {
+                    "id": "b5f8176c-9b3d-4503-a114-fabf89661a27",
+                    "createdAt": "2025-11-07T00:30:36.506000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/2004615094714322509) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "c50c4d85-fbb0-4c94-9eff-5f15764c4f40",
+                    "createdAt": "2025-11-07T00:30:36.500000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "bca26088-b800-4965-b5d7-419c167bf4ac",
+                    "createdAt": "2025-11-07T00:30:27.392000+07:00",
+                    "message": "(service factorial-service-api-service) has stopped 1 running tasks: (task 557d4f6bf2914ba396295c21eba788ae)."
+                },
+                {
+                    "id": "97d40e61-d93a-4ae1-8405-2c11ff97d00d",
+                    "createdAt": "2025-11-07T00:29:37.612000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "5187486e-1196-419b-8984-2247d118fabd",
+                    "createdAt": "2025-11-07T00:28:57.479000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task d0d42b0196594ce286029d5730232733)."
+                },
+                {
+                    "id": "0c210131-50fe-4584-ae17-842299f2e82b",
+                    "createdAt": "2025-11-07T00:26:35.913000+07:00",
+                    "message": "(service factorial-service-api-service) has reached a steady state."
+                },
+                {
+                    "id": "d200098f-e35f-45a3-9c64-34b1ae983390",
+                    "createdAt": "2025-11-07T00:26:35.912000+07:00",
+                    "message": "(service factorial-service-api-service) (deployment ecs-svc/2004615094714322509) deployment completed."
+                },
+                {
+                    "id": "5f538600-db02-4c67-ae29-a1d66d63a07d",
+                    "createdAt": "2025-11-07T00:21:20.370000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "b5ff14af-219f-4883-8b10-5a7b688caab2",
+                    "createdAt": "2025-11-07T00:20:50.644000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task 557d4f6bf2914ba396295c21eba788ae)."
+                },
+                {
+                    "id": "8b45d202-df0a-4024-b95e-5fe9b113eced",
+                    "createdAt": "2025-11-07T00:16:27.324000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/2004615094714322509) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "c0b69207-3b62-40a2-ac10-3c8d45a54508",
+                    "createdAt": "2025-11-07T00:16:27.318000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "a8d18707-5482-4f6c-bda7-89b979e91392",
+                    "createdAt": "2025-11-07T00:16:17.955000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "420c76bf-cc98-416b-afb5-beba969ea835",
+                    "createdAt": "2025-11-07T00:15:48.081000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task c71c754756d14163b770d227d51312c7)."
+                },
+                {
+                    "id": "17567a52-fb79-41ff-9ad3-a194a6446764",
+                    "createdAt": "2025-11-07T00:15:28.480000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "bdd19fe5-4d1f-4778-b7ec-d2657901d284",
+                    "createdAt": "2025-11-07T00:15:28.407000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/2004615094714322509) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "c7e0d08d-e78e-4a21-851c-6a0f581942bd",
+                    "createdAt": "2025-11-07T00:15:28.401000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "72db0c89-890f-48b7-85ed-26898dc84c11",
+                    "createdAt": "2025-11-07T00:14:49.541000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "972f0de5-1af8-435b-bd27-2715c6e2edfd",
+                    "createdAt": "2025-11-07T00:14:19.691000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task f5e08792247443639300e5491e352812)."
+                },
+                {
+                    "id": "339c9c79-e0c9-4208-8cd1-9dd93c7374d8",
+                    "createdAt": "2025-11-07T00:10:37.045000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "0f7f46f6-beaf-484e-89c8-e754ed192a44",
+                    "createdAt": "2025-11-07T00:10:36.968000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/2441260938996151982) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "4205e2b1-ca02-44a7-b3b4-3fbc2176c4fd",
+                    "createdAt": "2025-11-07T00:10:36.963000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "c3e702e8-c30e-4fc9-a7e1-722637038f63",
+                    "createdAt": "2025-11-07T00:09:57.503000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "b6a67fdf-6e8a-496e-be39-54b155d4f1e3",
+                    "createdAt": "2025-11-07T00:09:16.390000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task 8b3c03c9954e4a98998b44c51b443a62)."
+                },
+                {
+                    "id": "4dbc404b-3340-4563-b268-aeb0d0215107",
+                    "createdAt": "2025-11-07T00:09:06.948000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/2441260938996151982) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "ed04d5ba-60d1-48a1-be9e-89c580c13bdc",
+                    "createdAt": "2025-11-07T00:09:06.939000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "90eb85f3-20a8-42ac-b144-2794c56ab97d",
+                    "createdAt": "2025-11-07T00:08:57.333000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "910610c7-fa9c-447a-a463-2bab5f26f076",
+                    "createdAt": "2025-11-07T00:08:26.074000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task 0930dbec7477443bbe65212469f947e0)."
+                },
+                {
+                    "id": "7df2ae86-a0ce-48ec-aef3-6a3216f4380c",
+                    "createdAt": "2025-11-07T00:03:58.575000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/5875194934202068251) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "a243ec66-5d63-4868-91b1-fd57bace6783",
+                    "createdAt": "2025-11-07T00:03:58.570000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "bccf2e4b-2612-4bf5-af2e-a74bc2873bd3",
+                    "createdAt": "2025-11-07T00:03:49.826000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "88b7d881-c7ba-40dd-8a3e-bb5842092420",
+                    "createdAt": "2025-11-07T00:03:21.052000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task abba93d475984c7d933832a49d53bead)."
+                },
+                {
+                    "id": "1f0604a0-51c1-458a-9614-293755466d84",
+                    "createdAt": "2025-11-07T00:03:01.002000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/5875194934202068251) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "c2fe622d-5196-462e-8e93-e4167e069157",
+                    "createdAt": "2025-11-07T00:03:00.998000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "e4b3ee7e-6678-49ae-8319-4d60f3d737f4",
+                    "createdAt": "2025-11-07T00:02:52.448000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "18cf5b11-01ca-4c63-9cf8-89e8ac037a41",
+                    "createdAt": "2025-11-07T00:02:24.164000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task 149a08e70aee434189de127d379803d7)."
+                },
+                {
+                    "id": "96c11e8a-8e2c-45df-86c0-10b47c87a71d",
+                    "createdAt": "2025-11-06T23:58:01.459000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/5875194934202068251) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "55c0536e-05a5-43d3-813a-7ecf203fd4e2",
+                    "createdAt": "2025-11-06T23:58:01.453000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "50ad7970-2d1c-46a3-8197-24135d0c3db3",
+                    "createdAt": "2025-11-06T23:57:40.696000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "11140e87-5ab1-4c6e-8689-caa44be3e601",
+                    "createdAt": "2025-11-06T23:57:10.330000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task 9d84b3bc8cef4edf85f591e8dfc355af)."
+                },
+                {
+                    "id": "64806729-02a6-43ee-b614-94145f5e5e03",
+                    "createdAt": "2025-11-06T23:57:09.442000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/5875194934202068251) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "34bdaf6e-fe18-4ad8-94c3-97cb0f86634e",
+                    "createdAt": "2025-11-06T23:57:09.437000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "57674172-a7df-4f1e-8f8a-c4dd9619bd2d",
+                    "createdAt": "2025-11-06T23:57:00.551000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "e709da1c-30f3-44e4-8a16-8836d42ed431",
+                    "createdAt": "2025-11-06T23:56:31.429000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task 6e8fe58749b143a08e367bdc496935e7)."
+                },
+                {
+                    "id": "9dc5755f-b105-4efd-8af3-1b98037ce57c",
+                    "createdAt": "2025-11-06T23:56:15.331000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/6637480941646566352) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "1d50bcd0-0853-4f98-9e33-6accca247fef",
+                    "createdAt": "2025-11-06T23:56:15.296000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "db884982-e5a5-457b-a92f-8cae86b59424",
+                    "createdAt": "2025-11-06T23:55:05.896000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task ecc8b6e047db4cab9bf29b2571a58587)."
+                },
+                {
+                    "id": "e918ba11-b978-4f9d-8fb9-372364cf034c",
+                    "createdAt": "2025-11-06T23:50:37.249000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/6637480941646566352) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "ae57e56b-9fce-49af-9598-ec3c1333abea",
+                    "createdAt": "2025-11-06T23:50:37.245000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "913f2600-7ff8-4968-8295-4510d02d44ef",
+                    "createdAt": "2025-11-06T23:50:27.268000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "0fd702c6-2612-4f4b-bfe7-06f560691b90",
+                    "createdAt": "2025-11-06T23:49:57.182000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task 02500b4d829544bc8a713a91391505f5)."
+                },
+                {
+                    "id": "47cf2d22-a56a-4dfe-b6ee-7b963e75e0e8",
+                    "createdAt": "2025-11-06T23:49:46.385000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "7a5ccf7e-282d-4023-8d2c-2c0ec7839863",
+                    "createdAt": "2025-11-06T23:49:46.334000+07:00",
+                    "message": "(service factorial-service-api-service, taskSet ecs-svc/6637480941646566352) has begun draining connections on 1 tasks."
+                },
+                {
+                    "id": "ed93815d-8a54-40dd-8318-18549c487c5d",
+                    "createdAt": "2025-11-06T23:49:46.330000+07:00",
+                    "message": "(service factorial-service-api-service) deregistered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "0fddc2f5-4f34-452d-a08c-2a8dda647e5a",
+                    "createdAt": "2025-11-06T23:49:06.921000+07:00",
+                    "message": "(service factorial-service-api-service) registered 1 targets in (target-group arn:aws:elasticloadbalancing:us-east-1:218435950768:targetgroup/simple-order-service/139eb83caf762da4)"
+                },
+                {
+                    "id": "0bd2b0ed-6734-4a4e-9f18-40187d000769",
+                    "createdAt": "2025-11-06T23:48:36.801000+07:00",
+                    "message": "(service factorial-service-api-service) has started 1 tasks: (task 32eb88d839a04ee0a8d331e7d67db318)."
+                }
+            ],
+            "createdAt": "2025-11-06T23:48:24.088000+07:00",
+            "placementConstraints": [],
+            "placementStrategy": [],
+            "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "subnet-0911715bbcfeaf63f"
+                    ],
+                    "securityGroups": [
+                        "sg-0eda5df6af283ac2f"
+                    ],
+                    "assignPublicIp": "DISABLED"
+                }
+            },
+            "healthCheckGracePeriodSeconds": 0,
+            "schedulingStrategy": "REPLICA",
+            "deploymentController": {
+                "type": "ECS"
+            },
+            "createdBy": "arn:aws:iam::218435950768:user/anto_dev",
+            "enableECSManagedTags": true,
+            "propagateTags": "NONE",
+            "enableExecuteCommand": true
+        }
+    ],
+    "failures": []
+}

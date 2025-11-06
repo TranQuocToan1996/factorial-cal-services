@@ -1,0 +1,77 @@
+{
+    "family": "factorial-calculate-service-migrate-tf",
+    "containerDefinitions": [
+        {
+            "cpu": 0,
+            "environment": [],
+            "environmentFiles": [],
+            "essential": true,
+            "image": "218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/migration:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/factorial-calculate-service-migrate-tf",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "mountPoints": [],
+            "name": "factorial-service-migrate",
+            "portMappings": [],
+            "secrets": [
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:AWS_ACCESS_KEY_ID::"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:AWS_SECRET_ACCESS_KEY::"
+                },
+                {
+                    "name": "DB_HOST",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_HOST::"
+                },
+                {
+                    "name": "DB_NAME",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_NAME::"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_PASSWORD::"
+                },
+                {
+                    "name": "DB_PORT",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_PORT::"
+                },
+                {
+                    "name": "DB_SSLMODE",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_SSLMODE::"
+                },
+                {
+                    "name": "DB_USER",
+                    "valueFrom": "arn:aws:secretsmanager:us-east-1:218435950768:secret:dev/factorial-service-PuUw9d:DB_USER::"
+                }
+            ],
+            "systemControls": [],
+            "ulimits": [],
+            "volumesFrom": []
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::218435950768:role/ecs-task-role",
+    "executionRoleArn": "arn:aws:iam::218435950768:role/ecs-task-execution-role",
+    "networkMode": "awsvpc",
+    "volumes": [],
+    "placementConstraints": [],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "enableFaultInjection": false
+}

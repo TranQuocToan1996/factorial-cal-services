@@ -306,7 +306,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "number": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -317,7 +317,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "number": {
-                    "type": "string"
+                    "type": "integer"
                 }
             }
         },
@@ -335,6 +335,9 @@ const docTemplate = `{
         "dto.MetadataResponseData": {
             "type": "object",
             "properties": {
+                "bucket": {
+                    "type": "string"
+                },
                 "checksum": {
                     "type": "string"
                 },
@@ -342,10 +345,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "number": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "s3_key": {
                     "type": "string"

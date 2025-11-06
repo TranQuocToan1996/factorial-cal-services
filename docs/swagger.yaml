@@ -13,7 +13,7 @@ definitions:
   dto.CalculateRequest:
     properties:
       number:
-        type: string
+        type: integer
     required:
     - number
     type: object
@@ -22,7 +22,7 @@ definitions:
       message:
         type: string
       number:
-        type: string
+        type: integer
     type: object
   dto.ErrorResponse:
     properties:
@@ -33,14 +33,16 @@ definitions:
     type: object
   dto.MetadataResponseData:
     properties:
+      bucket:
+        type: string
       checksum:
         type: string
       created_at:
         type: string
       id:
-        type: string
+        type: integer
       number:
-        type: string
+        type: integer
       s3_key:
         type: string
       status:
