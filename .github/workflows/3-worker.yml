@@ -63,9 +63,9 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       # TODO: Add ENV
-      - name: Build and push API image
+      - name: Build and push Worker image
         run: |
-          docker buildx build --platform linux/amd64 --target worker -t factorial-calculate-service/worker .
+          docker buildx build --platform linux/amd64 -f Dockerfile.worker -t factorial-calculate-service/worker .
           docker tag factorial-calculate-service/worker:latest 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/worker:latest
           docker push 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/worker:latest
 

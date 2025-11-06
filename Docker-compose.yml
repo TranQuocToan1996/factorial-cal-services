@@ -47,8 +47,7 @@ services:
   migrate:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: migrate
+      dockerfile: Dockerfile.migrate
     depends_on:
       postgres:
         condition: service_healthy
@@ -85,8 +84,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: api
+      dockerfile: Dockerfile.api
     container_name: factorial-cal-services-api
     depends_on:
       postgres:
@@ -132,8 +130,7 @@ services:
   worker:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: worker
+      dockerfile: Dockerfile.worker
     depends_on:
       postgres:
         condition: service_healthy
@@ -177,8 +174,7 @@ services:
   calculate:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: calculator
+      dockerfile: Dockerfile.calculator
     depends_on:
       postgres:
         condition: service_healthy

@@ -1,0 +1,24 @@
+# Multi-stage Dockerfile for API and Worker
+
+# Build stage
+FROM golang:1.25-alpine AS builder
+WORKDIR /app
+
+# Copy go mod files first for better caching
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Build Migrate binary
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o migrate ./cmd/migrate
+
+FROM alpine:3.18 AS migrate
+WORKDIR /app
+RUN apk add --no-cache ca-certificates
+COPY --from=builder /app/migrate /app/migrate
+COPY --from=builder /app/migrations /app/migrations
+ENTRYPOINT ["/app/migrate"]

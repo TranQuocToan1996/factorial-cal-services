@@ -63,7 +63,7 @@ jobs:
       # TODO: Add ENV
       - name: Build and push API image
         run: |
-          docker buildx build --platform linux/amd64 --target api -t factorial-calculate-service/api .
+          docker buildx build --platform linux/amd64 -f Dockerfile.api -t factorial-calculate-service/api .
           docker tag factorial-calculate-service/api:latest 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/api:latest
           docker push 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/api:latest
 
