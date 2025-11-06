@@ -14,16 +14,16 @@ RUN go mod download
 COPY . .
 
 # Build API binary
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o api ./cmd/api
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o api ./cmd/api
 
 # Build Worker binary
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o worker ./cmd/worker
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o worker ./cmd/worker
 
 # Build Calculator binary
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o calculator ./cmd/calculator
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o calculator ./cmd/calculator
 
 # Build Migrate binary
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o migrate ./cmd/migrate
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o migrate ./cmd/migrate
 
 # API Image
 FROM alpine:3.18 AS api

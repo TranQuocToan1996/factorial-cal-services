@@ -64,7 +64,7 @@ jobs:
       # TODO: Add ENV
       - name: Build and push image
         run: |
-          docker build --target calculator -t factorial-calculate-service/calculator .
+          docker buildx build --platform linux/amd64 --target calculator -t factorial-calculate-service/calculator .
           docker tag factorial-calculate-service/calculator:latest 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/calculator:latest
           docker push 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/calculator:latest
 

@@ -45,6 +45,16 @@ jobs:
           role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and  image
+        run: |
+          docker buildx build --platform linux/amd64 --target migrate -t factorial-calculate-service/migration .
+          docker tag factorial-calculate-service/migration:latest 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/migration:latest
+          docker push 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/migration:latest
+
       - name: Run ECS migration job
         id: run-migration-task
         run: |
