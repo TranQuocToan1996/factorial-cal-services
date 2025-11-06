@@ -63,3 +63,8 @@ func (s *LocalStorageService) DownloadFactorial(ctx context.Context, s3Key strin
 
 	return string(data), nil
 }
+
+// GetBucket implements StorageService interface (alias for basePath)
+func (s *LocalStorageService) GetBucket() string {
+	return s.basePath
+}

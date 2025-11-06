@@ -20,9 +20,7 @@ type FactorialRepository interface {
 	Create(calc *domain.FactorialCalculation) error
 	FindByNumber(number int64) (*domain.FactorialCalculation, error)
 	UpdateStatus(number string, status string) error
-	UpdateS3Key(number string, s3Key string, status string) error
-	UpdateS3KeyWithChecksum(number int64, s3Key string, checksum string, size int64, status string) error
-	UpdateWithCurrentNumber(number int64, s3Key string, checksum string, size int64, status string) error
+	UpdateWithCurrentNumber(number int64, s3Key string, checksum string, size int64, status string, bucket string) error
 }
 
 // NewFactorialRepository creates a new factorial repository
@@ -70,48 +68,6 @@ func (r *factorialRepository) UpdateStatus(number string, status string) error {
 	return nil
 }
 
-// UpdateS3Key updates the S3 key and status of a factorial calculation
-func (r *factorialRepository) UpdateS3Key(number string, s3Key string, status string) error {
-	result := r.db.Model(&domain.FactorialCalculation{}).
-		Where("number = ?", number).
-		Updates(map[string]any{
-			"s3_key": s3Key,
-			"status": status,
-		})
-
-	if result.Error != nil {
-		return result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
-	}
-
-	return nil
-}
-
-// UpdateS3KeyWithChecksum updates the S3 key, checksum, size, and status of a factorial calculation
-func (r *factorialRepository) UpdateS3KeyWithChecksum(number int64, s3Key string, checksum string, size int64, status string) error {
-	result := r.db.Model(&domain.FactorialCalculation{}).
-		Where("number = ?", number).
-		Updates(map[string]any{
-			"s3_key":   s3Key,
-			"checksum": checksum,
-			"size":     size,
-			"status":   status,
-		})
-
-	if result.Error != nil {
-		return result.Error
-	}
-
-	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
-	}
-
-	return nil
-}
-
 // UpdateWithCurrentNumber atomically updates factorial metadata and current calculated number
 func (r *factorialRepository) UpdateWithCurrentNumber(
 	number int64,
@@ -119,6 +75,7 @@ func (r *factorialRepository) UpdateWithCurrentNumber(
 	checksum string,
 	size int64,
 	status string,
+	bucket string,
 ) error {
 	// Use transaction to ensure atomicity
 	return r.db.Transaction(func(tx *gorm.DB) error {
@@ -130,6 +87,7 @@ func (r *factorialRepository) UpdateWithCurrentNumber(
 				"checksum": checksum,
 				"size":     size,
 				"status":   status,
+				"bucket":   bucket,
 			})
 
 		if result.Error != nil {

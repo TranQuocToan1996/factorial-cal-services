@@ -45,6 +45,10 @@ func (m *mockStorageService) GenerateKey(number int64) string {
 	return fmt.Sprintf("%d.txt", number)
 }
 
+func (m *mockStorageService) GetBucket() string {
+	return "test-bucket"
+}
+
 // setupTestDB creates an in-memory SQLite database with schema
 func setupTestDB(t *testing.T) *gorm.DB {
 	// Use in-memory SQLite database

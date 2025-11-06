@@ -104,3 +104,8 @@ func (s *s3Service) Upload(ctx context.Context, number int64, result string) (st
 func (s *s3Service) Download(ctx context.Context, key string) (string, error) {
 	return s.DownloadFactorial(ctx, key)
 }
+
+// GetBucket implements StorageService interface (alias for bucketName)
+func (s *s3Service) GetBucket() string {
+	return s.bucketName
+}

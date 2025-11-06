@@ -59,7 +59,7 @@ func NewFactorialHandler(
 // @Example      400 {"code":400,"status":"fail","message":"invalid number format","data":{"error":"fail","message":"invalid number format"}}
 // @Example      500 {"code":500,"status":"fail","message":"Failed to submit calculation","data":{"error":"fail","message":"Failed to submit calculation"}}
 func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
-	var req dto.CalculateRequest
+	var req dto.FactorialMessage
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		sendErrorResponse(c, http.StatusBadRequest, "fail", err.Error())
@@ -82,9 +82,9 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 	}
 
 	// Return calculating status
-	sendAPIResponse(c, http.StatusOK, "ok", "calculating", dto.CalculateResponseData{
+	sendAPIResponse(c, http.StatusOK, "ok", "submitted", dto.CalculateResponseData{
 		Number:  req.Number,
-		Message: "calculating",
+		Message: "submitted",
 	})
 }
 
@@ -113,19 +113,15 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 		return
 	}
 
-	// Check if should use Redis cache
-	if h.redisService.ShouldCache(number) {
-		// Try Redis first
-		result, err := h.redisService.Get(c.Request.Context(), number)
-		if err != nil {
-			log.Printf("Redis error: %v", err)
-		} else if result != "" {
-			sendAPIResponse(c, http.StatusOK, "ok", "done", dto.ResultResponseData{
-				Number:          number,
-				FactorialResult: result,
-			})
-			return
-		}
+	result, err := h.redisService.Get(c.Request.Context(), number)
+	if err != nil {
+		log.Printf("Redis error: %v", err)
+	} else if result != "" {
+		sendAPIResponse(c, http.StatusOK, "ok", "done", dto.ResultResponseData{
+			Number:          number,
+			FactorialResult: result,
+		})
+		return
 	}
 
 	// Not in cache or large number, check DB for S3 key
@@ -137,20 +133,16 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 	}
 
 	if calc == nil {
-		messageBytes := fmt.Appendf(nil, "{\"number\": \"%s\"}", number)
-		if err := h.producer.Publish(c.Request.Context(), h.queueName, messageBytes); err != nil {
-			log.Printf("Error publishing event: %v", err)
-		}
-		sendAPIResponse(c, http.StatusOK, "ok", "calculating", dto.CalculateResponseData{})
+		sendAPIResponse(c, http.StatusOK, "fail", "not_found", dto.CalculateResponseData{})
 		return
 	}
 
 	if calc.Status != domain.StatusDone {
-		sendAPIResponse(c, http.StatusOK, "ok", "calculating", dto.CalculateResponseData{})
+		sendAPIResponse(c, http.StatusOK, "fail", "calculating", dto.CalculateResponseData{})
 		return
 	}
 
-	result, err := h.storage.DownloadFactorial(c.Request.Context(), calc.S3Key)
+	result, err = h.storage.DownloadFactorial(c.Request.Context(), calc.S3Key)
 	if err != nil {
 		log.Printf("Error downloading from S3: %v", err)
 		sendErrorResponse(c, http.StatusInternalServerError, "fail", "Failed to retrieve result from storage")
@@ -199,17 +191,18 @@ func (h *FactorialHandler) GetMetadata(c *gin.Context) {
 	}
 
 	if calc == nil {
-		sendAPIResponse(c, http.StatusOK, "ok", "calculating", dto.CalculateResponseData{})
+		sendAPIResponse(c, http.StatusOK, "fail", "need_submit_calculation", dto.CalculateResponseData{})
 		return
 	}
 
 	sendAPIResponse(c, http.StatusOK, "ok", "done", dto.MetadataResponseData{
-		ID:        fmt.Sprintf("%d", calc.ID),
+		ID:        calc.ID,
 		Number:    calc.Number,
 		S3Key:     calc.S3Key,
 		Checksum:  calc.Checksum,
 		Status:    calc.Status,
 		CreatedAt: calc.CreatedAt,
 		UpdatedAt: calc.UpdatedAt,
+		Bucket:    calc.Bucket,
 	})
 }

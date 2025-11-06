@@ -29,11 +29,12 @@ type ResultResponseData struct {
 
 // MetadataResponseData represents the data payload for metadata response
 type MetadataResponseData struct {
-	ID        string    `json:"id"`
+	ID        int64     `json:"id"`
 	Number    int64     `json:"number"`
 	S3Key     string    `json:"s3_key,omitempty"`
 	Checksum  string    `json:"checksum,omitempty"`
 	Status    string    `json:"status"`
+	Bucket    string    `json:"bucket"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

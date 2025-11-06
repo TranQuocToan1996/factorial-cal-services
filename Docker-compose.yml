@@ -71,7 +71,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_PASSWORD=
       - MAX_FACTORIAL=10000
-      - REDIS_THRESHOLD=1000
+      - REDIS_THRESHOLD=10000
       - WORKER_BATCH_SIZE=100
       - WORKER_MAX_BATCHES=16
       - AWS_REGION=us-east-1
@@ -116,7 +116,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_PASSWORD=
       - MAX_FACTORIAL=10000
-      - REDIS_THRESHOLD=1000
+      - REDIS_THRESHOLD=10000
       - WORKER_BATCH_SIZE=100
       - WORKER_MAX_BATCHES=16
       - AWS_REGION=us-east-1
@@ -160,7 +160,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_PASSWORD=
       - MAX_FACTORIAL=10000
-      - REDIS_THRESHOLD=1000
+      - REDIS_THRESHOLD=10000
       - WORKER_BATCH_SIZE=100
       - WORKER_MAX_BATCHES=16
       - AWS_REGION=us-east-1
@@ -186,7 +186,6 @@ services:
         condition: service_healthy
     environment:
       - SERVER_PORT=:8080
-      - SERVER_PORT=:8080
       - DB_USER=postgres
       - DB_PASSWORD=password
       - DB_HOST=postgres
@@ -199,13 +198,12 @@ services:
       - RABBITMQ_PORT=5672
       - FACTORIAL_CAL_SERVICES_QUEUE_NAME=factorial-cal-queue
       - SWAGGER_HOST=api:8080
-      - SWAGGER_HOST=api:8080
       - RABBITMQ_CA=
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=
       - MAX_FACTORIAL=10000
-      - REDIS_THRESHOLD=1000
+      - REDIS_THRESHOLD=10000
       - WORKER_BATCH_SIZE=100
       - WORKER_MAX_BATCHES=16
       - AWS_REGION=us-east-1

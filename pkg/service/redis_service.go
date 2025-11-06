@@ -33,7 +33,7 @@ func NewRedisService(client *redis.Client, ttl time.Duration, threshold int64) R
 		ttl = DefaultRedisTTL
 	}
 	if threshold == 0 {
-		threshold = 1000 // Default threshold
+		threshold = 10000 // Default threshold
 	}
 	return &redisService{
 		client:    client,

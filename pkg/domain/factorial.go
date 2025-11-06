@@ -20,6 +20,7 @@ type FactorialCalculation struct {
 	S3Key     string    `gorm:"type:varchar(512);not null" json:"s3_key"`
 	Checksum  string    `gorm:"type:varchar(64)" json:"checksum,omitempty"`
 	Size      int64     `gorm:"type:bigint;default:0" json:"size,omitempty"`
+	Bucket    string    `gorm:"type:varchar(255);not null" json:"bucket"`
 	CreatedAt time.Time `gorm:"autoCreateTime;index" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }

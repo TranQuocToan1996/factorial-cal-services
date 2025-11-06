@@ -250,7 +250,7 @@ All services support the following environment variables:
 - `REDIS_HOST`: Redis host (default: localhost)
 - `REDIS_PORT`: Redis port (default: 6379)
 - `REDIS_PASSWORD`: Redis password (optional)
-- `REDIS_THRESHOLD`: Cache threshold for numbers (default: 1000)
+- `REDIS_THRESHOLD`: Cache threshold for numbers (default: 10000)
 
 #### RabbitMQ
 - `RABBITMQ_HOST`: RabbitMQ host (default: localhost)

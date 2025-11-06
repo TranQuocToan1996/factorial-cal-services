@@ -43,7 +43,7 @@ func NewFactorialService(
 		currentCalculatedRepository: currentCalculatedRepository,
 		maxRequestRepository:        maxRequestRepository,
 		storage:                     storage,
-		maxFactorial:                100000,
+		maxFactorial:                10000,
 	}
 }
 
@@ -130,7 +130,7 @@ func (s *factorialService) continuelyCalculateFactorial(current, max int64, fact
 		}
 
 		// Size should be the string length (bytes), not bit length
-		err = s.repository.UpdateWithCurrentNumber(current, s3Key, checksum(factorialStr), int64(len(factorialStr)), domain.StatusDone)
+		err = s.repository.UpdateWithCurrentNumber(current, s3Key, checksum(factorialStr), int64(len(factorialStr)), domain.StatusDone, s.storage.GetBucket())
 		if err != nil {
 			return fmt.Errorf("failed to update factorial record: %w", err)
 		}
