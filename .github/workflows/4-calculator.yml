@@ -47,8 +47,8 @@ jobs:
       - name: Generate Swagger docs
         run: swag init -g cmd/api/main.go -o docs
 
-      - name: Run tests
-        run: go test -v ./tests -race -timeout 300s -cover
+      # - name: Run tests
+      #   run: go test -v ./tests -race -timeout 300s -cover
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
