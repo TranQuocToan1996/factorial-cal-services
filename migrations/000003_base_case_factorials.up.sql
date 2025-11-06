@@ -54,5 +54,5 @@ VALUES (
 )
 ON CONFLICT (number) DO NOTHING;
 
-INSERT INTO factorial_current_calculated_numbers (next_number) VALUES (3);
+INSERT INTO factorial_current_calculated_numbers (next_number) VALUES (4);
 INSERT INTO factorial_max_request_numbers (max_number) VALUES (3);

@@ -79,6 +79,8 @@ services:
       - STORAGE_TYPE=s3
       - QUEUE_TYPE=rabbitmq
     restart: "no"
+    env_file:
+      - .env
 
   api:
     build:
@@ -124,6 +126,8 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    env_file:
+      - .env
 
   worker:
     build:
@@ -167,6 +171,8 @@ services:
     deploy:
       mode: replicated
       replicas: 2
+    env_file:
+      - .env
 
   calculate:
     build:
@@ -210,6 +216,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

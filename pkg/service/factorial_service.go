@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"log"
@@ -80,9 +82,6 @@ func (s *factorialService) StartContinuelyCalculateFactorial() {
 				log.Printf("failed to get max number: %v", err)
 				continue
 			}
-			if current > max {
-				continue
-			}
 			if current > s.maxFactorial {
 				log.Printf("current number exceeds maximum allowed value of %d", s.maxFactorial)
 				continue
@@ -131,7 +130,7 @@ func (s *factorialService) continuelyCalculateFactorial(current, max int64, fact
 		}
 
 		// Size should be the string length (bytes), not bit length
-		err = s.repository.UpdateWithCurrentNumber(current, s3Key, factorialStr, int64(len(factorialStr)), domain.StatusDone)
+		err = s.repository.UpdateWithCurrentNumber(current, s3Key, checksum(factorialStr), int64(len(factorialStr)), domain.StatusDone)
 		if err != nil {
 			return fmt.Errorf("failed to update factorial record: %w", err)
 		}
@@ -156,4 +155,10 @@ func (s *factorialService) getPreviousFactorial(number int64) (*big.Int, error) 
 		return nil, fmt.Errorf("failed to parse factorial result: invalid format")
 	}
 	return currentFactorial, nil
+}
+
+func checksum(data string) string {
+	h := sha256.New()
+	h.Write([]byte(data))
+	return hex.EncodeToString(h.Sum(nil))
 }
