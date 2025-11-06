@@ -118,4 +118,3 @@ jobs:
               exit 1
           fi
 
-          echo "Deployment hoàn tất và Service ổn định"
