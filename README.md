@@ -34,7 +34,6 @@ A distributed factorial calculation service built with Go, using RabbitMQ for me
 
 
 # For the deployed version, for simple no Auth require:
-Swagger: https://express-nodejs-demo-alb-1541480660.us-east-1.elb.amazonaws.com/swagger/index.html
 
 - POST https://express-nodejs-demo-alb-1541480660.us-east-1.elb.amazonaws.com/api/v1/factorial
 {
