@@ -78,7 +78,7 @@ func (c *Config) DSN() string {
 }
 
 func (c *Config) RabbitMQURL() string {
-	return fmt.Sprintf("amqp://%s:%s@%s:%s",
+	return fmt.Sprintf("amqps://%s:%s@%s:%s",
 		c.RABBITMQ_USER, c.RABBITMQ_PASSWORD, c.RABBITMQ_HOST, c.RABBITMQ_PORT)
 }
 
