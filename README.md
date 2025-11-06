@@ -27,8 +27,8 @@ A distributed factorial calculation service built with Go, using RabbitMQ for me
 - Refer context some info setup.
 - Storage: Create S3 bucket or use local disk. Or you can implement memory storage layer. Add base case in the /infrastructure/base_case
 - Use step 1.1 or 1.2
-1.1 Refer to the /infrastructure/terraform if u you Terraform
-1.2 refer to /infrastructure/ecs and add to chatbot for generate aws commands to create
+- 1.1 Refer to the /infrastructure/terraform if u you Terraform
+- 1.2 refer to /infrastructure/ecs and add to chatbot for generate aws commands to create
 - Base on the .env file. Set the env files so the service can get it.
 - Call API request number. After that call GET the result of the number.
 
@@ -68,14 +68,15 @@ factorial-cal-services/
 │       └── main.go
 │
 ├── pkg/                          # Application packages
-│   ├── aws/                      # AWS clients (Step Functions, etc.)
-│   │   └── stepfunctions_client.go
+│   ├── aws/                      # AWS clients
+│   │   └── aws.go
 │   ├── config/                   # Configuration management
 │   │   └── config.go
 │   ├── consumer/                 # Message queue consumers
 │   │   ├── interface.go
 │   │   ├── rabbitmq_consumer.go
 │   │   ├── rabbitmq_handler.go
+│   │   ├── rabbitmq_handler_test.go
 │   │   └── rabbitmq_queue_setup.go
 │   ├── db/                       # Database connection
 │   │   └── gorm.go
@@ -98,7 +99,9 @@ factorial-cal-services/
 │   │   └── max_request_repository.go
 │   ├── service/                  # Business logic layer
 │   │   ├── factorial_service.go
+│   │   ├── factorial_service_integration_test.go
 │   │   ├── redis_service.go
+│   │   ├── redis_service_test.go
 │   │   ├── storage_interface.go
 │   │   ├── storage_local_service.go
 │   │   └── storage_s3_service.go
@@ -112,6 +115,8 @@ factorial-cal-services/
 │   ├── 000001_init.down.sql
 │   ├── 000002_additional_tables.up.sql
 │   ├── 000002_additional_tables.down.sql
+│   ├── 000003_base_case_factorials.up.sql
+│   ├── 000003_base_case_factorials.down.sql
 │   └── migration.go
 │
 ├── docs/                         # API documentation (Swagger)
@@ -120,38 +125,59 @@ factorial-cal-services/
 │   └── swagger.yaml
 │
 ├── infrastructure/               # Infrastructure as Code
-│   ├── helm/                     # Helm charts
-│   │   ├── Chart.yaml
-│   │   ├── values.yaml
-│   │   ├── README.md
-│   │   └── templates/
-│   │       ├── api-deployment.yaml
-│   │       ├── calculator-deployment.yaml
-│   │       ├── worker-deployment.yaml
-│   │       ├── service.yaml
-│   │       ├── secret.yaml
-│   │       ├── serviceaccount.yaml
-│   │       ├── hpa.yaml
-│   │       └── _helpers.tpl
-│   ├── terraform/                # Terraform configurations
-│   │   ├── vpc.tf
-│   │   ├── subnets.tf
-│   │   ├── security_groups.tf
-│   │   └── ...
-│   └── argocd/                   # ArgoCD configurations
-│       └── application.yaml
+│   ├── base_case/                # Base case factorial results
+│   │   ├── 0.txt
+│   │   ├── 1.txt
+│   │   ├── 2.txt
+│   │   └── 3.txt
+│   ├── ecs/                      # ECS task definitions and configurations
+│   │   ├── igws.json
+│   │   ├── route-tables.json
+│   │   ├── security-groups.json
+│   │   ├── service/
+│   │   │   └── ecs-services.json
+│   │   ├── subnets.json
+│   │   ├── task_definitions/
+│   │   │   ├── api_tf.json
+│   │   │   ├── cal_tf.json
+│   │   │   ├── migrate_tf.json
+│   │   │   └── woker.json
+│   │   ├── vpc-endpoints.json
+│   │   └── vpc.json
+│   └── terraform/                # Terraform configurations
+│       └── generated/
+│           └── aws/
+│               ├── cloudwatch/   # CloudWatch configurations
+│               ├── ecs/           # ECS configurations
+│               ├── iam/          # IAM roles and policies
+│               ├── rds/          # RDS configurations
+│               ├── s3/           # S3 bucket configurations
+│               ├── secretsmanager/ # Secrets Manager configurations
+│               ├── subnet/       # Subnet configurations
+│               ├── vpc/          # VPC configurations
+│               └── vpc_endpoint/ # VPC endpoint configurations
 │
 ├── context/                      # Architecture and design docs
-│   ├── arch.md
 │   ├── api_design.md
+│   ├── arch.md
+│   ├── arch.png
 │   ├── database.md
-│   └── flow.md
+│   ├── flow.md
+│   ├── postgresql-migration-summary.md
+│   ├── project.md
+│   ├── Security_group.png
+│   ├── vpc_network.md
+│   └── VPC.png
 │
-├── Dockerfile                    # Multi-stage Dockerfile
+├── Dockerfile.api                # Dockerfile for API service
+├── Dockerfile.calculator         # Dockerfile for Calculator service
+├── Dockerfile.migrate            # Dockerfile for Migration service
+├── Dockerfile.worker             # Dockerfile for Worker service
 ├── Docker-compose.yml            # Docker Compose configuration
 ├── Makefile                      # Build and deployment commands
 ├── go.mod                        # Go module dependencies
-└── README.md                     # This file
+├── go.sum                        # Go module checksums
+└── README.md                      # This file
 ```
 
 ## Architecture Overview
@@ -174,6 +200,9 @@ factorial-cal-services/
    - Reads current and max numbers from database
    - Stores results in S3
    - Updates database with calculation results
+
+4. **Calculator Service** (`cmd/migrate`)
+   - Update metadata and data for SQL DB
 
 ### Data Flow
 

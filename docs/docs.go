@@ -107,7 +107,7 @@ const docTemplate = `{
         },
         "/factorial/metadata/{number}": {
             "get": {
-                "description": "Get the metadata of a factorial calculation (status, S3 key, checksum, etc.)",
+                "description": "Get the metadata of a factorial calculation (status, S3 key, checksum, etc.). Returns metadata if calculation exists, or status if not found.",
                 "produces": [
                     "application/json"
                 ],
@@ -184,7 +184,7 @@ const docTemplate = `{
         },
         "/factorial/{number}": {
             "get": {
-                "description": "Get the factorial calculation result for a number",
+                "description": "Get the factorial calculation result for a number. Returns result if calculation is complete, or status if in progress or not found.",
                 "produces": [
                     "application/json"
                 ],
@@ -203,7 +203,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Calculation in progress",
+                        "description": "Calculation in progress or not found",
                         "schema": {
                             "allOf": [
                                 {

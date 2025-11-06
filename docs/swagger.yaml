@@ -117,7 +117,8 @@ paths:
       - factorial
   /factorial/{number}:
     get:
-      description: Get the factorial calculation result for a number
+      description: Get the factorial calculation result for a number. Returns result
+        if calculation is complete, or status if in progress or not found.
       parameters:
       - description: Number
         in: path
@@ -128,7 +129,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: Calculation in progress
+          description: Calculation in progress or not found
           schema:
             allOf:
             - $ref: '#/definitions/dto.APIResponse'
@@ -160,7 +161,7 @@ paths:
   /factorial/metadata/{number}:
     get:
       description: Get the metadata of a factorial calculation (status, S3 key, checksum,
-        etc.)
+        etc.). Returns metadata if calculation exists, or status if not found.
       parameters:
       - description: Number
         in: path
