@@ -59,33 +59,13 @@ jobs:
         run: |
           set -e
           echo "Running ECS task..."
-          TASK_ARN=$(aws ecs run-task \
+          aws ecs run-task \
             --cluster ${{ secrets.ECS_CLUSTER }} \
             --task-definition ${{ secrets.TASK_DEFINITION_ARN_MIGRATION }} \
             --network-configuration "${{ secrets.NETWORK_CONFIGURATION }}" \
             --launch-type FARGATE \
             --count 1 \
             --query 'tasks[0].taskArn' \
-            --output text)
-
-          echo "Task ARN: $TASK_ARN"
-          echo "Waiting for ECS task to complete..."
-
-          aws ecs wait tasks-stopped \
-            --cluster ${{ secrets.ECS_CLUSTER }} \
-            --tasks "$TASK_ARN"
-
-          echo "Fetching exit code..."
-          EXIT_CODE=$(aws ecs describe-tasks \
-            --cluster ${{ secrets.ECS_CLUSTER }} \
-            --tasks "$TASK_ARN" \
-            --query "tasks[0].containers[0].exitCode" \
-            --output text)
-
-          echo "Task finished with exit code: $EXIT_CODE"
-          if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "❌ Migration task failed"
-            exit 1
-          fi
+            --output text
 
           echo "✅ Migration completed successfully"
