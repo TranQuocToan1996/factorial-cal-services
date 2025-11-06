@@ -51,11 +51,11 @@ func NewFactorialHandler(
 // @Accept       json
 // @Produce      json
 // @Param        request body dto.CalculateRequest true "Calculation Request"
-// @Success      200  {object}  dto.APIResponse{data=dto.ResultResponseData} "Calculation already completed, returns result"
 // @Success      200  {object}  dto.APIResponse{data=dto.CalculateResponseData} "Calculation submitted successfully"
 // @Failure      400  {object}  dto.APIResponse{data=dto.ErrorResponse} "Invalid request - number missing or invalid format"
 // @Failure      500  {object}  dto.APIResponse{data=dto.ErrorResponse} "Internal server error - database or queue failure"
 // @Router       /factorial [post]
+// @Example      200 {"code":200,"status":"ok","message":"submitted","data":{"number":10,"message":"submitted"}}
 // @Example      400 {"code":400,"status":"fail","message":"invalid number format","data":{"error":"fail","message":"invalid number format"}}
 // @Example      500 {"code":500,"status":"fail","message":"Failed to submit calculation","data":{"error":"fail","message":"Failed to submit calculation"}}
 func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
@@ -90,17 +90,18 @@ func (h *FactorialHandler) SubmitCalculation(c *gin.Context) {
 
 // GetResult godoc
 // @Summary      Get factorial result
-// @Description  Get the factorial calculation result for a number
+// @Description  Get the factorial calculation result for a number. Returns result if calculation is complete, or status if in progress or not found.
 // @Tags         factorial
 // @Produce      json
 // @Param        number path string true "Number"
-// @Success      200  {object}  dto.APIResponse{data=dto.ResultResponseData} "Result retrieved successfully"
-// @Success      200  {object}  dto.APIResponse{data=dto.CalculateResponseData} "Calculation in progress"
+// @Success      200  {object}  dto.APIResponse{data=dto.ResultResponseData} "Result retrieved successfully - calculation completed"
+// @Success      200  {object}  dto.APIResponse{data=dto.CalculateResponseData} "Calculation in progress or not found"
 // @Failure      400  {object}  dto.APIResponse{data=dto.ErrorResponse} "Invalid number format"
 // @Failure      500  {object}  dto.APIResponse{data=dto.ErrorResponse} "Internal server error - database or storage failure"
 // @Router       /factorial/{number} [get]
-// @Example      200 {"code":200,"status":"ok","message":"done","data":{"number":"10"}}
-// @Example      200 {"code":200,"status":"ok","message":"calculating","data":{}}
+// @Example      200 {"code":200,"status":"ok","message":"done","data":{"number":"10","factorial_result":"3628800"}}
+// @Example      200 {"code":200,"status":"fail","message":"calculating","data":{}}
+// @Example      200 {"code":200,"status":"fail","message":"not_found","data":{}}
 // @Example      400 {"code":400,"status":"fail","message":"number must be between 0 and 10000","data":{"error":"fail","message":"number must be between 0 and 10000"}}
 // @Example      500 {"code":500,"status":"fail","message":"Failed to retrieve result from storage","data":{"error":"fail","message":"Failed to retrieve result from storage"}}
 func (h *FactorialHandler) GetResult(c *gin.Context) {
@@ -159,17 +160,17 @@ func (h *FactorialHandler) GetResult(c *gin.Context) {
 
 // GetMetadata godoc
 // @Summary      Get factorial calculation metadata
-// @Description  Get the metadata of a factorial calculation (status, S3 key, checksum, etc.)
+// @Description  Get the metadata of a factorial calculation (status, S3 key, checksum, etc.). Returns metadata if calculation exists, or status if not found.
 // @Tags         factorial
 // @Produce      json
 // @Param        number path string true "Number"
-// @Success      200  {object}  dto.APIResponse{data=dto.MetadataResponseData} "Metadata retrieved successfully"
+// @Success      200  {object}  dto.APIResponse{data=dto.MetadataResponseData} "Metadata retrieved successfully - calculation found"
 // @Success      200  {object}  dto.APIResponse{data=dto.CalculateResponseData} "Calculation not found or in progress"
 // @Failure      400  {object}  dto.APIResponse{data=dto.ErrorResponse} "Invalid number format"
 // @Failure      500  {object}  dto.APIResponse{data=dto.ErrorResponse} "Internal server error - database failure"
 // @Router       /factorial/metadata/{number} [get]
-// @Example      200 {"code":200,"status":"ok","message":"done","data":{"id":"1","number":"10","s3_key":"factorials/10.txt","checksum":"abc123...","status":"done","created_at":"2025-01-01T00:00:00Z","updated_at":"2025-01-01T00:00:00Z"}}
-// @Example      200 {"code":200,"status":"ok","message":"calculating","data":{}}
+// @Example      200 {"code":200,"status":"ok","message":"done","data":{"id":1,"number":10,"s3_key":"factorials/10.txt","checksum":"abc123...","status":"done","bucket":"my-bucket","created_at":"2025-01-01T00:00:00Z","updated_at":"2025-01-01T00:00:00Z"}}
+// @Example      200 {"code":200,"status":"fail","message":"need_submit_calculation","data":{}}
 // @Example      400 {"code":400,"status":"fail","message":"invalid number format","data":{"error":"fail","message":"invalid number format"}}
 // @Example      500 {"code":500,"status":"fail","message":"Failed to retrieve metadata","data":{"error":"fail","message":"Failed to retrieve metadata"}}
 func (h *FactorialHandler) GetMetadata(c *gin.Context) {
