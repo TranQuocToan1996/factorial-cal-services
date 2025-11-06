@@ -1,10 +1,18 @@
 name: App API deploy
 
+# on:
+#   workflow_run:
+#     workflows: ["Migration task run"]
+#     types:
+#       - completed
+#     branches:
+#       - main
+#   workflow_dispatch:
 on:
-  workflow_run:
-    workflows: ["Migration task run"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
   workflow_dispatch:
