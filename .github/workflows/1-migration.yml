@@ -1,4 +1,4 @@
-name: App Migration
+name: Migration task run
 
 on:
   push:
@@ -9,9 +9,8 @@ on:
       - main
   workflow_dispatch:
 
-
 jobs:
-  deploy:
+  migration:
     runs-on: ubuntu-latest
 
     permissions:
@@ -19,35 +18,67 @@ jobs:
       id-token: write
 
     steps:
+      # 0. Set up Go (for building binaries)
+      # TODO: Add a step to build the migration task
       - name: Log info
         run: |
-            echo "${{ secrets.DB_HOST  }}"
-            echo "${{ secrets.DB_NAME  }}"
-            echo "${{ secrets.DB_PORT  }}"
-            echo "${{ secrets.DB_SSLMODE  }}"
+            echo "${{ secrets.AWS_GITHUB_ACTION_ROLE  }}"
+            echo "${{ secrets.AWS_REGION  }}"
+            echo "${{ secrets.ECS_CLUSTER  }}"
+            echo "${{ secrets.TASK_DEFINITION_ARN_MIGRATION  }}"
+            echo "${{ secrets.NETWORK_CONFIGURATION  }}"
 
-
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-
+      # 3. Set up Go (for building binaries)
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
           go-version: '1.25'
           cache: true
 
-      - name: Install dependencies
-        run: go mod download
 
-      # TODO: Check DB credentials
-      - name: Run migrations
+      # 2. Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Run ECS migration job
+        id: run-migration-task
         run: |
-          DB_HOST=${{ secrets.DB_HOST  }}
-          DB_NAME=${{ secrets.DB_NAME  }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD  }}
-          DB_PORT=${{ secrets.DB_PORT  }}
-          DB_SSLMODE=${{ secrets.DB_SSLMODE  }}
-          DB_USER=${{ secrets.DB_USER  }}
-          go run cmd/migrate/main.go
+          set -e
+          echo "Running ECS task..."
+          TASK_ARN=$(aws ecs run-task \
+            --cluster ${{ secrets.ECS_CLUSTER }} \
+            --task-definition ${{ secrets.TASK_DEFINITION_ARN_MIGRATION }} \
+            --network-configuration "${{ secrets.NETWORK_CONFIGURATION }}" \
+            --launch-type FARGATE \
+            --count 1 \
+            --query 'tasks[0].taskArn' \
+            --output text)
 
+          echo "Task ARN: $TASK_ARN"
+          echo "Waiting for ECS task to complete..."
+
+          aws ecs wait tasks-stopped \
+            --cluster ${{ secrets.ECS_CLUSTER }} \
+            --tasks "$TASK_ARN"
+
+          echo "Fetching exit code..."
+          EXIT_CODE=$(aws ecs describe-tasks \
+            --cluster ${{ secrets.ECS_CLUSTER }} \
+            --tasks "$TASK_ARN" \
+            --query "tasks[0].containers[0].exitCode" \
+            --output text)
+
+          echo "Task finished with exit code: $EXIT_CODE"
+          if [ "$EXIT_CODE" -ne 0 ]; then
+            echo "❌ Migration task failed"
+            exit 1
+          fi
+
+          echo "✅ Migration completed successfully"
