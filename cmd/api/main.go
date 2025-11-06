@@ -70,7 +70,7 @@ func main() {
 	// Test Redis connection
 	ctx := context.Background()
 	if err := redisClient.Ping(ctx).Err(); err != nil {
-		log.Fatalf("Warning: Redis connection failed: %v", err)
+		log.Printf("Warning: Redis connection failed: %v", err)
 	} else {
 		log.Println("Connected to Redis successfully")
 	}
