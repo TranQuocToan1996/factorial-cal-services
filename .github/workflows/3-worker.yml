@@ -1,0 +1,111 @@
+name: App Worker deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Log info
+        run: |
+            echo "${{ secrets.AWS_GITHUB_ACTION_ROLE  }}"
+            echo "${{ secrets.AWS_REGION  }}"
+            echo "${{ secrets.ECR_REGISTRY  }}"
+            echo "${{ secrets.ECR_REPOSITORY  }}"
+            echo "${{ secrets.ECR_REPOSITORY_WORKER  }}"
+            echo "${{ secrets.ECS_CLUSTER  }}"
+            echo "${{ secrets.ECS_SERVICE_WORKER  }}"
+            echo "${{ secrets.TASK_DEFINITION_ARN_WORKER  }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
+          cache: true
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Install swag
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+
+      - name: Generate Swagger docs
+        run: swag init -g cmd/api/main.go -o docs
+
+      - name: Run tests
+        run: go test -v ./tests -race -timeout 300s -cover
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTION_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # TODO: Add ENV
+      - name: Build and push API image
+        run: |
+          docker build --target worker -t factorial-calculate-service/worker .
+          docker tag factorial-calculate-service/worker:latest 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/worker:latest
+          docker push 218435950768.dkr.ecr.us-east-1.amazonaws.com/factorial-calculate-service/worker:latest
+
+      - name: Deploy to ECS Fargate
+        run: |
+          echo "Cập nhật Service với Task Definition mới..."
+          aws ecs update-service \
+            --cluster ${{ secrets.ECS_CLUSTER }} \
+            --service ${{ secrets.ECS_SERVICE_WORKER }} \
+            --task-definition ${{ secrets.TASK_DEFINITION_ARN_WORKER }} \
+            --force-new-deployment
+
+          SERVICE_ARN=$(aws ecs describe-services \
+              --cluster ${{ secrets.ECS_CLUSTER }} \
+              --services ${{ secrets.ECS_SERVICE_WORKER }} \
+              --query 'services[0].serviceArn' \
+              --output text)
+
+
+          if ! aws ecs wait services-stable \
+            --cluster ${{ secrets.ECS_CLUSTER }} \
+            --services $SERVICE_ARN; then
+              
+              echo "::error::Deployment đã thất bại hoặc timeout. Đang tìm lý do dừng task."
+              
+              STOPPED_TASK=$(aws ecs list-tasks \
+                --cluster ${{ secrets.ECS_CLUSTER }} \
+                --service-name ${{ secrets.ECS_SERVICE_WORKER }} \
+                --desired-status STOPPED \
+                --query 'taskArns[0]' \
+                --output text)
+
+              if [ "$STOPPED_TASK" != "None" ]; then
+                  aws ecs describe-tasks \
+                    --cluster ${{ secrets.ECS_CLUSTER }} \
+                    --tasks $STOPPED_TASK \
+                    --query 'tasks[0].stoppedReason' \
+                    --output text
+              fi
+              
+              exit 1
+          fi
+
+          echo "Deployment hoàn tất và Service ổn định"

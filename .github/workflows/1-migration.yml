@@ -1,0 +1,53 @@
+name: App Migration
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Log info
+        run: |
+            echo "${{ secrets.DB_HOST  }}"
+            echo "${{ secrets.DB_NAME  }}"
+            echo "${{ secrets.DB_PORT  }}"
+            echo "${{ secrets.DB_SSLMODE  }}"
+
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
+          cache: true
+
+      - name: Install dependencies
+        run: go mod download
+
+      # TODO: Check DB credentials
+      - name: Run migrations
+        run: |
+          DB_HOST=${{ secrets.DB_HOST  }}
+          DB_NAME=${{ secrets.DB_NAME  }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD  }}
+          DB_PORT=${{ secrets.DB_PORT  }}
+          DB_SSLMODE=${{ secrets.DB_SSLMODE  }}
+          DB_USER=${{ secrets.DB_USER  }}
+          go run cmd/migrate/main.go
+
