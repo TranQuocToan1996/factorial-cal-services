@@ -18,8 +18,6 @@ jobs:
       id-token: write
 
     steps:
-      # 0. Set up Go (for building binaries)
-      # TODO: Add a step to build the migration task
       - name: Log info
         run: |
             echo "${{ secrets.AWS_GITHUB_ACTION_ROLE  }}"
