@@ -23,17 +23,39 @@ data "aws_secretsmanager_secret_version" "factorial_service" {
 
 locals {
   secrets = jsondecode(data.aws_secretsmanager_secret_version.factorial_service.secret_string)
+
+  vpc_id = "vpc-0956e9914efe15691"
+
+  # Use specific private subnets for ElastiCache and MQ
+  private_subnet_ids = [
+    "subnet-0911715bbcfeaf63f", # express-nodejs-demo-subnet-private1-us-east-1a
+    "subnet-0484b1c030d49a464"  # express-nodejs-demo-subnet-private2-us-east-1b
+  ]
+}
+
+
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = ["vpc-0956e9914efe15691"]
+  }
 }
 
 # Redis module
 module "redis" {
-  source       = "./module/redis"
-  cluster_name = "infra"
-  node_type    = "cache.t3.micro"
-  num_nodes    = 1
-  # Redis connection info from secret (if needed for outputs)
-  redis_host     = local.secrets.REDIS_HOST
-  redis_password = local.secrets.REDIS_PASSWORD
+  source         = "./module/redis"
+  cluster_name   = "infra"
+  node_type      = "cache.t3.micro"
+  num_nodes      = 1
+  subnet_ids     = local.private_subnet_ids
+  vpc_id         = "vpc-0956e9914efe15691"
+  redis_host     = try(local.secrets.REDIS_HOST, "")
+  redis_password = try(local.secrets.REDIS_PASSWORD, "")
+
+  tags = {
+    Environment = "Development"
+    Project     = "FactorialService"
+  }
 }
 
 # RabbitMQ module
@@ -42,6 +64,13 @@ module "rabbitmq" {
   cluster_name      = "infra"
   instance_type     = "mq.t3.micro"
   secret_arn        = data.aws_secretsmanager_secret.factorial_service.arn
-  rabbitmq_user     = local.secrets.RABBITMQ_USER
-  rabbitmq_password = local.secrets.RABBITMQ_PASSWORD
+  rabbitmq_user     = try(local.secrets.RABBITMQ_USER, "")
+  rabbitmq_password = try(local.secrets.RABBITMQ_PASSWORD, "")
+  subnet_ids        = data.aws_subnets.default.ids
+  vpc_id            = "vpc-0956e9914efe15691"
+
+  tags = {
+    Environment = "Development"
+    Project     = "FactorialService"
+  }
 }

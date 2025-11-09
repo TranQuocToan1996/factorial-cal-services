@@ -1,20 +1,28 @@
 variable "cluster_name" {
-  type = string
+  type        = string
+  description = "Cluster name for Redis"
 }
 
 variable "node_type" {
-  type    = string
-  default = "cache.t3.micro"
+  type        = string
+  default     = "cache.t3.micro"
+  description = "ElastiCache node type"
 }
 
 variable "num_nodes" {
-  type    = number
-  default = 1
+  type        = number
+  default     = 1
+  description = "Number of cache nodes"
 }
 
 variable "subnet_ids" {
-  type    = list(string)
-  default = []
+  type        = list(string)
+  description = "List of subnet IDs for ElastiCache subnet group"
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "VPC ID for security group"
 }
 
 variable "redis_host" {
@@ -25,7 +33,13 @@ variable "redis_host" {
 
 variable "redis_password" {
   type        = string
-  description = "Redis password from Secrets Manager"
+  description = "Redis password/auth token from Secrets Manager"
   sensitive   = true
   default     = ""
+}
+
+variable "tags" {
+  type        = map(string)
+  description = "Tags to apply to resources"
+  default     = {}
 }
