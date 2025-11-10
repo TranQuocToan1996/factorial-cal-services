@@ -68,4 +68,4 @@ jobs:
             --query 'tasks[0].taskArn' \
             --output text
 
-          echo "✅ Migration completed successfully"
+          echo "✅ Migration completed successfully "
